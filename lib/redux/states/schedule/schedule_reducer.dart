@@ -1,0 +1,23 @@
+import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
+import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
+import 'package:kt_dart/collection.dart';
+
+ScheduleState scheduleReducer(ScheduleState state, dynamic action){
+  if(action is ScheduleDateChangedAction){
+    return state.copyWith(selectedDate: action.date);
+  } else if(action is RequestingScheduleAction){
+    return state.copyWith(loadingStatus: LoadingStatus.LOADING);
+  } else if (action is ReceivedScheduleAction){
+    final tSchedule = state.schedules.toMutableMap();
+    tSchedule[action.date] = action.schedule;
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, schedules: tSchedule, errorMsg: '');
+  } else if(action is ScheduleAlreadyDownloadedAction){
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
+  } else if (action is ErrorScheduleAction){
+    return state.copyWith(loadingStatus: LoadingStatus.ERROR, errorMsg: action.error);
+  }
+
+  return state;
+}

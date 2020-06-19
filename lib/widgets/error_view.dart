@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ErrorView extends StatelessWidget {
   final String msg;
 
-  ErrorView({@required this.msg});
+  ErrorView(this.msg);
 
   @override
   Widget build(BuildContext context) {

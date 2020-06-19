@@ -1,11 +1,11 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:flutter/material.dart';
 
-class OwnProgressIndicator extends StatelessWidget {
+class ProgressView extends StatelessWidget {
 
   final String msg;
 
-  OwnProgressIndicator({@required this.msg});
+  ProgressView(this.msg);
 
   @override
   Widget build(BuildContext context) {

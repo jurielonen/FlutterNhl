@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
       drawer: AppDrawer(onTilePressed: (DrawerPages page) =>
           setState(() => _page = page),
       ),
-      appBar: AppBar(title: Text('NHL'),),
+      //appBar: AppBar(title: Text('NHL'),),
       body: _getPage(),
     );
   }
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
         return AwardsHome();
       }
       default: {
-        return ErrorView(msg: 'Error msg 1: $_page');
+        return ErrorView('Error msg 1: $_page');
       }
     }
   }

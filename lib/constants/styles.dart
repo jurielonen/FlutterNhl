@@ -6,11 +6,11 @@ import 'colors.dart';
 
 abstract class Styles {
 
+  static DateFormat apiDateFormat = DateFormat('yyyy-MM-dd');
   static DateFormat dateFormat = DateFormat('dd.MM.yyyy');
   static DateFormat dateWithoutYearFormat = DateFormat('dd.MM');
   static DateFormat timeFormat = DateFormat('HH:mm');
   static DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
-
 
   static const cardTeamWinnerText = TextStyle(
     color: kPrimaryTextColor,
