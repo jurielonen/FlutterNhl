@@ -3,6 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main(){
   group('helpers', (){
+
+    test('getJsonDateTime', (){
+      expect(getJsonDateTime('goalsAgainst', nullMap), DateTime(1990));
+      expect(getJsonDateTime('goalsAgainst', emptyMap), DateTime(1990));
+      expect(getJsonDateTime('divisionRank', valuesMap), DateTime(1990));
+      expect(getJsonDateTime('gameDate', valuesMap), DateTime(2020, 3,12,0,0,0,0));
+
+    });
+
     test('getJsonInt', (){
       expect(getJsonInt('goalsAgainst', nullMap), -1);
       expect(getJsonInt('goalsAgainst', emptyMap), -1);
@@ -98,6 +107,7 @@ const Map<String, dynamic> nullMap = null;
 const Map<String, dynamic> emptyMap = {};
 const Map<String, dynamic> valuesMap = {
   "goalsAgainst" : 170,
+  "gameDate": "2020-03-12T00:00",
   "goalsScored" : 213,
   "points" : 83,
   "divisionRank" : "2",

@@ -2,27 +2,10 @@ import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'test_functions.ignore.dart';
+
 void main() {
   group('player', () {
-    checkPlayer(Player actual, Player expected) {
-      expect(actual.id, expected.id);
-      expect(actual.fullname, expected.fullname);
-    }
-
-    checkPlayerPlay(PlayerPlay actual, PlayerPlay expected) {
-      expect(actual.id, expected.id);
-      expect(actual.fullname, expected.fullname);
-      expect(actual.playerType, expected.playerType);
-    }
-
-    checkPlayerGame(PlayerGame actual, PlayerGame expected) {
-      expect(actual.id, expected.id);
-      expect(actual.fullname, expected.fullname);
-      expect(actual.jerseyNumber, expected.jerseyNumber);
-      expect(actual.position.name, expected.position.name);
-      expect(actual.position.code, expected.position.code);
-      expect(actual.stats, expected.stats);
-    }
 
     test('player', () {
       checkPlayer(Player.fromJson(null), empty);

@@ -1,3 +1,18 @@
+DateTime getJsonDateTime(String key, Map<String, dynamic> json){
+  try {
+    if(json != null) {
+      if (json.containsKey(key)) {
+        if (json[key] is String) {
+          return DateTime.parse(json[key]);
+        }
+      }
+    }
+    return DateTime(1990);
+  } on FormatException catch(error){
+    return DateTime(1990);
+  }
+}
+
 int getJsonInt(String key, Map<String, dynamic> json){
   if(json != null) {
     if (json.containsKey(key)) {

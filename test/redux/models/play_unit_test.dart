@@ -4,40 +4,10 @@ import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'test_functions.ignore.dart';
+
 void main() {
   group('play', () {
-    checkGoals(Goals actual, Goals expected) {
-      expect(actual.away, expected.away);
-      expect(actual.home, expected.home);
-    }
-
-    checkAbout(About actual, About expected) {
-      expect(actual.eventIdx, expected.eventIdx);
-      expect(actual.period, expected.period);
-      expect(actual.periodType, expected.periodType);
-      expect(actual.ordinalNum, expected.ordinalNum);
-      expect(actual.periodTime, expected.periodTime);
-      expect(actual.periodTimeRemaining, expected.periodTimeRemaining);
-      checkGoals(actual.goals, expected.goals);
-    }
-
-    checkPlay(Play actual, Play expected) {
-      expect(actual.type, expected.type);
-      expect(actual.event, expected.event);
-      checkAbout(actual.about, expected.about);
-    }
-
-    checkPlayWithPlayers(PlayWithPlayers actual, PlayWithPlayers expected) {
-      expect(actual.team.id, expected.team.id);
-      expect(actual.team.name, expected.team.name);
-      expect(actual.players.length, expected.players.length);
-      actual.players.asMap().forEach((key, value) {
-        expect(value.id, expected.players[key].id);
-        expect(value.fullname, expected.players[key].fullname);
-        expect(value.playerType, expected.players[key].playerType);
-      });
-      checkPlay(actual, expected);
-    }
 
     test('play/playWithPlayers/About unit tests', () {
       checkPlay(Play.fromJson(null), empty);

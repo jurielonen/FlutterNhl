@@ -3,52 +3,10 @@ import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'test_functions.ignore.dart';
+
 void main() {
   group('Team', () {
-    checkTeam(Team actual, Team expected) {
-      expect(actual.name, expected.name);
-      expect(actual.id, expected.id);
-      expect(actual.abb, expected.abb);
-    }
-
-    checkTeamSchedule(TeamSchedule actual, TeamSchedule expected) {
-      expect(actual.name, expected.name);
-      expect(actual.id, expected.id);
-      expect(actual.abb, expected.abb);
-      expect(actual.score, expected.score);
-      expect(actual.record, expected.record);
-    }
-
-    checkPlayerGame(PlayerGame actual, PlayerGame expected) {
-      expect(actual.id, expected.id);
-      expect(actual.fullname, expected.fullname);
-      expect(actual.jerseyNumber, expected.jerseyNumber);
-      expect(actual.position.name, expected.position.name);
-      expect(actual.position.code, expected.position.code);
-      expect(actual.stats, expected.stats);
-    }
-
-    checkTeamFinal(TeamFinal actual, TeamFinal expected) {
-      expect(actual.name, expected.name);
-      expect(actual.id, expected.id);
-      expect(actual.abb, expected.abb);
-      expect(actual.teamStats, expected.teamStats);
-      expect(actual.playerStats.length, expected.playerStats.length);
-      actual.playerStats.asMap().forEach((key, value) {
-        checkPlayerGame(value, expected.playerStats[key]);
-      });
-    }
-
-    checkTeamPreview(TeamPreview actual, TeamPreview expected) {
-      expect(actual.name, expected.name);
-      expect(actual.id, expected.id);
-      expect(actual.abb, expected.abb);
-      expect(actual.teamStats, expected.teamStats);
-      expect(actual.playerStats.length, expected.playerStats.length);
-      actual.playerStats.asMap().forEach((key, value) {
-        checkPlayerGame(value, expected.playerStats[key]);
-      });
-    }
 
     test('Team', () {
       checkTeam(Team.fromJson(null), empty);
