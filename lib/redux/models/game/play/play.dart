@@ -22,8 +22,8 @@ class Play {
       return PlayWithPlayers(
           play: tPlay,
           players: List<PlayerPlay>.from(
-              (json['players'] as Iterable<Map<String, dynamic>>).map<Player>(
-                  (Map<String, dynamic> player) => PlayerPlay.fromJson(player))),
+              getJsonList(['players'], json).map<Player>(
+                  (player) => PlayerPlay.fromJson(player))),
           team: Team.fromJson(getJsonObject(['team'], json)));
     } else {
       return tPlay;

@@ -145,8 +145,6 @@ checkGamePreview(GamePreview actual, GamePreview expected){
 }
 
 checkGameFinal(GameFinal actual, GameFinal expected){
-  print(actual);
-  print(expected);
   checkGame(actual, expected);
   checkTeamFinal(actual.home, expected.home);
   checkTeamFinal(actual.away, expected.away);

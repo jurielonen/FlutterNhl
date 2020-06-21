@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/api/fetch.dart';
+import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:http/http.dart';
@@ -21,7 +22,7 @@ class StatsApi {
   }
 
   Future<GameFinal> fetchGameFinal(Game game) async {
-   final searchUri = Uri.https(baseUrl, '/api/v1/game${game.id}/feed/live');
+   final searchUri = Uri.https(baseUrl, '/api/v1/game/${game.id}/feed/live');
    print('$printMsg fetchGameFinal: $searchUri');
    return GameFinal.fromJson(game, await fetch(searchUri, client));
   }
@@ -36,9 +37,9 @@ class StatsApi {
     return GamePreview.fromJson(game, await fetch(searchUri, client));
   }
 
-  Future<Null> fetchGameContent(int gameId) async {
-   final searchUri = Uri.https(baseUrl, '/$gameId/content');
+  Future<Content> fetchGameContent(int gameId) async {
+   final searchUri = Uri.https(baseUrl, '/api/v1/game/$gameId/content');
    print('$printMsg fetchGameContent: $searchUri');
-
+   return Content.fromJson(await fetch(searchUri, client));
   }
 }

@@ -2,12 +2,7 @@ import 'package:FlutterNhl/redux/api/fetch.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:http/http.dart';
 
-
-enum StatType {
-  GOALIE,
-  PLAYER,
-  TEAM
-}
+enum StatType { GOALIE, PLAYER, TEAM }
 
 Map<String, String> getParams(sort,
     {isAggregated = false,
@@ -49,9 +44,10 @@ class NHLApi {
     }).catchError((error) => onFetchError(error));
   }
 
-  Future<List<dynamic>> fetchStats(StatType type, String stat, Map<String, String> params) async {
+  Future<List<dynamic>> fetchStats(
+      StatType type, String stat, Map<String, String> params) async {
     String path = 'stats/rest/en/';
-    switch(type){
+    switch (type) {
       case StatType.GOALIE:
         path += 'goalie/$stat';
         break;
@@ -62,10 +58,10 @@ class NHLApi {
         path += 'team/$stat';
         break;
     }
-    switch(stat){
+    switch (stat) {
       case 'shootout':
       case 'penaltyShots':
-        if(params.containsKey('factCayenneExp')){
+        if (params.containsKey('factCayenneExp')) {
           params.remove('factCayenneExp');
         }
         break;
@@ -82,9 +78,7 @@ class NHLApi {
           }
         }
       }
-      throw Exception(
-          'Error while formatting data in $printMsg::fetchPlayer');
-
+      throw Exception('Error while formatting data in $printMsg::fetchPlayer');
     }).catchError((error) => onFetchError(error));
   }
 
