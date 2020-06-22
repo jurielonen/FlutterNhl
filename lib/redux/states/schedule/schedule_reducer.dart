@@ -1,10 +1,10 @@
-import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
 import 'package:kt_dart/collection.dart';
 
 ScheduleState scheduleReducer(ScheduleState state, dynamic action){
+  print('SCHEDULESTATE: ${action.runtimeType}');
   if(action is ScheduleDateChangedAction){
     return state.copyWith(selectedDate: action.date);
   } else if(action is RequestingScheduleAction){

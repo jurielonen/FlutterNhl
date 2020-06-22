@@ -3,7 +3,7 @@ import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_selectors.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 
 class ScheduleViewModel {

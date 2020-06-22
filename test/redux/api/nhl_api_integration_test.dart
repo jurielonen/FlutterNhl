@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/api/nhl_api.dart';
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -12,9 +13,12 @@ void main(){
       var keys = reportData.keys;
       for(String key in keys){
         var data = reportData[key].season;
-        List<dynamic> stats = await api.fetchStats(type, key, getParams(data.getSortKeys(), limit: 1));
+        StatParameters params = StatParameters.create(ParamType(type, key, data.getSortKeys()));
+
+        List<dynamic> stats = await api.fetchStats(params);
         expect(stats.length > 0, true);
         final stat = stats.first;
+        print(stat);
         if(stat is Map<String, dynamic>) {
           expect(data.resultFilters.length > 0, true);
           data.resultFilters.forEach((name) {

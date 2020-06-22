@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/viewmodel/schedule_view_model.dart';
+import 'package:FlutterNhl/views/schedule/schedule_game.dart';
 import 'package:FlutterNhl/views/template_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -72,14 +73,16 @@ class ScheduleGamesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverFixedExtentList(
-      itemExtent: 50.0,
+      itemExtent: 100.0,
       delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-          return Container(
+          return ScheduleGameCard(selectedSchedule.games[index]);
+
+            /*Container(
             alignment: Alignment.center,
             color: Colors.lightBlue[100 * (index % 9)],
             child: Text(selectedSchedule.games[index].toString()),
-          );
+          );*/
         },
         childCount: selectedSchedule.games.length,
       ),

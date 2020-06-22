@@ -1,4 +1,18 @@
-const Map<String, String> columns = {
+String getColumnAbb(String value){
+  if(constantColumns.containsKey(value)){
+    return constantColumns[value];
+  }
+  return '';
+}
+
+String getColumnTooltip(String value){
+  if(constantTooltips.containsKey(value)){
+    return constantTooltips[value];
+  }
+  return '';
+}
+
+const Map<String, String> constantColumns = {
   "assists": "A",
   "birthDate": "DOB",
   "currentTeamAbbrev": "Team",
@@ -91,12 +105,14 @@ const Map<String, String> columns = {
   'shFaceoffsLost': 'SH FOL',
   'shFaceoffsWon': 'SH FOW',
   'totalFaceoffs': 'FO',
+  "evGoals": "EVG",
+  "evPoints": "EVP",
   //team
   "penaltyKillNetPct": "Net PK%",
   "powerPlayNetPct": "Net PP%",
 };
 
-const Map<String, String> tooltips = {
+const Map<String, String> constantTooltips = {
   "assists": "Assists",
   "birthDate": "Player Birth Date",
   "currentTeamAbbrev": "Current Team",
@@ -200,6 +216,8 @@ const Map<String, String> tooltips = {
   "wins": "Wins",
   "winsInRegulation": "Regulation Wins",
   "winsInShootout": "Shootout Games Won (since 2005-06)",
+  "evGoals": "Even Strength Goals",
+  "evPoints": "Even Strength Points",
   //team
   "penaltyKillNetPct": "Penalty Kill Net Pct",
   "powerPlayNetPct": "Power Play Net Pct",

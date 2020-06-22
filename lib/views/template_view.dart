@@ -21,7 +21,7 @@ class TemplateView extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.all(8.0),
           sliver: _getStateWidget(),
-        )
+        ),
       ],
     );
   }

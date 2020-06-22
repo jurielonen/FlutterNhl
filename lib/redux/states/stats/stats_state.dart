@@ -1,0 +1,71 @@
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
+import 'package:FlutterNhl/redux/states/stats/stats_middleware.dart';
+import 'package:meta/meta.dart';
+
+@immutable
+class StatsState {
+  StatsState(
+      {@required this.loadingStatus,
+      @required this.config,
+      //@required this.parameters,
+      @required this.selectedParams,
+      @required this.errorMsg,
+      @required this.downloadedStats});
+
+  final LoadingStatus loadingStatus;
+  final Config config;
+  //final KtMap<ParamType, StatParameters> parameters;
+  final StatParameters selectedParams;
+  final StatsTableSource downloadedStats;
+  final String errorMsg;
+
+  factory StatsState.initial() {
+    return StatsState(
+        loadingStatus: LoadingStatus.IDLE,
+        config: Config.initial(),
+        //parameters: emptyMap(),
+        selectedParams: StatParameters.initial(),
+        downloadedStats: StatsTableSource.initial(),
+        errorMsg: '');
+  }
+
+  StatsState copyWith(
+      {LoadingStatus loadingStatus,
+      Config config,
+      //KtMap<ParamType, StatParameters> parameters,
+      StatParameters selectedStat,
+      StatsTableSource downloadedStats,
+      String errorMsg}) {
+    return StatsState(
+      loadingStatus: loadingStatus ?? this.loadingStatus,
+      config: config ?? this.config,
+      //parameters: parameters ?? this.parameters,
+      selectedParams: selectedStat ?? this.selectedParams,
+      downloadedStats: downloadedStats ?? this.downloadedStats,
+      errorMsg: errorMsg ?? this.errorMsg,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StatsState &&
+          runtimeType == other.runtimeType &&
+          loadingStatus == other.loadingStatus &&
+          config == other.config &&
+          //parameters == other.parameters &&
+          selectedParams == other.selectedParams &&
+          downloadedStats == other.downloadedStats &&
+          errorMsg == other.errorMsg;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      config.hashCode ^
+      //parameters.hashCode ^
+      selectedParams.hashCode ^
+      downloadedStats.hashCode ^
+      errorMsg.hashCode;
+}

@@ -12,6 +12,24 @@ abstract class Styles {
   static DateFormat timeFormat = DateFormat('HH:mm');
   static DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
 
+  static const playerTableText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 10,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
+
+  static const playerTableTeamText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 8,
+    fontStyle: FontStyle.italic,
+    fontWeight: FontWeight.normal,
+  );
+
+
   static const cardTeamWinnerText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',

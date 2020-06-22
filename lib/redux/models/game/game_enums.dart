@@ -53,3 +53,18 @@ GameState gameStateFromString(String value){
     default : return GameState.UNKNOWN;
   }
 }
+
+String gameStateToString(GameState value){
+  switch(value){
+    case GameState.SCHEDULED: return 'Scheduled';
+    case GameState.PRE_GAME:
+    case GameState.IN_PROGRESS:
+    case GameState.IN_PROGRESS_CRITICAL: return 'Live';
+    case GameState.GAME_OVER:
+    case GameState.FINAL:
+    case GameState.FINAL_2: return 'Final';
+    case GameState.SCHEDULED_TBD: return 'TBD';
+    case GameState.POSTPONED: return 'Postponed';
+    default : return 'Unknown';
+  }
+}

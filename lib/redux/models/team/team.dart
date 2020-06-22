@@ -9,7 +9,7 @@ class Team {
   final String abb;
 
   Team({@required this.id, @required this.name, @required this.abb});
-  Team.clone(Team team) : this(id: team.id, name: team.name, abb: team.name);
+  Team.clone(Team team) : this(id: team.id, name: team.name, abb: team.abb);
 
 
   factory Team.fromJson(Map<String, dynamic> json) {
@@ -26,6 +26,11 @@ class Team {
       abb: '',
     );
   }
+
+  @override
+  String toString() {
+    return '$id-$name-$abb';
+  }
 }
 
 class TeamSchedule extends Team {
@@ -41,6 +46,8 @@ class TeamSchedule extends Team {
         record: getJsonObject(['leagueRecord'], json),
         score: getJsonInt('score', json));
   }
+
+  String get teamRecord => '${getJsonInt('wins', record)}-${getJsonInt('losses', record)}-${getJsonInt('ot', record)}';
 }
 
 class TeamPreview extends Team {

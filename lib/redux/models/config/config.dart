@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+
 
 class Config {
   Config({
@@ -16,6 +18,10 @@ class Config {
   //final List<String> aggregatedColumns;
   //final List<String> individualColumns;
 
+  factory Config.initial(){
+    return Config(playerReportData: {}, goalieReportData: {}, teamReportData: {});
+  }
+
   factory Config.fromJson(Map<String, dynamic> json) => Config(
     playerReportData: Map.from(json["playerReportData"]).map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v))),
     goalieReportData: Map.from(json["goalieReportData"]).map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v))),
@@ -23,6 +29,33 @@ class Config {
     //aggregatedColumns: List<String>.from(json["aggregatedColumns"].map((x) => x)),
     //individualColumns: List<String>.from(json["individualColumns"].map((x) => x)),
   );
+
+  bool isEmpty(){
+    return playerReportData.isEmpty || goalieReportData.isEmpty || teamReportData.isEmpty;
+  }
+
+  List<String> getFilterItems(ParamType paramType){
+    switch(paramType.type){
+      case StatType.PLAYER:
+        if(playerReportData.containsKey(paramType.stat)) {
+          return playerReportData[paramType.stat].season.resultFilters;
+        }
+        break;
+
+      case StatType.GOALIE:
+        if(goalieReportData.containsKey(paramType.stat)) {
+          return goalieReportData[paramType.stat].season.resultFilters;
+        }
+        break;
+
+      case StatType.TEAM:
+        if(teamReportData.containsKey(paramType.stat)) {
+          return teamReportData[paramType.stat].season.resultFilters;
+        }
+        break;
+    }
+    return [];
+  }
 }
 
 class Advanced {

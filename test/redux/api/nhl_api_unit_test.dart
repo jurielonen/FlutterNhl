@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/api/nhl_api.dart';
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -33,13 +34,14 @@ void main(){
 
     test('stats', () async {
       final api = NHLApi(_client(playerResp));
+      StatParameters parameters = StatParameters(ParamType(StatType.PLAYER, 'summary', '[{\"property\":\"points\",\"direction\":\"DESC\"},{\"property\":\"goals\",\"direction\":\"DESC\"},{\"property\":\"assists\",\"direction\":\"DESC\"}]'));
+      await api.fetchStats(parameters);
 
-      await api.fetchStats(StatType.PLAYER, 'summary', getParams('[{\"property\":\"points\",\"direction\":\"DESC\"},' +
-          '{\"property\":\"goals\",\"direction\":\"DESC\"},{\"property\":\"assists\",\"direction\":\"DESC\"}]'));
+      parameters = StatParameters(ParamType(StatType.GOALIE, 'realtime', '[{\"property\":\"points\",\"direction\":\"DESC\"}]'));
+      await api.fetchStats(parameters);
 
-      await api.fetchStats(StatType.GOALIE, 'realtime', getParams('[{\"property\":\"points\",\"direction\":\"DESC\"}]'));
-
-      await api.fetchStats(StatType.TEAM, 'satperc', getParams('[{\"property\":\"assists\",\"direction\":\"DESC\"}]'));
+      parameters = StatParameters(ParamType(StatType.TEAM, 'satperc', '[{\"property\":\"assists\",\"direction\":\"DESC\"}]'));
+      await api.fetchStats(parameters);
 
       expect(requestLog[0].url.toString(), 'https://api.nhle.com/stats/rest/en/skater/summary?isAggregate=false&isGame=false&' +
           'sort=%5B%7B%22property%22%3A%22points%22%2C%22direction%22%3A%22DESC%22%7D%2C%7B%22property%22%3A%22goals%22%2C%22direction' +

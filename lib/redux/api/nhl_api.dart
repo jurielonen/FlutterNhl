@@ -1,10 +1,9 @@
 import 'package:FlutterNhl/redux/api/fetch.dart';
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:http/http.dart';
 
-enum StatType { GOALIE, PLAYER, TEAM }
-
-Map<String, String> getParams(sort,
+/*Map<String, String> getParams(sort,
     {isAggregated = false,
     isGame = false,
     start = 0,
@@ -23,7 +22,7 @@ Map<String, String> getParams(sort,
     'cayenneExp':
         'gameTypeId=${gameType.toString()} and seasonId>=${startSeason.toString()} and seasonId<=${endSeason.toString()}'
   };
-}
+}*/
 
 class NHLApi {
   final Client client;
@@ -44,29 +43,8 @@ class NHLApi {
     }).catchError((error) => onFetchError(error));
   }
 
-  Future<List<dynamic>> fetchStats(
-      StatType type, String stat, Map<String, String> params) async {
-    String path = 'stats/rest/en/';
-    switch (type) {
-      case StatType.GOALIE:
-        path += 'goalie/$stat';
-        break;
-      case StatType.PLAYER:
-        path += 'skater/$stat';
-        break;
-      case StatType.TEAM:
-        path += 'team/$stat';
-        break;
-    }
-    switch (stat) {
-      case 'shootout':
-      case 'penaltyShots':
-        if (params.containsKey('factCayenneExp')) {
-          params.remove('factCayenneExp');
-        }
-        break;
-    }
-    final searchUri = Uri.https(baseUrl, path, params);
+  Future<List<dynamic>> fetchStats(StatParameters params) async {
+    final searchUri = Uri.https(baseUrl, params.getPath(), params.getParams());
     print('$printMsg fetchStats: $searchUri');
 
     return fetch(searchUri, client).then((value) {
