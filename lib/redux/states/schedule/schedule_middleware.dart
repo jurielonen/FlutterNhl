@@ -14,17 +14,16 @@ class ScheduleMiddleware extends MiddlewareClass<AppState>{
   @override
   Future<Null> call(Store<AppState> store, dynamic action, NextDispatcher next) async {
     if(action is InitAction){
-
-      next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
+      if (store.state.scheduleState.selectedDate == null) {
+        next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
+      }
       _getSchedule(store, next);
     } else
     if(action is GetCurrentDateScheduleIfNotLoadedAction) {
-      if(store.state.scheduleState.loadingStatus != LoadingStatus.LOADING) {
-        if (store.state.scheduleState.selectedDate == null) {
-          next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
-        }
-        _getSchedule(store, next);
+      if (store.state.scheduleState.selectedDate == null) {
+        next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }
+      _getSchedule(store, next);
     } else {
       next(action);
       if (action is ScheduleDateChangedAction) {
@@ -34,17 +33,19 @@ class ScheduleMiddleware extends MiddlewareClass<AppState>{
   }
 
   Future<Null> _getSchedule(Store<AppState> store, NextDispatcher next) async {
-    next(RequestingScheduleAction);
-    String sDate = selectedDateSelector(store.state);
-    if (store.state.scheduleState.schedules.containsKey(sDate)) {
-      next(ScheduleAlreadyDownloadedAction());
-    } else {
-      try{
-        final Schedule schedule = await api.fetchSchedule(sDate);
-        next(ReceivedScheduleAction(sDate, schedule));
-      } catch(e) {
-        print(e.toString());
-        next(ErrorScheduleAction(e.toString()));
+    if(store.state.scheduleState.loadingStatus != LoadingStatus.LOADING) {
+      next(RequestingScheduleAction());
+      String sDate = selectedDateSelector(store.state);
+      if (store.state.scheduleState.schedules.containsKey(sDate)) {
+        next(ScheduleAlreadyDownloadedAction());
+      } else {
+        try {
+          final Schedule schedule = await api.fetchSchedule(sDate);
+          next(ReceivedScheduleAction(sDate, schedule));
+        } catch (e) {
+          print(e.toString());
+          next(ErrorScheduleAction(e.toString()));
+        }
       }
     }
   }
