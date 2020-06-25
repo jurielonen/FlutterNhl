@@ -19,13 +19,13 @@ class ScheduleState {
   factory ScheduleState.initial() {
     return ScheduleState(
         loadingStatus: LoadingStatus.IDLE,
-        selectedDate: null,
+        selectedDate: DateTime(2020, 2, 1),
         schedules: emptyMap(),
         errorMsg: '');
   }
 
-  ScheduleState copyWith({
-      LoadingStatus loadingStatus,
+  ScheduleState copyWith(
+      {LoadingStatus loadingStatus,
       DateTime selectedDate,
       KtMap<String, Schedule> schedules,
       String errorMsg}) {
@@ -40,16 +40,16 @@ class ScheduleState {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ScheduleState &&
-        runtimeType == other.runtimeType &&
-        loadingStatus == other.loadingStatus &&
-        selectedDate == other.selectedDate &&
-        schedules == other.schedules &&
-        errorMsg == other.errorMsg;
+          runtimeType == other.runtimeType &&
+          loadingStatus == other.loadingStatus &&
+          selectedDate == other.selectedDate &&
+          schedules == other.schedules &&
+          errorMsg == other.errorMsg;
 
   @override
   int get hashCode =>
-    loadingStatus.hashCode ^
-    selectedDate.hashCode ^
-    schedules.hashCode ^
-    errorMsg.hashCode;
+      loadingStatus.hashCode ^
+      selectedDate.hashCode ^
+      schedules.hashCode ^
+      errorMsg.hashCode;
 }

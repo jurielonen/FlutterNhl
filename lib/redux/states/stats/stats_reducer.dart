@@ -4,26 +4,34 @@ import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_action.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 
-StatsState statsReducer(StatsState state, dynamic action){
+StatsState statsReducer(StatsState state, dynamic action) {
   print('STATSSTATE: ${action.runtimeType}');
-  if(action is StatChangedAction){
+  if (action is StatsParametersChangedAction) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.IDLE, selectedStat: StatParameters.create(action.param));
-  } else if(action is StatsRequestingAction){
+        loadingStatus: LoadingStatus.IDLE, selectedStat: action.param);
+  } else if (action is StatsParamTypeChangedAction) {
+    return state.copyWith(
+        loadingStatus: LoadingStatus.IDLE,
+        selectedStat: StatParameters.create(action.type));
+  } else if (action is StatsRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
-  } else if(action is StatsNextAction){
+  } else if (action is StatsNextAction) {
     return state.copyWith(selectedStat: state.selectedParams.nextStats());
-  } else if(action is StatsPreviousAction){
+  } else if (action is StatsPreviousAction) {
     return state.copyWith(selectedStat: state.selectedParams.previousStats());
-  } else if(action is StatsReceived) {
-    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, downloadedStats: action.stats);
-  } else if(action is StatsErrorAction){
-    return state.copyWith(loadingStatus: LoadingStatus.ERROR, errorMsg: action.errorMsg);
-  } else if(action is StatsConfigReceived){
+  } else if (action is StatsReceived) {
+    return state.copyWith(
+        loadingStatus: LoadingStatus.SUCCESS, downloadedStats: action.stats);
+  } else if (action is StatsErrorAction) {
+    return state.copyWith(
+        loadingStatus: LoadingStatus.ERROR, errorMsg: action.errorMsg);
+  } else if (action is StatsConfigReceived) {
     Config temp = action.config;
     String firstKey = temp.playerReportData.keys.first;
-    ParamType paramType = ParamType(StatType.PLAYER, firstKey, temp.playerReportData[firstKey].season.getSortKeys());
-    return state.copyWith(config: action.config, selectedStat: StatParameters.create(paramType));
+    ParamType paramType = ParamType(StatType.PLAYER, firstKey,
+        temp.playerReportData[firstKey].season.getSortKeys());
+    return state.copyWith(
+        config: action.config, selectedStat: StatParameters.create(paramType));
   }
 
   return state;

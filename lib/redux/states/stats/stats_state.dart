@@ -1,7 +1,7 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
-import 'package:FlutterNhl/redux/states/stats/stats_middleware.dart';
+import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:meta/meta.dart';
 
 @immutable

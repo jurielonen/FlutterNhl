@@ -20,19 +20,18 @@ void main() {
 class NHLApp extends StatefulWidget {
   final Store<AppState> store;
   NHLApp(this.store);
-  
+
   @override
   _NHLAppState createState() => _NHLAppState();
 }
 
 class _NHLAppState extends State<NHLApp> {
-
   @override
   void initState() {
     super.initState();
-    widget.store.dispatch(InitAction);
+    widget.store.dispatch(InitAction());
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return StoreProvider<AppState>(
@@ -52,7 +51,6 @@ class _NHLAppState extends State<NHLApp> {
       ),
     );
   }
-
 }
 
 final ThemeData _kNHLTheme = buildNHLTheme();

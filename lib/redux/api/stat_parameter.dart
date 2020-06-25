@@ -1,5 +1,31 @@
 enum StatType { GOALIE, PLAYER, TEAM }
 
+String statTypeToString(StatType type) {
+  switch (type) {
+    case StatType.PLAYER:
+      return 'Player';
+    case StatType.GOALIE:
+      return 'Goalie';
+    case StatType.TEAM:
+      return 'Team';
+    default:
+      return '';
+  }
+}
+
+String statTypeNameKey(StatType type) {
+  switch (type) {
+    case StatType.PLAYER:
+      return 'skaterFullName';
+    case StatType.GOALIE:
+      return 'goalieFullName';
+    case StatType.TEAM:
+      return 'teamFullName';
+    default:
+      return '';
+  }
+}
+
 class ParamType {
   final StatType type;
   final String stat;
@@ -10,15 +36,17 @@ class ParamType {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is ParamType &&
-              runtimeType == other.runtimeType &&
-              type == other.type &&
-              stat == other.stat;
+      other is ParamType &&
+          runtimeType == other.runtimeType &&
+          type == other.type &&
+          stat == other.stat;
 
   @override
-  int get hashCode =>
-      type.hashCode ^
-      stat.hashCode;
+  int get hashCode => type.hashCode ^ stat.hashCode;
+
+  ParamType copyWith({StatType type, String stat}) {
+    return ParamType(type ?? this.type, stat ?? this.stat, this.sort);
+  }
 }
 
 class StatParameters {
@@ -32,7 +60,8 @@ class StatParameters {
   String startSeason = _getCurrentSeason();
   String endSeason = _getCurrentSeason();
 
-  static final Map<ParamType, StatParameters> _cache = <ParamType, StatParameters>{};
+  static final Map<ParamType, StatParameters> _cache =
+      <ParamType, StatParameters>{};
 
   StatParameters(this.paramType);
 
@@ -46,10 +75,8 @@ class StatParameters {
     }
   }
 
-  factory StatParameters.initial(){
-    return StatParameters(
-      ParamType(StatType.PLAYER, '', '')
-    );
+  factory StatParameters.initial() {
+    return StatParameters(ParamType(StatType.PLAYER, '', ''));
   }
 
   nextStats() => start += limit;
@@ -72,7 +99,7 @@ class StatParameters {
     return '${year - 1}$year';
   }
 
-  String getPath(){
+  String getPath() {
     String path = 'stats/rest/en/';
     switch (paramType.type) {
       case StatType.GOALIE:
@@ -88,7 +115,7 @@ class StatParameters {
     return path;
   }
 
-  Map<String, String> getParams(){
+  Map<String, String> getParams() {
     Map<String, String> temp = {
       'isAggregate': isAggregated.toString(),
       'isGame': isGame.toString(),
@@ -97,7 +124,7 @@ class StatParameters {
       'limit': limit.toString(),
       'factCayenneExp': 'gamesPlayed>=${gamesPlayed.toString()}',
       'cayenneExp':
-      'gameTypeId=${gameType.toString()} and seasonId>=${startSeason.toString()} and seasonId<=${endSeason.toString()}'
+          'gameTypeId=${gameType.toString()} and seasonId>=${startSeason.toString()} and seasonId<=${endSeason.toString()}'
     };
     switch (paramType.stat) {
       case 'shootout':
@@ -110,7 +137,6 @@ class StatParameters {
 
     return temp;
   }
-
 }
 
 /*Map<String, String> getParams(sort,

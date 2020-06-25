@@ -7,19 +7,20 @@ import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_selectors.dart';
 import 'package:redux/redux.dart';
 
-class ScheduleMiddleware extends MiddlewareClass<AppState>{
+class ScheduleMiddleware extends MiddlewareClass<AppState> {
   final StatsApi api;
   ScheduleMiddleware(this.api);
 
   @override
-  Future<Null> call(Store<AppState> store, dynamic action, NextDispatcher next) async {
-    if(action is InitAction){
+  Future<Null> call(
+      Store<AppState> store, dynamic action, NextDispatcher next) async {
+    print('ScheduleMiddleware: ${action.runtimeType}');
+    if (action is InitAction) {
       if (store.state.scheduleState.selectedDate == null) {
         next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }
       _getSchedule(store, next);
-    } else
-    if(action is GetCurrentDateScheduleIfNotLoadedAction) {
+    } else if (action is GetCurrentDateScheduleIfNotLoadedAction) {
       if (store.state.scheduleState.selectedDate == null) {
         next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }
@@ -33,7 +34,7 @@ class ScheduleMiddleware extends MiddlewareClass<AppState>{
   }
 
   Future<Null> _getSchedule(Store<AppState> store, NextDispatcher next) async {
-    if(store.state.scheduleState.loadingStatus != LoadingStatus.LOADING) {
+    if (store.state.scheduleState.loadingStatus != LoadingStatus.LOADING) {
       next(RequestingScheduleAction());
       String sDate = selectedDateSelector(store.state);
       if (store.state.scheduleState.schedules.containsKey(sDate)) {
@@ -49,5 +50,4 @@ class ScheduleMiddleware extends MiddlewareClass<AppState>{
       }
     }
   }
-  
 }
