@@ -26,6 +26,8 @@ class _StatAppBarState extends State<StatAppBar> {
             onTypeSelected: widget.viewModel.statChanged,
             statTypes: widget.viewModel.statTypes,
             selectedStat: widget.viewModel.selectedParams.paramType,
+            nextPage: widget.viewModel.nextPage,
+            previousPage: widget.viewModel.previousPage,
           )),
     );
   }
@@ -66,6 +68,8 @@ class StatTypeBar extends StatelessWidget {
 class StatTabBar extends StatefulWidget {
   final Function(StatType) onTabSelected;
   final Function(String) onTypeSelected;
+  final Function() nextPage;
+  final Function() previousPage;
   final List<String> statTypes;
   final ParamType selectedStat;
 
@@ -73,7 +77,9 @@ class StatTabBar extends StatefulWidget {
       {this.onTabSelected,
       this.onTypeSelected,
       this.statTypes,
-      this.selectedStat});
+      this.selectedStat,
+      this.nextPage,
+      this.previousPage});
 
   @override
   _StatTabBarState createState() => _StatTabBarState();
@@ -87,6 +93,7 @@ class _StatTabBarState extends State<StatTabBar> {
     return Column(
       children: <Widget>[
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             ToggleButtons(
               borderColor: Colors.transparent,
@@ -135,30 +142,43 @@ class _StatTabBarState extends State<StatTabBar> {
             ),
           ],
         ),
-        Row(
-          children: <Widget>[
-            DropdownButton<String>(
-              value: widget.selectedStat.stat,
-              icon: Icon(Icons.arrow_downward),
-              iconSize: 24,
-              elevation: 16,
-              style: TextStyle(color: Colors.deepPurple),
-              underline: Container(
-                height: 2,
-                color: Colors.deepPurpleAccent,
+        Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.navigate_before),
+                tooltip: 'Previous days games',
+                onPressed: () => widget.previousPage(),
               ),
-              onChanged: (String newValue) {
-                widget.onTypeSelected(newValue);
-              },
-              items: widget.statTypes
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            )
-          ],
+              DropdownButton<String>(
+                value: widget.selectedStat.stat,
+                icon: Icon(Icons.arrow_downward),
+                iconSize: 24,
+                elevation: 16,
+                style: TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String newValue) {
+                  widget.onTypeSelected(newValue);
+                },
+                items: widget.statTypes
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              IconButton(
+                icon: Icon(Icons.navigate_next),
+                tooltip: 'Next days games',
+                onPressed: () => widget.nextPage(),
+              ),
+            ],
+          ),
         )
       ],
     );

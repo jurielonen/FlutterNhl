@@ -65,6 +65,15 @@ class StatParameters {
 
   StatParameters(this.paramType);
 
+
+  StatParameters.copy({
+      this.paramType,
+      this.start,
+      this.gamesPlayed,
+      this.gameType,
+      this.startSeason,
+      this.endSeason});
+
   factory StatParameters.create(ParamType paramType) {
     if (_cache.containsKey(paramType)) {
       return _cache[paramType];
@@ -79,8 +88,26 @@ class StatParameters {
     return StatParameters(ParamType(StatType.PLAYER, '', ''));
   }
 
-  nextStats() => start += limit;
-  previousStats() => start -= limit;
+  StatParameters copyWith({ParamType paramType,int start, int gamesPlayed, int gameType, String startSeason, String endSeason}){
+    return StatParameters.copy(
+      paramType: paramType ?? this.paramType,
+      start: start ?? this.start,
+      gamesPlayed: gamesPlayed ?? this.gamesPlayed,
+      gameType:  gameType ?? this.gameType,
+      startSeason: startSeason ?? this.startSeason,
+      endSeason: endSeason ?? this.endSeason
+    );
+  }
+
+  StatParameters nextStats(){
+    return copyWith(start: start += limit);
+  }
+  StatParameters previousStats(){
+    if(start < limit){
+      return copyWith(start: 0);
+    }
+    return copyWith(start: start -= limit);
+  }
 
   resetFilters() {
     start = 0;
