@@ -4,7 +4,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/viewmodel/schedule_view_model.dart';
 import 'package:FlutterNhl/views/schedule/schedule_game.dart';
-import 'package:FlutterNhl/views/template_view.dart';
+import 'file:///C:/Users/juri/Documents/GitHub/FlutterNhl/lib/widgets/template_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -20,7 +20,9 @@ class ScheduleHome extends StatelessWidget {
       converter: (store) => ScheduleViewModel.fromStore(store),
       builder: (_, viewModel) => TemplateView(
           viewModel.loadingStatus,
-          viewModel.selectedSchedule is ScheduleGames ? ScheduleGamesView(viewModel.selectedSchedule) : ScheduleEmptyView(viewModel.selectedSchedule),
+          viewModel.selectedSchedule is ScheduleGames
+              ? ScheduleGamesView(viewModel.selectedSchedule)
+              : ScheduleEmptyView(viewModel.selectedSchedule),
           _buildSliverAppBar(
               viewModel.selectedDate, viewModel.changeSelectedDate),
           viewModel.errorMsg),
@@ -75,10 +77,10 @@ class ScheduleGamesView extends StatelessWidget {
     return SliverFixedExtentList(
       itemExtent: 100.0,
       delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
+        (BuildContext context, int index) {
           return ScheduleGameCard(selectedSchedule.games[index]);
 
-            /*Container(
+          /*Container(
             alignment: Alignment.center,
             color: Colors.lightBlue[100 * (index % 9)],
             child: Text(selectedSchedule.games[index].toString()),

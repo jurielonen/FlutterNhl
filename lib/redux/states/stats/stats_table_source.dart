@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 
 class StatsTableSource {
   final List<DataColumn> columns;
-  final List<DataRow> rows;
-
-  StatsTableSource(this.columns, this.rows);
+  //final List<DataRow> rows;
+  final StatType type;
+  final List<dynamic> stats;
+  final List<String> displayItems;
+  StatsTableSource({this.columns, this.type, this.stats, this.displayItems});
 
   factory StatsTableSource.initial() {
-    return StatsTableSource([], []);
+    return StatsTableSource(
+        columns: [], type: StatType.PLAYER, stats: [], displayItems: []);
   }
 
   factory StatsTableSource.fromData(
@@ -27,29 +30,49 @@ class StatsTableSource {
               style: TextStyle(fontStyle: FontStyle.italic)),
           tooltip: getColumnTooltip(element)));
     });
+
+    return StatsTableSource(
+        columns: tColumns,
+        type: type,
+        stats: stats,
+        displayItems: displayItems);
+  }
+
+  List<DataRow> setTapListenerToRow(
+      BuildContext context, String route, StatType type) {
     List<DataRow> tRows = [];
 
     stats.forEach((statRow) {
       if (statRow is Map<String, dynamic>) {
         List<DataCell> tCells = [];
-        tCells.add(DataCell(Text.rich(
-            TextSpan(text: getJsonString(statTypeNameKey(type), statRow),
-                //style: Styles.playerTableText,
-                children: <TextSpan>[
-              TextSpan(
-                  text: ' ' + getJsonString('teamAbbrevs', statRow),
-                  style: Styles.playerTableTeamText)
-            ]))));
+        tCells.add(DataCell(
+            Text.rich(
+                TextSpan(text: getJsonString(statTypeNameKey(type), statRow),
+                    //style: Styles.playerTableText,
+                    children: <TextSpan>[
+                  TextSpan(
+                      text: ' ' + getJsonString('teamAbbrevs', statRow),
+                      style: Styles.playerTableTeamText)
+                ])),
+            onTap: () => Navigator.pushNamed(context, route,
+                arguments: PlayerPageArguments(
+                    getJsonInt('playerId', statRow), type))));
         displayItems.forEach((element) {
           if (statRow.containsKey(element)) {
             tCells.add(DataCell(Text(statRow[element].toString())));
           }
         });
-        assert(tCells.length == tColumns.length);
+        assert(tCells.length == columns.length);
         tRows.add(DataRow(cells: tCells));
       }
     });
-
-    return StatsTableSource(tColumns, tRows);
+    return tRows;
   }
+}
+
+class PlayerPageArguments {
+  final int playerId;
+  final StatType type;
+
+  PlayerPageArguments(this.playerId, this.type);
 }

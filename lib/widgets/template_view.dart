@@ -4,14 +4,13 @@ import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 
 class TemplateView extends StatelessWidget {
-
   final LoadingStatus loadingStatus;
   final Widget successContent;
   final Widget appBar;
   final String errorMsg;
 
-
-  TemplateView(this.loadingStatus, this.successContent, this.appBar, this.errorMsg);
+  TemplateView(
+      this.loadingStatus, this.successContent, this.appBar, this.errorMsg);
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +25,8 @@ class TemplateView extends StatelessWidget {
     );
   }
 
-  Widget _getStateWidget(){
-    switch(loadingStatus){
+  Widget _getStateWidget() {
+    switch (loadingStatus) {
       case LoadingStatus.IDLE:
       case LoadingStatus.LOADING:
         return SliverFillRemaining(

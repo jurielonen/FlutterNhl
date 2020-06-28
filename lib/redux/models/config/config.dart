@@ -99,23 +99,23 @@ class Config {
     return [];
   }
 
-  List<String> getFilterItems(ParamType paramType) {
-    switch (paramType.type) {
+  List<String> getFilterItems(StatType type, String stat) {
+    switch (type) {
       case StatType.PLAYER:
-        if (playerReportData.containsKey(paramType.stat)) {
-          return playerReportData[paramType.stat].season.resultFilters;
+        if (playerReportData.containsKey(stat)) {
+          return playerReportData[stat].season.resultFilters;
         }
         break;
 
       case StatType.GOALIE:
-        if (goalieReportData.containsKey(paramType.stat)) {
-          return goalieReportData[paramType.stat].season.resultFilters;
+        if (goalieReportData.containsKey(stat)) {
+          return goalieReportData[stat].season.resultFilters;
         }
         break;
 
       case StatType.TEAM:
-        if (teamReportData.containsKey(paramType.stat)) {
-          return teamReportData[paramType.stat].season.resultFilters;
+        if (teamReportData.containsKey(stat)) {
+          return teamReportData[stat].season.resultFilters;
         }
         break;
     }

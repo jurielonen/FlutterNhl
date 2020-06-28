@@ -1,28 +1,9 @@
 import 'package:FlutterNhl/redux/api/fetch.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
+import 'package:FlutterNhl/redux/models/helpers.dart';
+import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:http/http.dart';
-
-/*Map<String, String> getParams(sort,
-    {isAggregated = false,
-    isGame = false,
-    start = 0,
-    limit = 20,
-    gamesPlayed = 1,
-    gameType = 2,
-    startSeason = '20192020',
-    endSeason = '20192020'}) {
-  return {
-    'isAggregate': isAggregated.toString(),
-    'isGame': isGame.toString(),
-    'sort': sort,
-    'start': start.toString(),
-    'limit': limit.toString(),
-    'factCayenneExp': 'gamesPlayed>=${gamesPlayed.toString()}',
-    'cayenneExp':
-        'gameTypeId=${gameType.toString()} and seasonId>=${startSeason.toString()} and seasonId<=${endSeason.toString()}'
-  };
-}*/
 
 class NHLApi {
   final Client client;
@@ -34,7 +15,7 @@ class NHLApi {
   Future<Config> fetchConfig() async {
     final searchUri = Uri.https(baseUrl, 'stats/rest/en/config');
     print('$printMsg fetchConfig: $searchUri');
-    return fetch(searchUri, client).then((value) {
+    return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>)
         return Config.fromJson(value);
       else
@@ -47,7 +28,7 @@ class NHLApi {
     final searchUri = Uri.https(baseUrl, params.getPath(), params.getParams());
     print('$printMsg fetchStats: $searchUri');
 
-    return fetch(searchUri, client).then((value) {
+    return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
         if (value.containsKey('data')) {
           final data = value['data'];
@@ -55,6 +36,41 @@ class NHLApi {
             return data;
           }
         }
+      }
+      throw Exception('Error while formatting data in $printMsg::fetchPlayer');
+    }).catchError((error) => onFetchError(error));
+  }
+
+  Future<PlayerPage> fetchPlayerBio(int playerId, StatType type) async {
+    final searchUri =
+        Uri.https(baseUrl, 'stats/rest/en/${statTypeToParam(type)}/bios', {
+      'isAggregate': 'false',
+      'isGame': 'false',
+      'factCayenneExp': 'playerId=$playerId'
+    });
+    print('$printMsg fetchPlayerBio: $searchUri');
+    return await fetch(searchUri, client).then((value) {
+      if (value is Map<String, dynamic>) {
+        return PlayerPage.fromJson(value);
+      }
+      throw Exception('Error while formatting data in $printMsg::fetchPlayer');
+    }).catchError((error) => onFetchError(error));
+  }
+
+  Future<List<dynamic>> fetchPlayerStat(
+      String stat, int playerId, StatType type) async {
+    final searchUri =
+        Uri.https(baseUrl, 'stats/rest/en/${statTypeToParam(type)}/$stat', {
+      'isAggregate': 'false',
+      'isGame': 'false',
+      'sort': '[{\"property\":\"seasonId\", \"direction\":\"DESC\"}]',
+      'factCayenneExp': 'playerId=$playerId'
+    });
+
+    print('$printMsg fetchPlayerStat: $searchUri');
+    return await fetch(searchUri, client).then((value) {
+      if (value is Map<String, dynamic>) {
+        return getJsonList(['data'], value);
       }
       throw Exception('Error while formatting data in $printMsg::fetchPlayer');
     }).catchError((error) => onFetchError(error));

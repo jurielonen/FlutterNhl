@@ -17,33 +17,15 @@ class StatsMiddleware extends MiddlewareClass<AppState> {
   Future<Null> call(Store<AppState> store, action, next) async {
     next(action);
     if (action is StatsEntered) {
-      if (store.state.statsState.config.isEmpty()) {
-        _getConfig(store, next);
+      if (store.state.config.isEmpty()) {
+        await getConfig(store, next, api);
       }
       _getStats(store, next);
     } else if (action is StatsParamTypeChangedAction ||
         action is StatsParametersChangedAction ||
         action is StatsPreviousAction ||
         action is StatsNextAction) {
-      _getStats(store, next);
-    }
-  }
-
-  Future<Null> _getConfig(Store<AppState> store, NextDispatcher next) async {
-    if (store.state.statsState.loadingStatus != LoadingStatus.LOADING) {
-      next(StatsRequestingAction());
-      try {
-        Config temp = await api.fetchConfig();
-        next(StatsConfigReceived(temp));
-        StatParameters statParameters = store.state.statsState.selectedParams;
-        List<dynamic> tStats = await api.fetchStats(statParameters);
-        next(StatsReceived(StatsTableSource.fromData(
-            statParameters.paramType.type,
-            tStats,
-            filterTypeSelector(store.state))));
-      } catch (e) {
-        next(StatsErrorAction(e.toString()));
-      }
+      await _getStats(store, next);
     }
   }
 
@@ -61,6 +43,25 @@ class StatsMiddleware extends MiddlewareClass<AppState> {
       } catch (e) {
         next(StatsErrorAction(e.toString()));
       }
+    }
+  }
+}
+
+Future<Null> getConfig(
+    Store<AppState> store, NextDispatcher next, NHLApi api) async {
+  if (store.state.statsState.loadingStatus != LoadingStatus.LOADING) {
+    next(StatsRequestingAction());
+    try {
+      Config temp = await api.fetchConfig();
+      next(ConfigReceived(temp));
+      StatParameters statParameters = store.state.statsState.selectedParams;
+      List<dynamic> tStats = await api.fetchStats(statParameters);
+      next(StatsReceived(StatsTableSource.fromData(
+          statParameters.paramType.type,
+          tStats,
+          filterTypeSelector(store.state))));
+    } catch (e) {
+      next(StatsErrorAction(e.toString()));
     }
   }
 }

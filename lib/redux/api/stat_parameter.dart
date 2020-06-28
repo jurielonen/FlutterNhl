@@ -26,6 +26,19 @@ String statTypeNameKey(StatType type) {
   }
 }
 
+String statTypeToParam(StatType type) {
+  switch (type) {
+    case StatType.PLAYER:
+      return 'skater';
+    case StatType.GOALIE:
+      return 'goalie';
+    /*case StatType.TEAM:
+      return 'teamFullName';*/
+    default:
+      throw Exception('Unknown stattype in statTypeToParam ${type}');
+  }
+}
+
 class ParamType {
   final StatType type;
   final String stat;
@@ -65,9 +78,8 @@ class StatParameters {
 
   StatParameters(this.paramType);
 
-
-  StatParameters.copy({
-      this.paramType,
+  StatParameters.copy(
+      {this.paramType,
       this.start,
       this.gamesPlayed,
       this.gameType,
@@ -88,22 +100,28 @@ class StatParameters {
     return StatParameters(ParamType(StatType.PLAYER, '', ''));
   }
 
-  StatParameters copyWith({ParamType paramType,int start, int gamesPlayed, int gameType, String startSeason, String endSeason}){
+  StatParameters copyWith(
+      {ParamType paramType,
+      int start,
+      int gamesPlayed,
+      int gameType,
+      String startSeason,
+      String endSeason}) {
     return StatParameters.copy(
-      paramType: paramType ?? this.paramType,
-      start: start ?? this.start,
-      gamesPlayed: gamesPlayed ?? this.gamesPlayed,
-      gameType:  gameType ?? this.gameType,
-      startSeason: startSeason ?? this.startSeason,
-      endSeason: endSeason ?? this.endSeason
-    );
+        paramType: paramType ?? this.paramType,
+        start: start ?? this.start,
+        gamesPlayed: gamesPlayed ?? this.gamesPlayed,
+        gameType: gameType ?? this.gameType,
+        startSeason: startSeason ?? this.startSeason,
+        endSeason: endSeason ?? this.endSeason);
   }
 
-  StatParameters nextStats(){
+  StatParameters nextStats() {
     return copyWith(start: start += limit);
   }
-  StatParameters previousStats(){
-    if(start < limit){
+
+  StatParameters previousStats() {
+    if (start < limit) {
       return copyWith(start: 0);
     }
     return copyWith(start: start -= limit);

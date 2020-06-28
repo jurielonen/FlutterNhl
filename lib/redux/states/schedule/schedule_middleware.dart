@@ -14,21 +14,20 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
   @override
   Future<Null> call(
       Store<AppState> store, dynamic action, NextDispatcher next) async {
-    print('ScheduleMiddleware: ${action.runtimeType}');
     if (action is InitAction) {
       if (store.state.scheduleState.selectedDate == null) {
         next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }
-      _getSchedule(store, next);
+      await _getSchedule(store, next);
     } else if (action is GetCurrentDateScheduleIfNotLoadedAction) {
       if (store.state.scheduleState.selectedDate == null) {
         next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }
-      _getSchedule(store, next);
+      await _getSchedule(store, next);
     } else {
       next(action);
       if (action is ScheduleDateChangedAction) {
-        _getSchedule(store, next);
+        await _getSchedule(store, next);
       }
     }
   }

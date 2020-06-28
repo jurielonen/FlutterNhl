@@ -1,25 +1,26 @@
 import 'package:FlutterNhl/redux/models/schedule.dart';
+import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 
-class ScheduleDateChangedAction {
+class ScheduleDateChangedAction extends ScheduleAction {
   final DateTime date;
   ScheduleDateChangedAction(this.date);
 }
 
-class RequestingScheduleAction {}
+class RequestingScheduleAction extends ScheduleAction {}
 
-class GetCurrentDateScheduleIfNotLoadedAction {}
+class GetCurrentDateScheduleIfNotLoadedAction extends ScheduleAction {}
 
-class ScheduleAlreadyDownloadedAction {}
+class ScheduleAlreadyDownloadedAction extends ScheduleAction {}
 
-class ReceivedScheduleAction {
+class ReceivedScheduleAction extends ScheduleAction {
   final String date;
   final Schedule schedule;
   ReceivedScheduleAction(this.date, this.schedule);
 }
 
-class ErrorScheduleAction {
+class ErrorScheduleAction extends ScheduleAction {
   final String error;
   ErrorScheduleAction(this.error);
 }
 
-class RefreshScheduleAction {}
+class RefreshScheduleAction extends ScheduleAction {}

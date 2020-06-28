@@ -44,7 +44,8 @@ class _NHLAppState extends State<NHLApp> {
           Routes.homepage: (context) => HomePage(),
           Routes.game: (context) => GameHome(),
           Routes.team: (context) => TeamHome(),
-          Routes.player: (context) => PlayerHome(),
+          Routes.player: (context) =>
+              PlayerHome(playerArgs: ModalRoute.of(context).settings.arguments),
         },
         home: HomePage(),
         debugShowCheckedModeBanner: false,

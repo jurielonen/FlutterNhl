@@ -1,6 +1,5 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:meta/meta.dart';
 
@@ -8,14 +7,12 @@ import 'package:meta/meta.dart';
 class StatsState {
   StatsState(
       {@required this.loadingStatus,
-      @required this.config,
       //@required this.parameters,
       @required this.selectedParams,
       @required this.errorMsg,
       @required this.downloadedStats});
 
   final LoadingStatus loadingStatus;
-  final Config config;
   //final KtMap<ParamType, StatParameters> parameters;
   final StatParameters selectedParams;
   final StatsTableSource downloadedStats;
@@ -24,7 +21,6 @@ class StatsState {
   factory StatsState.initial() {
     return StatsState(
         loadingStatus: LoadingStatus.IDLE,
-        config: Config.initial(),
         //parameters: emptyMap(),
         selectedParams: StatParameters.initial(),
         downloadedStats: StatsTableSource.initial(),
@@ -33,14 +29,12 @@ class StatsState {
 
   StatsState copyWith(
       {LoadingStatus loadingStatus,
-      Config config,
       //KtMap<ParamType, StatParameters> parameters,
       StatParameters selectedStat,
       StatsTableSource downloadedStats,
       String errorMsg}) {
     return StatsState(
       loadingStatus: loadingStatus ?? this.loadingStatus,
-      config: config ?? this.config,
       //parameters: parameters ?? this.parameters,
       selectedParams: selectedStat ?? this.selectedParams,
       downloadedStats: downloadedStats ?? this.downloadedStats,
@@ -54,7 +48,6 @@ class StatsState {
       other is StatsState &&
           runtimeType == other.runtimeType &&
           loadingStatus == other.loadingStatus &&
-          config == other.config &&
           //parameters == other.parameters &&
           selectedParams == other.selectedParams &&
           downloadedStats == other.downloadedStats &&
@@ -63,7 +56,6 @@ class StatsState {
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
-      config.hashCode ^
       //parameters.hashCode ^
       selectedParams.hashCode ^
       downloadedStats.hashCode ^

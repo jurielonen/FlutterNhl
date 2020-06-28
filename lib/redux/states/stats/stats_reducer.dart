@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
+import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_action.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 
@@ -25,13 +26,12 @@ StatsState statsReducer(StatsState state, dynamic action) {
   } else if (action is StatsErrorAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.ERROR, errorMsg: action.errorMsg);
-  } else if (action is StatsConfigReceived) {
+  } else if (action is ConfigReceived) {
     Config temp = action.config;
     String firstKey = temp.playerReportData.keys.first;
     ParamType paramType = ParamType(StatType.PLAYER, firstKey,
         temp.playerReportData[firstKey].season.getSortKeys());
-    return state.copyWith(
-        config: action.config, selectedStat: StatParameters.create(paramType));
+    return state.copyWith(selectedStat: StatParameters.create(paramType));
   }
 
   return state;
