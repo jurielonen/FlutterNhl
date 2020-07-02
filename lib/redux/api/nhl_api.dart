@@ -51,7 +51,12 @@ class NHLApi {
     print('$printMsg fetchPlayerBio: $searchUri');
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
-        return PlayerPage.fromJson(value);
+        if(type == StatType.PLAYER)
+          return PlayerPage.fromJsonPlayer(value);
+        else if(type == StatType.GOALIE)
+          return PlayerPage.fromJsonGoalie(value);
+        else
+          throw Exception('$printMsg::fetchPlayer: Unknown player type $type');
       }
       throw Exception('Error while formatting data in $printMsg::fetchPlayer');
     }).catchError((error) => onFetchError(error));

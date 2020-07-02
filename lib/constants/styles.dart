@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -160,6 +161,28 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
+  static Widget buildPlayerCircleIcon(Player player){
+    if(player != null && player.id != -1){
+      return CircleAvatar(backgroundImage: NetworkImage(player.headShotUrl), backgroundColor: Colors.black, );
+    } else {
+      return CircleAvatar(backgroundImage: AssetImage('assets/noimage.png'), backgroundColor: Colors.black,);
+    }
+  }
 
+  static Widget buildPlayerBoxIcon(Player player){
+    if(player != null && player.id != -1){
+      return
+        Image.network(
+          player.headShotUrl,
+          fit: BoxFit.cover,
+        );
+    } else {
+      return
+        Image.asset(
+          'assets/noimage.png',
+          fit: BoxFit.cover,
+        );
+    }
+  }
 
 }

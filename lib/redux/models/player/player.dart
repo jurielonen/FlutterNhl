@@ -1,9 +1,11 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
+import 'package:flutter/material.dart';
 
 class Player {
   final int id;
@@ -35,6 +37,9 @@ class Player {
         if (tName == '') {
           tName = getJsonString('skaterFullName', json);
         }
+        if (tName == '') {
+          tName = getJsonString('goalieFullName', json);
+        }
         return Player(id: tId, fullname: tName);
       }
     }
@@ -46,6 +51,9 @@ class Player {
       fullname: '',
     );
   }
+
+  String get headShotUrl =>
+      'https://nhl.bamcontent.com/images/headshots/current/168x168/$id.jpg';
 }
 
 class PlayerPlay extends Player {
@@ -139,7 +147,7 @@ class PlayerPage extends Player {
   final Position position;
   final String handness;
   final String currentTeam;
-  final PlayerPageAllTimeStats allTimeStats;
+  final PlayerAllTimeStats allTimeStats;
   Map<String, PlayerTableSource> stats = {};
   List<GameLogsPlayer> gameLog = [];
 
@@ -173,7 +181,7 @@ class PlayerPage extends Player {
             currentTeam: '',
             allTimeStats: PlayerPageAllTimeStats.fromJson({}));
 
-  factory PlayerPage.fromJson(Map<String, dynamic> json) {
+  factory PlayerPage.fromJsonPlayer(Map<String, dynamic> json) {
     Map<String, dynamic> regular = getJsonObject(['data', 0], json);
     return PlayerPage(
         player: Player.fromJson(regular),
@@ -188,6 +196,72 @@ class PlayerPage extends Player {
         position: positionFromString(getJsonString('positionCode', regular)),
         currentTeam: getJsonString('currentTeamName', regular),
         allTimeStats: PlayerPageAllTimeStats.fromJson(json));
+  }
+
+  factory PlayerPage.fromJsonGoalie(Map<String, dynamic> json) {
+    Map<String, dynamic> regular = getJsonObject(['data', 0], json);
+    return PlayerPage(
+        player: Player.fromJson(regular),
+        nationality: getJsonString('nationalityCode', regular),
+        birthCity: getJsonString('birthCity', regular),
+        birthCountry: getJsonString('birthCountryCode', regular),
+        handness: getJsonString('shootsCatches', regular),
+        birthDate: getJsonDateTime('birthDate', regular),
+        draftNum: getJsonInt('draftOverall', regular),
+        draftRound: getJsonInt('draftRound', regular),
+        draftYear: getJsonInt('draftYear', regular),
+        position: Position.G,
+        currentTeam: getJsonString('currentTeamAbbrev', regular),
+        allTimeStats: GoaliePageAllTimeStats.fromJson(json));
+  }
+
+  Map<String, String> get playerInfoMap {
+    return {
+      'Team': currentTeam,
+      'Position':  playerPositionString,
+      'Handess': playerHandessString
+    };
+  }
+
+  String get playerPositionString {
+    switch (position) {
+      case Position.D:
+        return 'Defenseman';
+        break;
+      case Position.C:
+        return 'Center';
+        break;
+      case Position.R:
+        return 'Right wing';
+        break;
+      case Position.L:
+        return 'Left wing';
+        break;
+      case Position.G:
+        return 'Goalie';
+        break;
+
+      ///TODO: add unknown to StatType enums
+      default:
+        return 'Unknown';
+        break;
+    }
+  }
+
+  String get playerHandessString {
+    switch (handness) {
+      case 'L':
+        return 'Left';
+        break;
+      case 'R':
+        return 'Right';
+        break;
+
+    ///TODO: add unknown to StatType enums
+      default:
+        return 'Unknown $handness';
+        break;
+    }
   }
 
   bool containsStat(String stat) {
@@ -231,7 +305,56 @@ class PlayerPage extends Player {
   }
 }
 
-class PlayerPageAllTimeStats {
+abstract class PlayerAllTimeStats {
+  Iterable<Widget> get getStatsWidget sync* {}
+}
+
+class GoaliePageAllTimeStats implements PlayerAllTimeStats {
+  final GoalieAllTimeStat regular;
+
+  GoaliePageAllTimeStats({this.regular});
+
+  factory GoaliePageAllTimeStats.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> regular = getJsonObject(['data', 0], json);
+    print(regular);
+    return GoaliePageAllTimeStats(
+      regular: GoalieAllTimeStat(
+          gamesPlayed: getJsonInt('gamesPlayed', regular),
+          wins: getJsonInt('wins', regular),
+          losses: getJsonInt('losses', regular),
+          otLosses: getJsonInt('otLosses', regular),
+          shutouts: getJsonInt('shutouts', regular)),
+    );
+  }
+
+  @override
+  Iterable<Widget> get getStatsWidget sync* {
+    yield Card(
+      child: ListTile(
+        title: Text('Regular season all time stats'),
+        subtitle: RichText(
+          text: TextSpan(
+            text: 'GP: ',
+            style: Styles.scaffoldGameWinnerText,
+            children: <TextSpan>[
+              TextSpan(text: regular.gamesPlayed.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', W: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: regular.wins.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', L: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: regular.losses.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', OTL: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: regular.otLosses.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', SO: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: regular.shutouts.toString(), style: Styles.cardOtherText),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PlayerPageAllTimeStats implements PlayerAllTimeStats {
   final PlayerAllTimeStat regular;
   final PlayerAllTimeStat playoff;
 
@@ -242,17 +365,72 @@ class PlayerPageAllTimeStats {
     Map<String, dynamic> playoffs = getJsonObject(['data', 1], json);
     return PlayerPageAllTimeStats(
       regular: PlayerAllTimeStat(
-          gamesPlayed: getJsonInt('gamesPlayed', json),
-          goals: getJsonInt('goals', json),
-          assists: getJsonInt('assists', json),
-          points: getJsonInt('points', json)),
+          gamesPlayed: getJsonInt('gamesPlayed', regular),
+          goals: getJsonInt('goals', regular),
+          assists: getJsonInt('assists', regular),
+          points: getJsonInt('points', regular)),
       playoff: PlayerAllTimeStat(
-          gamesPlayed: getJsonInt('gamesPlayed', json),
-          goals: getJsonInt('goals', json),
-          assists: getJsonInt('assists', json),
-          points: getJsonInt('points', json)),
+          gamesPlayed: getJsonInt('gamesPlayed', playoffs),
+          goals: getJsonInt('goals', playoffs),
+          assists: getJsonInt('assists', playoffs),
+          points: getJsonInt('points', playoffs)),
     );
   }
+
+  @override
+  Iterable<Widget> get getStatsWidget sync* {
+    yield Card(
+      child: ListTile(
+        title: Text('Regular season all time stats'),
+        subtitle: RichText(
+          text: TextSpan(
+            text: 'GP: ',
+            style: Styles.scaffoldGameWinnerText,
+            children: <TextSpan>[
+              TextSpan(text: regular.gamesPlayed.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', G: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: regular.goals.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', A: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: regular.assists.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', P: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: regular.points.toString(), style: Styles.cardOtherText),
+            ],
+          ),
+        ),
+      ),
+    );
+    yield Card(
+      child: ListTile(
+        title: Text('Playoffs all time stats'),
+        subtitle: RichText(
+          text: TextSpan(
+            text: 'GP: ',
+            style: Styles.scaffoldGameWinnerText,
+            children: <TextSpan>[
+              TextSpan(text: playoff.gamesPlayed.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', G: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: playoff.goals.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', A: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: playoff.assists.toString(), style: Styles.cardOtherText),
+              TextSpan(text: ', P: ', style: Styles.scaffoldGameWinnerText),
+              TextSpan(text: playoff.points.toString(), style: Styles.cardOtherText),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GoalieAllTimeStat {
+  final int gamesPlayed;
+  final int wins;
+  final int losses;
+  final int otLosses;
+  final int shutouts;
+
+  GoalieAllTimeStat(
+      {this.gamesPlayed, this.wins, this.losses, this.otLosses, this.shutouts});
 }
 
 class PlayerAllTimeStat {

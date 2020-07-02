@@ -1,4 +1,4 @@
-import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
@@ -7,11 +7,47 @@ import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
 import 'package:FlutterNhl/views/player/player_game_log.dart';
+import 'package:FlutterNhl/views/player/widgets/player_bio_tab.dart';
+import 'package:FlutterNhl/widgets/custom_list_tile.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
+class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
+  final PlayerPage player;
+
+  PlayerPageAppBarContent(this.player);
+
+  @override
+  Widget getExpanded() {
+    return FlexibleSpaceBar(
+      collapseMode: CollapseMode.parallax,
+      background: CustomListTile(thumbnail: Styles.buildPlayerBoxIcon(player), title: player.fullname, listItems: player.playerInfoMap,),
+    );
+  }
+
+  @override
+  Widget getTitle(bool isScrolled) {
+
+    return AnimatedOpacity(
+      duration: Duration(milliseconds: 300),
+      opacity: isScrolled ? 1.0 : 0.0,
+      curve: Curves.ease,
+      child: _getPlayerTitle(),
+    );
+  }
+
+  Widget _getPlayerTitle(){
+    if(player != null && player.id != -1){
+      //return CustomListTile(thumbnail: Styles.buildPlayerBoxIcon(player), title: player.fullname, listItems: player.playerInfoMap,);
+      return ListTile(leading: Styles.buildPlayerCircleIcon(player), title: Text(player.fullname));
+    } else {
+      return Text('Player');
+    }
+  }
+
+}
 class PlayerHome extends StatelessWidget {
   static const String routeName = '/player';
   static const List<String> _tabs = ['Bio', 'Stats', 'Game Logs'];
@@ -32,7 +68,6 @@ class PlayerHome extends StatelessWidget {
         builder: (_, viewModel) => NestedTemplateView(
           tabs: _createTabs(context, viewModel),
           loadingStatus: viewModel.loadingStatus,
-          appBar: _createAppBar,
           errorMsg: viewModel.error,
           onTabPressed: (int index) {
             if (_tabs.length > index) {
@@ -46,23 +81,8 @@ class PlayerHome extends StatelessWidget {
               }
             }
           },
+          content: PlayerPageAppBarContent(viewModel.player),
         ),
-      ),
-    );
-  }
-
-  Widget _createAppBar(TabController controller) {
-    return SliverAppBar(
-      title: Text('Player'),
-      pinned: true,
-      forceElevated: true,
-      bottom: TabBar(
-        controller: controller,
-        tabs: _tabs
-            .map((String name) => Tab(
-                  text: name,
-                ))
-            .toList(),
       ),
     );
   }
@@ -74,7 +94,7 @@ class PlayerHome extends StatelessWidget {
         value: (name) {
           switch (name) {
             case 'Bio':
-              return _createBioTab(context, viewModel.player);
+              return _createBioTab(viewModel.player);
             case 'Stats':
               return _createStatTab(
                   viewModel.player.getStat(viewModel.selectedStat));
@@ -86,48 +106,8 @@ class PlayerHome extends StatelessWidget {
         });
   }
 
-  Widget _createBioTab(BuildContext context, PlayerPage player) {
-    return SliverToBoxAdapter(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Text(player.fullname),
-                Text(player.position.toString()),
-                Text(player.handness),
-                Text(player.currentTeam)
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Text(player.birthDate.toString()),
-                Text(player.draftNum.toString()),
-                Text(player.draftRound.toString()),
-                Text(player.draftYear.toString()),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Text('${player.birthCity}, ${player.birthCountry}'),
-                Text(player.nationality)
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Text(
-                    '${player.allTimeStats.regular.gamesPlayed},${player.allTimeStats.regular.goals},${player.allTimeStats.regular.assists},${player.allTimeStats.regular.points}'),
-                Text(
-                    '${player.allTimeStats.playoff.gamesPlayed},${player.allTimeStats.playoff.goals},${player.allTimeStats.playoff.assists},${player.allTimeStats.playoff.points}'),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
+  Widget _createBioTab(PlayerPage player) {
+    return PlayerBioTab(player: player);
   }
 
   Widget _createStatTab(PlayerTableSource stats) {

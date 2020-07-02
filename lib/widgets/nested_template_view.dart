@@ -4,20 +4,24 @@ import 'package:flutter/material.dart';
 
 import 'error_view.dart';
 
+class NestedTemplateViewAppBarContent {
+  Widget getTitle(bool isScrolled) {}
+  Widget getExpanded() {}
+}
+
 class NestedTemplateView extends StatefulWidget {
   final Map<String, Widget> tabs;
   final LoadingStatus loadingStatus;
-  final Function(TabController) appBar;
   final String errorMsg;
   final Function(int) onTabPressed;
+  final NestedTemplateViewAppBarContent content;
 
   const NestedTemplateView(
       {Key key,
       this.tabs,
       this.loadingStatus,
-      this.appBar,
       this.errorMsg,
-      this.onTabPressed})
+      this.onTabPressed, this.content})
       : super(key: key);
 
   @override
@@ -27,10 +31,14 @@ class NestedTemplateView extends StatefulWidget {
 class _NestedTemplateViewState extends State<NestedTemplateView>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  ScrollController _scrollController;
+  bool _isScrolled = false;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_listenToScrollChange);
     _tabController = TabController(vsync: this, length: widget.tabs.length);
     _tabController.index = 0;
     _tabController.addListener(() {
@@ -49,11 +57,12 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
   @override
   Widget build(BuildContext context) {
     return NestedScrollView(
+      controller: _scrollController,
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return <Widget>[
           SliverOverlapAbsorber(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            sliver: widget.appBar(_tabController),
+            sliver: _createAppBar(_tabController, widget.content),
           ),
         ];
       },
@@ -85,6 +94,24 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
     );
   }
 
+  Widget _createAppBar(TabController controller, NestedTemplateViewAppBarContent content) {
+    return SliverAppBar(
+      title: content.getTitle(_isScrolled),
+      pinned: true,
+      forceElevated: true,
+      expandedHeight: 200,
+      flexibleSpace: content.getExpanded(),
+      bottom: TabBar(
+        controller: controller,
+        tabs: widget.tabs.keys
+            .map((String name) => Tab(
+          text: name,
+        ))
+            .toList(),
+      ),
+    );
+  }
+
   Widget _getStateWidget(String tab) {
     switch (widget.loadingStatus) {
       case LoadingStatus.IDLE:
@@ -104,75 +131,16 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
         );
     }
   }
-}
 
-/*class NestedTemplateView extends StatelessWidget {
-
-  final Map<String, Widget> tabs;
-  final LoadingStatus loadingStatus;
-  final Widget appBar;
-  final String errorMsg;
-
-  const NestedTemplateView({this.tabs, this.loadingStatus, this.appBar, this.errorMsg});
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: tabs.length,
-      child: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled){
-          return <Widget>[
-            SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: appBar,
-            ),
-          ];
-        },
-        body: TabBarView(
-          children: tabs.keys.map((String name) {
-            return SafeArea(
-              top: false,
-              bottom: false,
-              child: Builder(
-                builder: (BuildContext context){
-                  return CustomScrollView(
-                    slivers: <Widget>[
-                      SliverOverlapInjector(
-                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                      ),
-                      SliverPadding(
-                        padding: const EdgeInsets.all(8.0),
-                        sliver: _getStateWidget(name),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _getStateWidget(String tab){
-    switch(loadingStatus){
-      case LoadingStatus.IDLE:
-      case LoadingStatus.LOADING:
-        return SliverFillRemaining(
-          child: ProgressView('Loading schedule'),
-        );
-      case LoadingStatus.ERROR:
-        return SliverFillRemaining(
-          child: ErrorView(errorMsg),
-        );
-      case LoadingStatus.SUCCESS:
-        return tabs[tab];
-      default:
-        return SliverFillRemaining(
-          child: ErrorView('Unknown state'),
-        );
+  void _listenToScrollChange() {
+    if (_scrollController.offset >= 48.0) {
+      setState(() {
+        _isScrolled = true;
+      });
+    } else {
+      setState(() {
+        _isScrolled = false;
+      });
     }
   }
 }
-*/
