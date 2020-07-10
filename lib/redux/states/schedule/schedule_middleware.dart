@@ -14,7 +14,7 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
   @override
   Future<Null> call(
       Store<AppState> store, dynamic action, NextDispatcher next) async {
-    if (action is InitAction) {
+    if (action is ScheduleEntered) {
       if (store.state.scheduleState.selectedDate == null) {
         next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }

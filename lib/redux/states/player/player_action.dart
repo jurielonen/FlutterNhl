@@ -22,7 +22,10 @@ class PlayerReceivedStatAction extends PlayerAction {
   PlayerReceivedStatAction(this.stats);
 }
 
-class PlayerGetGameLogsAction extends PlayerAction {}
+class PlayerGetGameLogsAction extends PlayerAction {
+  final String year;
+  PlayerGetGameLogsAction(this.year);
+}
 
 class PlayerGameLogsAlreadyDownloaded extends PlayerAction {}
 

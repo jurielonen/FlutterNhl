@@ -27,10 +27,9 @@ StatsState statsReducer(StatsState state, dynamic action) {
     return state.copyWith(
         loadingStatus: LoadingStatus.ERROR, errorMsg: action.errorMsg);
   } else if (action is ConfigReceived) {
-    Config temp = action.config;
-    String firstKey = temp.playerReportData.keys.first;
+    String firstKey = Config().playerReportData.keys.first;
     ParamType paramType = ParamType(StatType.PLAYER, firstKey,
-        temp.playerReportData[firstKey].season.getSortKeys());
+        Config().playerReportData[firstKey].season.getSortKeys());
     return state.copyWith(selectedStat: StatParameters.create(paramType));
   }
 

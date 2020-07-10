@@ -52,8 +52,8 @@ Future<Null> getConfig(
   if (store.state.statsState.loadingStatus != LoadingStatus.LOADING) {
     next(StatsRequestingAction());
     try {
-      Config temp = await api.fetchConfig();
-      next(ConfigReceived(temp));
+      await api.fetchConfig();
+      next(ConfigReceived());
       StatParameters statParameters = store.state.statsState.selectedParams;
       List<dynamic> tStats = await api.fetchStats(statParameters);
       next(StatsReceived(StatsTableSource.fromData(

@@ -47,7 +47,7 @@ class StatsView extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: DataTable(
             columns: stats.columns,
-            rows: stats.setTapListenerToRow(context, Routes.player, type),
+            rows: stats.setTapListenerToRow(context, type),
           ),
         ),
       ),

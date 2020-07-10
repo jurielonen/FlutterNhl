@@ -17,6 +17,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
 
   PlayerMiddleware(this.statsApi, this.nhlApi);
 
+  ///TODO: modify like teammiddleware
   @override
   Future<Null> call(
       Store<AppState> store, dynamic action, NextDispatcher next) async {
@@ -25,6 +26,8 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
       if (store.state.config.isEmpty()) {
         await getConfig(store, next, nhlApi);
       }
+
+      ///TODO: add check to see if player already downloaded
       await _getBio(store, next);
     } else if (action is PlayerStatsChangedAction) {
       if (!selectedPlayerSelector(store.state).containsStat(action.stat)) {
@@ -33,7 +36,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
         next(PlayerStatsAlreadyDownloaded());
       }
     } else if (action is PlayerGetGameLogsAction) {
-      if (!selectedPlayerSelector(store.state).containsGameLogs()) {
+      if (!selectedPlayerSelector(store.state).containsGameLogs(action.year)) {
         await _getGameLogs(store, next);
       } else {
         next(PlayerGameLogsAlreadyDownloaded());
@@ -75,8 +78,9 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
     if (store.state.playerState.loadingStatus != LoadingStatus.LOADING) {
       next(PlayerRequestingAction());
       try {
-        List<GameLogsPlayer> logs = await statsApi
-            .fetchPlayerGameLogs(store.state.playerState.playerId);
+        List<GameLogsPlayer> logs = await statsApi.fetchPlayerGameLogs(
+            store.state.playerState.playerId,
+            store.state.playerState.selectedYear);
         next(PlayerReceivedGameLogsAction(logs));
       } catch (error) {
         next(PlayerErrorAction(error.toString()));

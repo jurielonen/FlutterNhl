@@ -7,12 +7,15 @@ abstract class StatsAction {}
 
 abstract class PlayerAction {}
 
+abstract class TeamAction {}
+
 class InitAction {}
 
-class ConfigReceived {
-  final Config config;
-  ConfigReceived(this.config);
-}
+class ConfigReceived {}
+
+class SeasonConfigReceived {}
+
+class ScheduleEntered extends ScheduleAction {}
 
 class StatsEntered extends StatsAction {}
 
@@ -22,7 +25,7 @@ class PlayerEntered extends PlayerAction {
   PlayerEntered(this.playerId, this.statType);
 }
 
-class TeamEntered {
+class TeamEntered extends TeamAction {
   final int teamId;
   TeamEntered(this.teamId);
 }

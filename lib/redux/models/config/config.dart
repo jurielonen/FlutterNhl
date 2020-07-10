@@ -1,37 +1,57 @@
 import 'dart:convert';
 
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/models/helpers.dart';
 
 class Config {
-  Config({
+  /*Config({
     this.playerReportData,
     this.goalieReportData,
     this.teamReportData,
     //this.aggregatedColumns,
     //this.individualColumns,
-  });
+  });*/
 
-  final Map<String, Advanced> playerReportData;
-  final Map<String, Advanced> goalieReportData;
-  final Map<String, Advanced> teamReportData;
+  static final Config _config = Config._internal();
+
+  Map<String, Advanced> playerReportData;
+  Map<String, Advanced> goalieReportData;
+  Map<String, Advanced> teamReportData;
+  String currentSeason;
+  String regularSeasonStartDate;
+  String regularSeasonEndDate;
+  String seasonEndDate;
   //final List<String> aggregatedColumns;
   //final List<String> individualColumns;
 
-  factory Config.initial() {
-    return Config(
-        playerReportData: {}, goalieReportData: {}, teamReportData: {});
+  Config._internal() {
+    playerReportData = {};
+    goalieReportData = {};
+    teamReportData = {};
+    //return Config(
+    //    playerReportData: {}, goalieReportData: {}, teamReportData: {});
   }
 
-  factory Config.fromJson(Map<String, dynamic> json) => Config(
-        playerReportData: Map.from(json["playerReportData"])
-            .map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v))),
-        goalieReportData: Map.from(json["goalieReportData"])
-            .map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v))),
-        teamReportData: Map.from(json["teamReportData"])
-            .map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v))),
-        //aggregatedColumns: List<String>.from(json["aggregatedColumns"].map((x) => x)),
-        //individualColumns: List<String>.from(json["individualColumns"].map((x) => x)),
-      );
+  factory Config() => _config;
+
+  fromJson(Map<String, dynamic> json) {
+    playerReportData = Map.from(json["playerReportData"])
+        .map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v)));
+    goalieReportData = Map.from(json["goalieReportData"])
+        .map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v)));
+    teamReportData = Map.from(json["teamReportData"])
+        .map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v)));
+    //aggregatedColumns: List<String>.from(json["aggregatedColumns"].map((x) => x)),
+    //individualColumns: List<String>.from(json["individualColumns"].map((x) => x)),
+  }
+
+  fromJsonSeason(Map<String, dynamic> json) {
+    Map<String, dynamic> temp = getJsonObject(['seasons', 0], json);
+    currentSeason = getJsonString('seasonId', temp);
+    regularSeasonStartDate = getJsonString('regularSeasonStartDate', temp);
+    regularSeasonEndDate = getJsonString('regularSeasonEndDate', temp);
+    seasonEndDate = getJsonString('seasonEndDate', temp);
+  }
 
   bool isEmpty() {
     return playerReportData.isEmpty ||
@@ -96,7 +116,7 @@ class Config {
         return teamReportData.keys.toList();
         break;
     }
-    return [];
+    return ['Unknown'];
   }
 
   List<String> getFilterItems(StatType type, String stat) {

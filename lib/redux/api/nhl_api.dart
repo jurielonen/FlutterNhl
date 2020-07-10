@@ -12,12 +12,12 @@ class NHLApi {
   static final String baseUrl = 'api.nhle.com';
   static final String printMsg = 'NHLApi';
 
-  Future<Config> fetchConfig() async {
+  Future<Null> fetchConfig() async {
     final searchUri = Uri.https(baseUrl, 'stats/rest/en/config');
     print('$printMsg fetchConfig: $searchUri');
-    return await fetch(searchUri, client).then((value) {
+    await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>)
-        return Config.fromJson(value);
+        return Config().fromJson(value);
       else
         throw Exception(
             'Error while formatting data in $printMsg::fetchConfig');
@@ -51,9 +51,9 @@ class NHLApi {
     print('$printMsg fetchPlayerBio: $searchUri');
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
-        if(type == StatType.PLAYER)
+        if (type == StatType.PLAYER)
           return PlayerPage.fromJsonPlayer(value);
-        else if(type == StatType.GOALIE)
+        else if (type == StatType.GOALIE)
           return PlayerPage.fromJsonGoalie(value);
         else
           throw Exception('$printMsg::fetchPlayer: Unknown player type $type');
@@ -73,6 +73,23 @@ class NHLApi {
     });
 
     print('$printMsg fetchPlayerStat: $searchUri');
+    return await fetch(searchUri, client).then((value) {
+      if (value is Map<String, dynamic>) {
+        return getJsonList(['data'], value);
+      }
+      throw Exception('Error while formatting data in $printMsg::fetchPlayer');
+    }).catchError((error) => onFetchError(error));
+  }
+
+  Future<List<dynamic>> fetchTeamStat(String stat, int teamId) async {
+    final searchUri = Uri.https(baseUrl, 'stats/rest/en/team/$stat', {
+      'isAggregate': 'false',
+      'isGame': 'false',
+      'sort': '[{\"property\":\"seasonId\", \"direction\":\"DESC\"}]',
+      'factCayenneExp': 'teamId=$teamId'
+    });
+
+    print('$printMsg fetchTeamStat: $searchUri');
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
         return getJsonList(['data'], value);

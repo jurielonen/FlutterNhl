@@ -40,7 +40,9 @@ class Player {
         if (tName == '') {
           tName = getJsonString('goalieFullName', json);
         }
-        return Player(id: tId, fullname: tName);
+        final temp = Player(id: tId, fullname: tName);
+        _cache[tId] = temp;
+        return temp;
       }
     }
   }
@@ -149,7 +151,7 @@ class PlayerPage extends Player {
   final String currentTeam;
   final PlayerAllTimeStats allTimeStats;
   Map<String, PlayerTableSource> stats = {};
-  List<GameLogsPlayer> gameLog = [];
+  Map<String, List<GameLogsPlayer>> gameLog = {};
 
   PlayerPage(
       {@required Player player,
@@ -218,7 +220,7 @@ class PlayerPage extends Player {
   Map<String, String> get playerInfoMap {
     return {
       'Team': currentTeam,
-      'Position':  playerPositionString,
+      'Position': playerPositionString,
       'Handess': playerHandessString
     };
   }
@@ -257,7 +259,7 @@ class PlayerPage extends Player {
         return 'Right';
         break;
 
-    ///TODO: add unknown to StatType enums
+      ///TODO: add unknown to StatType enums
       default:
         return 'Unknown $handness';
         break;
@@ -281,8 +283,20 @@ class PlayerPage extends Player {
     }
   }
 
-  bool containsGameLogs() {
-    return gameLog.isNotEmpty;
+  bool containsGameLogs(String year) {
+    if (gameLog.isEmpty) return false;
+    return gameLog.containsKey(year);
+  }
+
+  List<GameLogsPlayer> getGameLog(String year) {
+    if (gameLog.containsKey(year)) {
+      return gameLog[year];
+    }
+    return [];
+  }
+
+  void addGameLog(String year, List<GameLogsPlayer> logs) {
+    gameLog[year] = logs;
   }
 
   StatType getStatType() {
@@ -337,15 +351,23 @@ class GoaliePageAllTimeStats implements PlayerAllTimeStats {
             text: 'GP: ',
             style: Styles.scaffoldGameWinnerText,
             children: <TextSpan>[
-              TextSpan(text: regular.gamesPlayed.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.gamesPlayed.toString(),
+                  style: Styles.cardOtherText),
               TextSpan(text: ', W: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: regular.wins.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.wins.toString(), style: Styles.cardOtherText),
               TextSpan(text: ', L: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: regular.losses.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.losses.toString(), style: Styles.cardOtherText),
               TextSpan(text: ', OTL: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: regular.otLosses.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.otLosses.toString(),
+                  style: Styles.cardOtherText),
               TextSpan(text: ', SO: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: regular.shutouts.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.shutouts.toString(),
+                  style: Styles.cardOtherText),
             ],
           ),
         ),
@@ -387,13 +409,19 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
             text: 'GP: ',
             style: Styles.scaffoldGameWinnerText,
             children: <TextSpan>[
-              TextSpan(text: regular.gamesPlayed.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.gamesPlayed.toString(),
+                  style: Styles.cardOtherText),
               TextSpan(text: ', G: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: regular.goals.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.goals.toString(), style: Styles.cardOtherText),
               TextSpan(text: ', A: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: regular.assists.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.assists.toString(),
+                  style: Styles.cardOtherText),
               TextSpan(text: ', P: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: regular.points.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: regular.points.toString(), style: Styles.cardOtherText),
             ],
           ),
         ),
@@ -407,13 +435,19 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
             text: 'GP: ',
             style: Styles.scaffoldGameWinnerText,
             children: <TextSpan>[
-              TextSpan(text: playoff.gamesPlayed.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: playoff.gamesPlayed.toString(),
+                  style: Styles.cardOtherText),
               TextSpan(text: ', G: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: playoff.goals.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: playoff.goals.toString(), style: Styles.cardOtherText),
               TextSpan(text: ', A: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: playoff.assists.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: playoff.assists.toString(),
+                  style: Styles.cardOtherText),
               TextSpan(text: ', P: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(text: playoff.points.toString(), style: Styles.cardOtherText),
+              TextSpan(
+                  text: playoff.points.toString(), style: Styles.cardOtherText),
             ],
           ),
         ),

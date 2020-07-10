@@ -8,6 +8,7 @@ import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
 import 'package:FlutterNhl/views/player/player_game_log.dart';
 import 'package:FlutterNhl/views/player/widgets/player_bio_tab.dart';
+import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
 import 'package:FlutterNhl/widgets/custom_list_tile.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view.dart';
@@ -23,13 +24,16 @@ class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
   Widget getExpanded() {
     return FlexibleSpaceBar(
       collapseMode: CollapseMode.parallax,
-      background: CustomListTile(thumbnail: Styles.buildPlayerBoxIcon(player), title: player.fullname, listItems: player.playerInfoMap,),
+      background: CustomListTile(
+        thumbnail: Styles.buildPlayerBoxIcon(player),
+        title: player.fullname,
+        listItems: player.playerInfoMap,
+      ),
     );
   }
 
   @override
   Widget getTitle(bool isScrolled) {
-
     return AnimatedOpacity(
       duration: Duration(milliseconds: 300),
       opacity: isScrolled ? 1.0 : 0.0,
@@ -38,16 +42,18 @@ class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
     );
   }
 
-  Widget _getPlayerTitle(){
-    if(player != null && player.id != -1){
+  Widget _getPlayerTitle() {
+    if (player != null && player.id != -1) {
       //return CustomListTile(thumbnail: Styles.buildPlayerBoxIcon(player), title: player.fullname, listItems: player.playerInfoMap,);
-      return ListTile(leading: Styles.buildPlayerCircleIcon(player), title: Text(player.fullname));
+      return ListTile(
+          leading: Styles.buildPlayerCircleIcon(player),
+          title: Text(player.fullname));
     } else {
       return Text('Player');
     }
   }
-
 }
+
 class PlayerHome extends StatelessWidget {
   static const String routeName = '/player';
   static const List<String> _tabs = ['Bio', 'Stats', 'Game Logs'];
@@ -60,6 +66,7 @@ class PlayerHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text(playerArgs.playerFullName)),
       body: StoreConnector<AppState, PlayerViewModel>(
         distinct: true,
         onInit: (store) =>
@@ -73,10 +80,10 @@ class PlayerHome extends StatelessWidget {
             if (_tabs.length > index) {
               switch (_tabs[index]) {
                 case 'Stats':
-                  viewModel.getStats('summary');
+                  viewModel.getStats(viewModel.selectedStat);
                   break;
                 case 'Game Logs':
-                  viewModel.getGameLogs();
+                  viewModel.getGameLogs(viewModel.selectedYear);
                   break;
               }
             }
@@ -87,7 +94,7 @@ class PlayerHome extends StatelessWidget {
     );
   }
 
-  Map<String, Widget> _createTabs(
+  Map<String, List<Widget>> _createTabs(
       BuildContext context, PlayerViewModel viewModel) {
     return Map.fromIterable(_tabs,
         key: (name) => name.toString(),
@@ -96,41 +103,76 @@ class PlayerHome extends StatelessWidget {
             case 'Bio':
               return _createBioTab(viewModel.player);
             case 'Stats':
-              return _createStatTab(
-                  viewModel.player.getStat(viewModel.selectedStat));
+              return _createStatTab(viewModel);
             case 'Game Logs':
-              return _createGameLogTab(viewModel.player.gameLog);
+              return _createGameLogTab(
+                  viewModel.player.getGameLog(viewModel.selectedYear),
+                  viewModel.getGameLogs);
             default:
-              return ErrorView('Unknown tab');
+              return <Widget>[
+                SliverFillRemaining(child: ErrorView('Unknown tab'))
+              ];
           }
         });
   }
 
-  Widget _createBioTab(PlayerPage player) {
-    return PlayerBioTab(player: player);
+  List<Widget> _createBioTab(PlayerPage player) {
+    return <Widget>[PlayerBioTab(player: player)];
   }
 
-  Widget _createStatTab(PlayerTableSource stats) {
-    if (stats.columns.length == 0)
-      return SliverFillRemaining(child: ErrorView('No data downloaded'));
-    return SliverFillRemaining(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
+  List<Widget> _createStatTab(PlayerViewModel viewModel) {
+    PlayerTableSource stats = viewModel.player.getStat(viewModel.selectedStat);
+    List<Widget> widgets = [
+      SliverToBoxAdapter(
+          child: CustomDropdownButton(
+        selectedValue: viewModel.selectedStat,
+        values: viewModel.displayItems,
+        onValueChanged: viewModel.getStats,
+      )),
+    ];
+    if (stats.columns.length == 0) {
+      widgets.add(SliverFillRemaining(child: ErrorView('No data downloaded')));
+    } else {
+      widgets.add(SliverFillRemaining(
         child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(columns: stats.columns, rows: stats.rows),
+          scrollDirection: Axis.vertical,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(columns: stats.columns, rows: stats.rows),
+          ),
         ),
-      ),
-    );
+      ));
+    }
+    return widgets;
   }
 
-  Widget _createGameLogTab(List<GameLogsPlayer> logs) {
-    return SliverFixedExtentList(
+  static const List<String> years = [
+    '20192020',
+    '20182019',
+    '20172018',
+    '20162017',
+    '20152016'
+  ];
+
+  List<Widget> _createGameLogTab(
+      List<GameLogsPlayer> logs, Function(String) onValueChanged) {
+    List<Widget> widgets = [
+      SliverToBoxAdapter(
+          child: CustomDropdownButton(
+        selectedValue: years.first,
+        values: years,
+        onValueChanged: onValueChanged,
+      )),
+    ];
+
+    widgets.add(SliverFixedExtentList(
       itemExtent: 100,
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) => PlayerGameLogCard(logs[index]),
         childCount: logs.length,
       ),
-    );
+    ));
+
+    return widgets;
   }
 }

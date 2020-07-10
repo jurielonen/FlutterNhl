@@ -10,14 +10,18 @@ class PlayerViewModel {
   final LoadingStatus loadingStatus;
   final PlayerPage player;
   final String selectedStat;
+  final String selectedYear;
+  final List<String> displayItems;
   final String error;
   final Function(String) getStats;
-  final Function() getGameLogs;
+  final Function(String) getGameLogs;
 
   PlayerViewModel(
       {@required this.loadingStatus,
       @required this.player,
       @required this.selectedStat,
+      @required this.selectedYear,
+      @required this.displayItems,
       @required this.error,
       @required this.getStats,
       @required this.getGameLogs});
@@ -27,9 +31,12 @@ class PlayerViewModel {
         loadingStatus: store.state.playerState.loadingStatus,
         player: selectedPlayerSelector(store.state),
         selectedStat: store.state.playerState.selectedStat,
+        selectedYear: store.state.playerState.selectedYear,
+        displayItems: statTypes(store.state),
         error: store.state.playerState.errorMsg,
         getStats: (String stat) =>
             store.dispatch(PlayerStatsChangedAction(stat)),
-        getGameLogs: () => store.dispatch(PlayerGetGameLogsAction()));
+        getGameLogs: (String year) =>
+            store.dispatch(PlayerGetGameLogsAction(year)));
   }
 }

@@ -11,6 +11,7 @@ class PlayerState {
       @required this.playerId,
       @required this.playerType,
       @required this.selectedStat,
+      @required this.selectedYear,
       @required this.players,
       @required this.errorMsg});
 
@@ -18,6 +19,7 @@ class PlayerState {
   final int playerId;
   final StatType playerType;
   final String selectedStat;
+  final String selectedYear;
   final KtMap<int, PlayerPage> players;
   final String errorMsg;
 
@@ -28,7 +30,8 @@ class PlayerState {
 
       ///TODO: Unknown enum to StatType
       playerType: StatType.PLAYER,
-      selectedStat: '',
+      selectedStat: 'summary',
+      selectedYear: '20192020',
       players: emptyMap(),
       errorMsg: '',
     );
@@ -39,6 +42,7 @@ class PlayerState {
       int playerId,
       StatType playerType,
       String selectedStat,
+      String selectedYear,
       KtMap<int, PlayerPage> players,
       String errorMsg}) {
     return PlayerState(
@@ -46,6 +50,7 @@ class PlayerState {
         playerId: playerId ?? this.playerId,
         playerType: playerType ?? this.playerType,
         selectedStat: selectedStat ?? this.selectedStat,
+        selectedYear: selectedYear ?? this.selectedYear,
         players: players ?? this.players,
         errorMsg: errorMsg ?? this.errorMsg);
   }
@@ -59,6 +64,7 @@ class PlayerState {
           playerId == other.playerId &&
           playerType == other.playerType &&
           selectedStat == other.selectedStat &&
+          selectedYear == other.selectedYear &&
           players == other.players &&
           errorMsg == other.errorMsg;
 
@@ -68,6 +74,7 @@ class PlayerState {
       playerId.hashCode ^
       playerType.hashCode ^
       selectedStat.hashCode ^
+      selectedYear.hashCode ^
       players.hashCode ^
       errorMsg.hashCode;
 }

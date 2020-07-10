@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/viewmodel/stats_view_model.dart';
+import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
 class StatAppBar extends StatefulWidget {
@@ -148,10 +149,15 @@ class _StatTabBarState extends State<StatTabBar> {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.navigate_before),
-                tooltip: 'Previous days games',
+                tooltip: 'Previous page',
                 onPressed: () => widget.previousPage(),
               ),
-              DropdownButton<String>(
+              CustomDropdownButton(
+                selectedValue: widget.selectedStat.stat,
+                values: widget.statTypes,
+                onValueChanged: widget.onTypeSelected,
+              ),
+              /*DropdownButton<String>(
                 value: widget.selectedStat.stat,
                 icon: Icon(Icons.arrow_downward),
                 iconSize: 24,
@@ -171,10 +177,10 @@ class _StatTabBarState extends State<StatTabBar> {
                     child: Text(value),
                   );
                 }).toList(),
-              ),
+              ),*/
               IconButton(
                 icon: Icon(Icons.navigate_next),
-                tooltip: 'Next days games',
+                tooltip: 'Next page',
                 onPressed: () => widget.nextPage(),
               ),
             ],

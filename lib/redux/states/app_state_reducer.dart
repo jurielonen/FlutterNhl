@@ -5,13 +5,21 @@ import 'package:FlutterNhl/redux/states/player/player_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_reducer.dart';
 
+///TODO: Add TeamState
 AppState appReducer(AppState state, dynamic action) {
   if (action is ConfigReceived) {
     return state.copyWith(
         scheduleState: state.scheduleState,
         statsState: statsReducer(state.statsState, action),
         playerState: state.playerState,
-        config: action.config);
+        config: Config());
+  } else if (action is SeasonConfigReceived) {
+    return state.copyWith(
+        scheduleState: scheduleReducer(state.scheduleState, action),
+        //TODO: add statsState to handle getting current season
+        statsState: state.statsState,
+        playerState: state.playerState,
+        config: Config());
   } else if (action is ScheduleAction) {
     return state.copyWith(
       scheduleState: scheduleReducer(state.scheduleState, action),
