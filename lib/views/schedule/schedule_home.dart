@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/viewmodel/schedule_view_model.dart';
 import 'package:FlutterNhl/views/schedule/schedule_game.dart';
+import 'package:FlutterNhl/widgets/error_view.dart';
 import 'file:///C:/Users/juri/Documents/GitHub/FlutterNhl/lib/widgets/template_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -21,8 +22,8 @@ class ScheduleHome extends StatelessWidget {
       builder: (_, viewModel) => TemplateView(
           viewModel.loadingStatus,
           viewModel.selectedSchedule is ScheduleGames
-              ? ScheduleGamesView(viewModel.selectedSchedule)
-              : ScheduleEmptyView(viewModel.selectedSchedule),
+              ? _getGamesView(viewModel.selectedSchedule)
+              : _getEmptyView(viewModel.selectedSchedule),
           _buildSliverAppBar(
               viewModel.selectedDate, viewModel.changeSelectedDate),
           viewModel.errorMsg),
@@ -66,38 +67,30 @@ class ScheduleHome extends StatelessWidget {
       ),
     );
   }
-}
 
-class ScheduleGamesView extends StatelessWidget {
-  final ScheduleGames selectedSchedule;
-  ScheduleGamesView(this.selectedSchedule);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _getGamesView(ScheduleGames selectedSchedule) {
+    if(selectedSchedule == null){
+      return SliverFillRemaining(
+        child: ErrorView('No data downloaded yet'),
+      );
+    }
     return SliverFixedExtentList(
       itemExtent: 100.0,
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return ScheduleGameCard(selectedSchedule.games[index]);
-
-          /*Container(
-            alignment: Alignment.center,
-            color: Colors.lightBlue[100 * (index % 9)],
-            child: Text(selectedSchedule.games[index].toString()),
-          );*/
         },
         childCount: selectedSchedule.games.length,
       ),
     );
   }
-}
 
-class ScheduleEmptyView extends StatelessWidget {
-  final Schedule selectedSchedule;
-  ScheduleEmptyView(this.selectedSchedule);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _getEmptyView(Schedule selectedSchedule) {
+    if(selectedSchedule == null){
+      return SliverFillRemaining(
+        child: ErrorView('No data downloaded yet'),
+      );
+    }
     return SliverFillRemaining(
       child: Center(
         child: Column(

@@ -13,6 +13,7 @@ class AppStateMiddleware extends MiddlewareClass<AppState> {
     next(action);
     if (action is InitAction) {
       await api.fetchSeason();
+      next(SeasonConfigReceived());
     }
   }
 }

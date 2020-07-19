@@ -23,7 +23,7 @@ class StatsState {
         loadingStatus: LoadingStatus.IDLE,
         //parameters: emptyMap(),
         selectedParams: StatParameters.initial(),
-        downloadedStats: StatsTableSource.initial(),
+        downloadedStats: null,
         errorMsg: '');
   }
 

@@ -2,7 +2,6 @@ import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/player/player_action.dart';
-import 'package:FlutterNhl/redux/states/player/player_selectors.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:kt_dart/collection.dart';
 

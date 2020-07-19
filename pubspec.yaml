@@ -56,7 +56,37 @@ flutter:
   assets:
     - assets/drawer_header_background.png
     - assets/noimage.png
-
+    - assets/logos/logo_ana.png
+    - assets/logos/logo_ari.png
+    - assets/logos/logo_bos.png
+    - assets/logos/logo_buf.png
+    - assets/logos/logo_car.png
+    - assets/logos/logo_cbj.png
+    - assets/logos/logo_cgy.png
+    - assets/logos/logo_chi.png
+    - assets/logos/logo_col.png
+    - assets/logos/logo_dal.png
+    - assets/logos/logo_det.png
+    - assets/logos/logo_edm.png
+    - assets/logos/logo_fla.png
+    - assets/logos/logo_la.png
+    - assets/logos/logo_min.png
+    - assets/logos/logo_mtl.png
+    - assets/logos/logo_nas.png
+    - assets/logos/logo_nj.png
+    - assets/logos/logo_nyi.png
+    - assets/logos/logo_nyr.png
+    - assets/logos/logo_ott.png
+    - assets/logos/logo_phi.png
+    - assets/logos/logo_pit.png
+    - assets/logos/logo_sj.png
+    - assets/logos/logo_stl.png
+    - assets/logos/logo_tb.png
+    - assets/logos/logo_tor.png
+    - assets/logos/logo_van.png
+    - assets/logos/logo_was.png
+    - assets/logos/logo_vgk.png
+    - assets/logos/logo_wpg.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

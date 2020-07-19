@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import 'error_view.dart';
 
 class NestedTemplateViewAppBarContent {
-  Widget getTitle(bool isScrolled) {}
-  Widget getExpanded() {}
+  double expandedHeight() { return 0; }
+  /*bool titleUsed() { return false;}
+  bool expandedUsed() { return false;}*/
+  Widget getLeading() {return null;}
+  Widget getTitle(bool isScrolled) {return null;}
+  Widget getExpanded() { return null;}
 }
 
 class NestedTemplateView extends StatefulWidget {
@@ -88,11 +92,11 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
   Widget _createAppBar(
       TabController controller, NestedTemplateViewAppBarContent content) {
     return SliverAppBar(
-      //title: content.getTitle(_isScrolled),
-      leading: Text(''),
+      title: content.getTitle(_isScrolled),
+      leading: content.getLeading(),
       pinned: true,
       forceElevated: true,
-      expandedHeight: 200,
+      expandedHeight: content.expandedHeight(),
       flexibleSpace: content.getExpanded(),
       bottom: TabBar(
         controller: controller,

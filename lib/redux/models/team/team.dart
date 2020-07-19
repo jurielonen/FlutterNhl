@@ -56,6 +56,8 @@ class Team {
   String toString() {
     return '$id-$name-$abb';
   }
+
+  String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
 }
 
 class TeamSchedule extends Team {
@@ -129,9 +131,9 @@ class TeamPage extends Team {
   final String conference;
   final Game previousGame;
   final Game nextGame;
-  final Map<String, String> currentStats;
+  final Map<String, dynamic> currentStats;
 
-  Map<Player, Map<String, String>> rosterStats = {};
+  List<PlayerGame> rosterStats = [];
   Map<String, List<Game>> gameLog = {};
   Map<String, PlayerTableSource> stats = {};
 
@@ -163,11 +165,21 @@ class TeamPage extends Team {
       firstYear: getJsonString('firstYearOfPlay', team),
       division: getJsonString2([''], team),
       conference: getJsonString2([''], team),
-      previousGame:
-          Game.fromJson(getJsonObject(['previousGameSchedule'], team)),
-      nextGame: Game.fromJson(getJsonObject(['nextGameSchedule'], team)),
-      currentStats: getJsonObject(['teamStats', 0, 'splits', 0, 'stat'], json),
+      previousGame: Game.fromJson(
+          getJsonObject(['previousGameSchedule', 'dates', 0, 'games', 0], team)),
+      nextGame:
+          Game.fromJson(getJsonObject(['nextGameSchedule', 'dates', 0, 'games', 0], team)),
+      currentStats: getJsonObject(['teamStats', 0, 'splits', 0, 'stat'], team),
     );
+  }
+
+  Map<String, String> get teamInfoMap {
+    return {
+      'Division': division,
+      'Conference': conference,
+      'Venue': venue,
+      'First year': firstYear
+    };
   }
 
   bool containsRosterStats() {

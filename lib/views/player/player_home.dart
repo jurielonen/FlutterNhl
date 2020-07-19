@@ -6,8 +6,8 @@ import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
-import 'package:FlutterNhl/views/player/player_game_log.dart';
-import 'package:FlutterNhl/views/player/widgets/player_bio_tab.dart';
+import 'file:///C:/Users/juri/Documents/GitHub/FlutterNhl/lib/views/player/widgets/player_game_log.dart';
+import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
 import 'package:FlutterNhl/widgets/custom_list_tile.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
@@ -22,6 +22,8 @@ class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
 
   @override
   Widget getExpanded() {
+    if(player == null)
+      return null;
     return FlexibleSpaceBar(
       collapseMode: CollapseMode.parallax,
       background: CustomListTile(
@@ -34,15 +36,16 @@ class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
 
   @override
   Widget getTitle(bool isScrolled) {
-    return AnimatedOpacity(
+    return null;
+    /*AnimatedOpacity(
       duration: Duration(milliseconds: 300),
       opacity: isScrolled ? 1.0 : 0.0,
       curve: Curves.ease,
       child: _getPlayerTitle(),
-    );
+    );*/
   }
 
-  Widget _getPlayerTitle() {
+  /*Widget _getPlayerTitle() {
     if (player != null && player.id != -1) {
       //return CustomListTile(thumbnail: Styles.buildPlayerBoxIcon(player), title: player.fullname, listItems: player.playerInfoMap,);
       return ListTile(
@@ -51,7 +54,27 @@ class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
     } else {
       return Text('Player');
     }
+  }*/
+
+  @override
+  double expandedHeight() {
+    return 200.0;
   }
+
+  @override
+  Widget getLeading() {
+    return Text('');
+  }
+
+ /* @override
+  bool expandedUsed() {
+    return true;
+  }
+
+  @override
+  bool titleUsed() {
+    return false;
+  }*/
 }
 
 class PlayerHome extends StatelessWidget {
@@ -105,9 +128,7 @@ class PlayerHome extends StatelessWidget {
             case 'Stats':
               return _createStatTab(viewModel);
             case 'Game Logs':
-              return _createGameLogTab(
-                  viewModel.player.getGameLog(viewModel.selectedYear),
-                  viewModel.getGameLogs);
+              return _createGameLogTab(viewModel);
             default:
               return <Widget>[
                 SliverFillRemaining(child: ErrorView('Unknown tab'))
@@ -117,11 +138,13 @@ class PlayerHome extends StatelessWidget {
   }
 
   List<Widget> _createBioTab(PlayerPage player) {
-    return <Widget>[PlayerBioTab(player: player)];
+    if(player == null)
+      return [SliverFillRemaining(child: ErrorView('No data downloaded'))];
+    else
+      return <Widget>[PlayerBioTab(player: player)];
   }
 
   List<Widget> _createStatTab(PlayerViewModel viewModel) {
-    PlayerTableSource stats = viewModel.player.getStat(viewModel.selectedStat);
     List<Widget> widgets = [
       SliverToBoxAdapter(
           child: CustomDropdownButton(
@@ -130,9 +153,8 @@ class PlayerHome extends StatelessWidget {
         onValueChanged: viewModel.getStats,
       )),
     ];
-    if (stats.columns.length == 0) {
-      widgets.add(SliverFillRemaining(child: ErrorView('No data downloaded')));
-    } else {
+    if (viewModel.player != null && viewModel.player.containsStat(viewModel.selectedStat)) {
+      PlayerTableSource stats = viewModel.player.getStat(viewModel.selectedStat);
       widgets.add(SliverFillRemaining(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -141,7 +163,9 @@ class PlayerHome extends StatelessWidget {
             child: DataTable(columns: stats.columns, rows: stats.rows),
           ),
         ),
-      ));
+      ),);
+    } else {
+      widgets.add(SliverFillRemaining(child: ErrorView('No data downloaded')));
     }
     return widgets;
   }
@@ -155,24 +179,30 @@ class PlayerHome extends StatelessWidget {
   ];
 
   List<Widget> _createGameLogTab(
-      List<GameLogsPlayer> logs, Function(String) onValueChanged) {
+      PlayerViewModel viewModel) {
     List<Widget> widgets = [
       SliverToBoxAdapter(
           child: CustomDropdownButton(
         selectedValue: years.first,
         values: years,
-        onValueChanged: onValueChanged,
+        onValueChanged: viewModel.getGameLogs,
       )),
     ];
+    if(viewModel.player != null && viewModel.player.containsGameLogs(viewModel.selectedYear)){
+      List<GameLogsPlayer> logs = viewModel.player.getGameLog(
+          viewModel.selectedYear);
 
-    widgets.add(SliverFixedExtentList(
-      itemExtent: 100,
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) => PlayerGameLogCard(logs[index]),
-        childCount: logs.length,
-      ),
-    ));
-
+      widgets.add(SliverFixedExtentList(
+        itemExtent: 100,
+        delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) =>
+              PlayerGameLogCard(logs[index]),
+          childCount: logs.length,
+        ),
+      ),);
+    } else {
+      widgets.add(SliverFillRemaining(child: ErrorView('No data downloaded')));
+    }
     return widgets;
   }
 }

@@ -43,7 +43,7 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
             await statsApi.fetchTeamInfo(store.state.teamState.teamId);
         next(TeamReceivedBioAction(team));
       } catch (error) {
-        next(TeamErrorAction(error));
+        next(TeamErrorAction(error.toString()));
       }
     }
   }
@@ -53,18 +53,18 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
       next(TeamRosterAlreadyDownloaded());
     } else {
       try {
-        final Map<Player, Map<String, dynamic>> team =
+        final List<PlayerGame> team =
             await statsApi.fetchTeamRoster(store.state.teamState.teamId);
         next(TeamReceivedRosterAction(team));
       } catch (error) {
-        next(TeamErrorAction(error));
+        next(TeamErrorAction(error.toString()));
       }
     }
   }
 
   Future<Null> _getStat(Store<AppState> store, NextDispatcher next) async {
-    if (selectedTeamSelector(store.state).containsRosterStats()) {
-      next(TeamRosterAlreadyDownloaded());
+    if (selectedTeamSelector(store.state).containsStat(store.state.teamState.selectedStat)) {
+      next(TeamStatsAlreadyDownloaded());
     } else {
       try {
         final List<dynamic> stats = await nhlApi.fetchTeamStat(
@@ -72,21 +72,21 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
         next(TeamReceivedStatAction(PlayerTableSource.fromData(
             stats, teamFilterTypeSelector(store.state))));
       } catch (error) {
-        next(TeamErrorAction(error));
+        next(TeamErrorAction(error.toString()));
       }
     }
   }
 
   Future<Null> _getDate(Store<AppState> store, NextDispatcher next) async {
-    if (selectedTeamSelector(store.state).containsRosterStats()) {
-      next(TeamRosterAlreadyDownloaded());
+    if (selectedTeamSelector(store.state).containsGameLog(store.state.teamState.selectedDate)) {
+      next(TeamDateAlreadyDownloaded());
     } else {
       try {
         final List<Game> games = await statsApi.fetchTeamGameLog(
             store.state.teamState.teamId, store.state.teamState.selectedDate);
         next(TeamReceivedDateAction(games));
       } catch (error) {
-        next(TeamErrorAction(error));
+        next(TeamErrorAction(error.toString()));
       }
     }
   }

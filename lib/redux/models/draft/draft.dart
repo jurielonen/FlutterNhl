@@ -1,0 +1,174 @@
+import 'package:FlutterNhl/redux/models/helpers.dart';
+import 'package:FlutterNhl/redux/models/player/player.dart';
+import 'package:FlutterNhl/redux/models/player/player_enums.dart';
+import 'package:FlutterNhl/redux/models/team/team.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class DraftDataTableSource extends DataTableSource {
+  final Draft draft;
+  final Function(int) onRowPressed;
+
+  DraftDataTableSource({@required this.draft, @required this.onRowPressed});
+
+  @override
+  DataRow getRow(int index) {
+    assert(index >= 0);
+    if(index >= rowCount){
+      return null;
+    }
+    Pick pick = draft.getPick(index + 1);
+    return DataRow.byIndex(index: index, cells: _getDataRow(pick));
+  }
+
+  List<DataCell> _getDataRow(Pick pick) {
+    return [
+      //DataCell(Text(pick.round)),
+      DataCell(Text(pick.pickRound.toString())),
+      DataCell(Text(pick.pickOverall.toString())),
+      DataCell(Text(pick.prospect.fullname),
+          onTap: () => onRowPressed(pick.prospect.id)),
+      DataCell(Text(pick.team.abb)),
+      DataCell(Text(pick.prospect.position.toString())),
+      DataCell(Text(pick.prospect.birthCountry)),
+      DataCell(Text(pick.prospect.amateurLeague)),
+      DataCell(Text(pick.prospect.amateurTeam)),
+    ];
+  }
+
+  @override
+  bool get isRowCountApproximate => true;
+
+  @override
+  int get rowCount => draft.rounds.last.picks.last.pickOverall;
+
+  @override
+  int get selectedRowCount => 0;
+
+  int get rowsPerPage {
+    if (draft == null) {
+      return 30;
+    } else {
+      return draft.rounds.first.picks.length;
+    }
+  }
+
+  String get year => draft.year.toString();
+}
+
+class Draft {
+  final int year;
+  //final int picksInRound;
+  //final List<Pick> picks;
+  final List<DraftRound> rounds;
+
+  Draft({@required this.year, @required this.rounds});
+
+  factory Draft.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> draft = getJsonObject(['drafts', 0], json);
+    /*List<Pick> picks = [];
+    getJsonList(['rounds'], draft).forEach((round) =>
+        getJsonList(['picks'], round)
+            .forEach((pick) => picks.add(Pick.fromJson(pick))));*/
+
+    return Draft(
+        year: getJsonInt('draftYear', draft),
+        rounds: List<DraftRound>.from(getJsonList(['rounds'], draft)
+            .map((round) => DraftRound.fromJson(round))));
+  }
+
+  factory Draft.empty() {
+    return Draft(year: 0, rounds: []);
+  }
+
+  Pick getPick(int overallPick){
+    Pick pick;
+    rounds.forEach((round) {
+      if(round.picks.first.pickOverall <= overallPick && round.picks.last.pickOverall >= overallPick){
+        pick = round.picks.firstWhere((element) => element.pickOverall == overallPick);
+      }
+    });
+    return pick;
+  }
+}
+
+class DraftRound {
+  final int round;
+  final List<Pick> picks;
+
+  DraftRound({@required this.round, @required this.picks});
+
+  factory DraftRound.fromJson(Map<String, dynamic> json) {
+    return DraftRound(
+      round: getJsonInt('roundNumber', json),
+      picks: List<Pick>.from(
+          getJsonList(['picks'], json).map((pick) => Pick.fromJson(pick))),
+    );
+  }
+}
+
+class Pick {
+  final int pickOverall;
+  final int pickRound;
+  final String round;
+  final Team team;
+  final Prospect prospect;
+
+  Pick(
+      {@required this.pickOverall,
+      @required this.team,
+      @required this.round,
+      @required this.prospect,
+      @required this.pickRound});
+
+  factory Pick.fromJson(Map<String, dynamic> json) {
+    return Pick(
+      pickOverall: getJsonInt('pickOverall', json),
+      pickRound: getJsonInt('pickInRound', json),
+      round: getJsonString('round', json),
+      team: Team.fromJson(getJsonObject(['team'], json)),
+      prospect: Prospect.fromJson(getJsonObject(['prospect'], json)),
+    );
+  }
+}
+
+class Prospect extends Player {
+  final String nationality;
+  final String birthCity;
+  final String birthCountry;
+  final DateTime birthDate;
+  final String handness;
+  final Position position;
+  final String prospectCategory;
+  final String amateurTeam;
+  final String amateurLeague;
+
+  Prospect(
+      {@required Player player,
+      @required this.nationality,
+      @required this.birthCity,
+      @required this.birthCountry,
+      @required this.birthDate,
+      @required this.handness,
+      @required this.position,
+      @required this.prospectCategory,
+      @required this.amateurTeam,
+      @required this.amateurLeague})
+      : super.clone(player);
+
+  factory Prospect.fromJson(Map<String, dynamic> json) {
+    return Prospect(
+      player: Player.fromJson(json),
+      nationality: getJsonString('nationality', json),
+      birthCity: getJsonString('birthCity', json),
+      birthCountry: getJsonString('birthCountry', json),
+      birthDate: getJsonDateTime('birthDate', json),
+      handness: getJsonString('shootsCatches', json),
+      position:
+          positionFromString(getJsonString2(['primaryPosition', 'code'], json)),
+      prospectCategory: getJsonString2(['prospectCategory', 'shortName'], json),
+      amateurTeam: getJsonString2(['amateurTeam', 'name'], json),
+      amateurLeague: getJsonString2(['amateurLeague', 'name'], json),
+    );
+  }
+}

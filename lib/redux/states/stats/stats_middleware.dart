@@ -18,6 +18,7 @@ class StatsMiddleware extends MiddlewareClass<AppState> {
     next(action);
     if (action is StatsEntered) {
       if (store.state.config.isEmpty()) {
+        next(DownloadAction());
         await getConfig(store, next, api);
       }
       _getStats(store, next);

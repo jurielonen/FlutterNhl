@@ -1,9 +1,11 @@
 import 'package:FlutterNhl/redux/api/fetch.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
+import 'package:FlutterNhl/redux/models/draft/draft.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
+import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:http/http.dart';
@@ -18,6 +20,7 @@ class StatsApi {
 
   Future<Null> fetchSeason() async {
     final searchUri = Uri.https(baseUrl, 'api/v1/seasons/current');
+    print('$printMsg fetchSeason: $searchUri');
     await fetch(searchUri, client).then((value) {
       return Config().fromJsonSeason(value);
     }).catchError((error) => throw Exception(error.toString()));
@@ -76,34 +79,55 @@ class StatsApi {
         {'expand': 'team.stats,team.schedule.previous,team.schedule.next'});
     print('$printMsg fetchTeamInfo: $searchUri');
 
-    return await fetch(searchUri, client)
-        .then((value) {})
-        .catchError((error) => throw Exception(error.toString()));
+    return await fetch(searchUri, client).then((value) {
+      return TeamPage.fromJson(value);
+    }).catchError((error) => throw Exception(error.toString()));
   }
 
-  Future<Null> fetchTeamRoster(int teamId) async {
+  Future<List<PlayerGame>> fetchTeamRoster(int teamId) async {
     final searchUri = Uri.https(baseUrl, 'api/v1/teams/$teamId', {
       'expand': 'team.roster,roster.person,person.stats',
       'stats': 'statsSingleSeason'
     });
     print('$printMsg fetchTeamRoster: $searchUri');
 
-    return await fetch(searchUri, client)
-        .then((value) {})
-        .catchError((error) => throw Exception(error.toString()));
+    return await fetch(searchUri, client).then((value) {
+      return List<PlayerGame>.from(
+          getJsonList(['teams', 0, 'roster', 'roster'], value)
+              .map((player) => PlayerGame.fromJsonFinal(player)));
+    }).catchError((error) => throw Exception(error.toString()));
   }
 
-  Future<Null> fetchTeamGameLog(int teamId, String season) async {
-    final searchUri = Uri.https(baseUrl, 'api/v1/teams/$teamId/stats', {
-      'stats': 'gameLog',
-      'expand': 'stats.team',
+  Future<List<Game>> fetchTeamGameLog(int teamId, String season) async {
+    final searchUri = Uri.https(baseUrl, 'api/v1/schedule', {
+      'teamId': teamId.toString(),
       'season': season,
     });
     print('$printMsg fetchTeamGameLog: $searchUri');
 
+    return await fetch(searchUri, client).then((value) {
+      List<Game> games = [];
+      getJsonList(['dates'], value).forEach((date) {
+        if (date is Map<String, dynamic>) {
+          if (getJsonInt('totalGames', date) == 1) {
+            games.add(Game.fromJson(getJsonObject(['games', 0], date)));
+          } else {
+            throw Exception('Too many or no games in: $date');
+          }
+        }
+      });
+      return games;
+    }).catchError((error) => throw Exception(error.toString()));
+  }
+
+  Future<Draft> fetchDraft(int year) async {
+    final searchUri =
+        Uri.https(baseUrl, 'api/v1/draft/$year', {'hydrate': 'prospects'});
+    print('$printMsg fetchDraft: $searchUri');
     return await fetch(searchUri, client)
-        .then((value) {})
-        .catchError((error) => throw Exception(error.toString()));
+        .then((value) => Draft.fromJson(value))
+        .catchError((error) =>
+            throw Exception('Error, fetchDraft: ${error.toString()}'));
   }
 }
 

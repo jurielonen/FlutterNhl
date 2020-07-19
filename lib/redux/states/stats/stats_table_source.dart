@@ -31,7 +31,11 @@ class StatsTableSource {
       tColumns.add(DataColumn(
           label: Text(getColumnAbb(element),
               style: TextStyle(fontStyle: FontStyle.italic)),
-          tooltip: getColumnTooltip(element)));
+          tooltip: getColumnTooltip(element),
+        //onSort: (int index, bool ascending){
+          //print('onsort');
+        //}
+      ),);
     });
 
     return StatsTableSource(

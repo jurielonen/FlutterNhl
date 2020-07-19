@@ -25,6 +25,9 @@ class Player {
     if (tId == -1) {
       tId = getJsonInt('playerId', json);
     }
+    if (tId == -1) {
+      tId = getJsonInt('nhlPlayerId', json);
+    }
     if (_cache.containsKey(tId)) {
       return _cache[tId];
     } else {

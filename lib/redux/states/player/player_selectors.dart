@@ -19,7 +19,7 @@ PlayerPage _getPlayer(int playerId, KtMap<int, PlayerPage> players) {
   if (players.containsKey(playerId)) {
     return players[playerId];
   } else {
-    return PlayerPage.empty();
+    return null;
   }
 }
 

@@ -17,10 +17,7 @@ class TemplateView extends StatelessWidget {
     return CustomScrollView(
       slivers: <Widget>[
         appBar,
-        SliverPadding(
-          padding: EdgeInsets.all(8.0),
-          sliver: _getStateWidget(),
-        ),
+        _getStateWidget(),
       ],
     );
   }

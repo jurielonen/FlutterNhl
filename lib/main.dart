@@ -43,7 +43,9 @@ class _NHLAppState extends State<NHLApp> {
           //TODO: Add routes string from class
           Routes.homepage: (context) => HomePage(),
           Routes.game: (context) => GameHome(),
-          Routes.team: (context) => TeamHome(),
+          Routes.team: (context) => TeamHome(
+                teamArguments: ModalRoute.of(context).settings.arguments,
+              ),
           Routes.player: (context) =>
               PlayerHome(playerArgs: ModalRoute.of(context).settings.arguments),
         },

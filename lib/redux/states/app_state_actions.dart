@@ -1,5 +1,5 @@
+import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
 
 abstract class ScheduleAction {}
 
@@ -9,11 +9,20 @@ abstract class PlayerAction {}
 
 abstract class TeamAction {}
 
+abstract class DraftAction {}
+
 class InitAction {}
+
+class DownloadAction {}
 
 class ConfigReceived {}
 
 class SeasonConfigReceived {}
+
+class PageChangedAction {
+  final DrawerPages page;
+  PageChangedAction(this.page);
+}
 
 class ScheduleEntered extends ScheduleAction {}
 
@@ -29,3 +38,5 @@ class TeamEntered extends TeamAction {
   final int teamId;
   TeamEntered(this.teamId);
 }
+
+class DraftEntered extends DraftAction {}

@@ -22,36 +22,6 @@ class PlayerBioTab extends StatelessWidget {
         tiles,
       ),
     );
-    /*Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text(player.birthDate.toString()),
-              Text(player.draftNum.toString()),
-              Text(player.draftRound.toString()),
-              Text(player.draftYear.toString()),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('${player.birthCity}, ${player.birthCountry}'),
-              Text(player.nationality)
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              /*Text(
-                '${player.allTimeStats.regular.gamesPlayed},${player.allTimeStats.regular.goals},${player.allTimeStats.regular.assists},${player.allTimeStats.regular.points}'),
-            Text(
-                '${player.allTimeStats.playoff.gamesPlayed},${player.allTimeStats.playoff.goals},${player.allTimeStats.playoff.assists},${player.allTimeStats.playoff.points}'),*/
-            ],
-          )
-        ],
-      ),
-    );*/
   }
 
   Widget _createTextCard(String title, String value){

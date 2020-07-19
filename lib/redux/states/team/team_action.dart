@@ -42,7 +42,7 @@ class TeamDownloadRoster extends TeamAction {}
 class TeamRosterAlreadyDownloaded extends TeamAction {}
 
 class TeamReceivedRosterAction extends TeamAction {
-  final Map<Player, Map<String, String>> players;
+  final List<PlayerGame> players;
   TeamReceivedRosterAction(this.players);
 }
 

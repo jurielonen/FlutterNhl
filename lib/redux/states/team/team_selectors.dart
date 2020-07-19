@@ -17,7 +17,7 @@ TeamPage _getTeam(int teamId, KtMap<int, TeamPage> teams) {
   if (teams.containsKey(teamId))
     return teams[teamId];
   else
-    return TeamPage.empty();
+    return null;
 }
 
 final teamFilterTypeSelector =

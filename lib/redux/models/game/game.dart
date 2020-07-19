@@ -61,6 +61,22 @@ class Game {
   String toString() {
     return '${homeTeam.name} - ${awayTeam.name}';
   }
+
+  String opponentAbb(Team team){
+    return isHomeTeam(team) ? awayTeam.abb : homeTeam.abb;
+  }
+
+  /*String teamWon(Team team){
+    switch(state){
+      case GameState.FINAL:
+      case GameState.FINAL_2:
+
+    }
+  }*/
+
+  bool isHomeTeam(Team team){
+    return team.id == homeTeam.id ? true : (team.id == awayTeam.id ? false : throw Exception('Given team hasnt played in $this'));
+  }
 }
 
 class GamePreview extends Game {

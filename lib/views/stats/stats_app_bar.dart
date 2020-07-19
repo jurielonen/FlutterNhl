@@ -3,6 +3,31 @@ import 'package:FlutterNhl/redux/viewmodel/stats_view_model.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
+class StatAppBar extends StatelessWidget {
+
+  static const List<String> _tabs = ['Player', 'Goalie', 'Team'];
+  final Function(StatType) onTabSelected;
+
+  const StatAppBar({Key key, @required this.onTabSelected}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      pinned: true,
+      floating: false,
+      snap: false,
+      title: Text('Stats'),
+      bottom: PreferredSize(
+      preferredSize: const Size.fromHeight(50.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: _tabs.map((e) => Tab(text: e, )).toList(),
+        ),
+      )
+    );
+  }
+}
+/*
 class StatAppBar extends StatefulWidget {
   final StatsViewModel viewModel;
 
@@ -190,3 +215,4 @@ class _StatTabBarState extends State<StatTabBar> {
     );
   }
 }
+*/

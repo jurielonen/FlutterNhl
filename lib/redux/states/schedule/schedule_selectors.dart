@@ -13,5 +13,5 @@ Schedule _getSchedule(String selectedDate, KtMap<String, Schedule> schedules){
   if(schedules.containsKey(selectedDate))
     return schedules[selectedDate];
   else
-    return Schedule.empty();
+    return null;
 }

@@ -9,15 +9,18 @@ TeamState teamReducer(TeamState state, dynamic action) {
   print('TEAMSTATE: ${action.runtimeType}');
   if (action is TeamEntered) {
     return state.copyWith(
+        loadingStatus: LoadingStatus.IDLE,
         teamId: action.teamId,
         selectedStat: 'summary',
-        selectedDate: Config().regularSeasonEndDate);
+        selectedDate: Config().currentSeason);
   } else if (action is TeamRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is TeamReceivedBioAction) {
     final teams = state.teams.toMutableMap();
     teams[action.team.id] = action.team;
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, teams: teams);
+  } else if(action is TeamBioAlreadyDownloaded) {
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   } else if (action is TeamStatsChangedAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE, selectedStat: action.stat);

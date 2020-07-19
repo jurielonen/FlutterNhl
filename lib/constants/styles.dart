@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/models/player/player.dart';
+import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -174,6 +175,22 @@ abstract class Styles {
       return
         Image.network(
           player.headShotUrl,
+          fit: BoxFit.cover,
+        );
+    } else {
+      return
+        Image.asset(
+          'assets/noimage.png',
+          fit: BoxFit.cover,
+        );
+    }
+  }
+
+  static Widget buildTeamBoxIcon(Team team){
+    if(team != null && team.id != -1){
+      return
+        Image.asset(
+          team.logoUrl,
           fit: BoxFit.cover,
         );
     } else {

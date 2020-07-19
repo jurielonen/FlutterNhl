@@ -141,6 +141,17 @@ class Config {
     }
     return [];
   }
+
+  static int getCurrentDraft(){
+    if(_config.currentSeason != null && _config.currentSeason != ''){
+       int year = int.tryParse(_config.currentSeason.substring(0, 4));
+       if(year != null){
+         return year;
+       }
+    }
+    int year = DateTime.now().year;
+    return year;
+  }
 }
 
 class Advanced {
