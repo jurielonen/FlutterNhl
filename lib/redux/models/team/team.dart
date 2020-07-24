@@ -33,7 +33,13 @@ class Team {
         if (tName == '') {
           tName = getJsonString('teamFullName', json);
         }
+        if (tName == '') {
+          tName = getJsonString('fullName', json);
+        }
         String tAbb = getJsonString('abbreviation', json);
+        if (tAbb == '') {
+          tAbb = getJsonString('triCode', json);
+        }
         if (tAbb == '') {
           tAbb = changeNameToAbb(tName);
         }

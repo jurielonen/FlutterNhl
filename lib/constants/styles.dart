@@ -202,4 +202,16 @@ abstract class Styles {
     }
   }
 
+  static Widget buildNetworkImage(String url){
+    if(url != null && url != ''){
+      return Image.network(url, fit: BoxFit.cover,);
+    } else {
+      return
+        Image.asset(
+          'assets/noimage.png',
+          fit: BoxFit.cover,
+        );
+    }
+  }
+
 }

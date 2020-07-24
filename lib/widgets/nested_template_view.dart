@@ -75,6 +75,7 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
         controller: _tabController,
         children: widget.tabs.keys.map((String name) {
           return SafeArea(
+            key: PageStorageKey<String>(name),
             top: false,
             bottom: false,
             child: Builder(

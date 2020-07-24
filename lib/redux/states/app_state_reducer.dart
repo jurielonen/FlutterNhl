@@ -2,6 +2,7 @@ import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
+import 'package:FlutterNhl/redux/states/award/award_reducer.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_reducer.dart';
 import 'package:FlutterNhl/redux/states/player/player_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
@@ -11,7 +12,7 @@ import 'package:FlutterNhl/redux/states/team/team_reducer.dart';
 ///TODO: config to static
 AppState appReducer(AppState state, dynamic action) {
   print('APPSTATE: ${action.runtimeType}');
-  if(action is DownloadAction) {
+  if (action is DownloadAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is ConfigReceived) {
     return state.copyWith(
@@ -25,7 +26,7 @@ AppState appReducer(AppState state, dynamic action) {
         //TODO: add statsState to handle getting current season
         draftState: draftReducer(state.draftState, action),
         config: Config());
-  } else if(action is PageChangedAction) {
+  } else if (action is PageChangedAction) {
     return state.copyWith(currentPage: action.page);
   } else if (action is ScheduleAction) {
     return state.copyWith(
@@ -37,15 +38,14 @@ AppState appReducer(AppState state, dynamic action) {
     );
   } else if (action is PlayerAction) {
     return state.copyWith(
-        playerState: playerReducer(state.playerState, action),
+      playerState: playerReducer(state.playerState, action),
     );
-  } else if (action is TeamAction){
-    return state.copyWith(
-        teamState: teamReducer(state.teamState, action));
-  } else if (action is DraftAction){
-    return state.copyWith(
-      draftState: draftReducer(state.draftState, action)
-    );
+  } else if (action is TeamAction) {
+    return state.copyWith(teamState: teamReducer(state.teamState, action));
+  } else if (action is DraftAction) {
+    return state.copyWith(draftState: draftReducer(state.draftState, action));
+  } else if (action is AwardAction) {
+    return state.copyWith(awardState: awardReducer(state.awardState, action));
   }
   return state;
 }

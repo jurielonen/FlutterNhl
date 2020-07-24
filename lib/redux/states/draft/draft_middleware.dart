@@ -12,7 +12,7 @@ class DraftMiddleware extends MiddlewareClass<AppState> {
   DraftMiddleware(this.statsApi);
 
   @override
-  Future<Null> call(Store<AppState> store, action, next) async {
+  Future<Null> call(Store<AppState> store, dynamic action, NextDispatcher next) async {
     next(action);
     if(store.state.draftState.loadingStatus != LoadingStatus.LOADING){
       if(action is DraftEntered || action is DraftChangedAction){

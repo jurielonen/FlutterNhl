@@ -10,7 +10,7 @@ class TemplateView extends StatelessWidget {
   final String errorMsg;
 
   TemplateView(
-      this.loadingStatus, this.successContent, this.appBar, this.errorMsg);
+      this.loadingStatus, this.successContent, this.appBar, this.errorMsg, {Key key}): super(key: key);
 
   @override
   Widget build(BuildContext context) {

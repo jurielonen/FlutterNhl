@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/store.dart';
+import 'package:FlutterNhl/views/award/recipient/recipient_home.dart';
 import 'package:FlutterNhl/views/game/game_home.dart';
 import 'package:FlutterNhl/views/home_page.dart';
 import 'package:FlutterNhl/views/player/player_home.dart';
@@ -48,6 +49,9 @@ class _NHLAppState extends State<NHLApp> {
               ),
           Routes.player: (context) =>
               PlayerHome(playerArgs: ModalRoute.of(context).settings.arguments),
+          Routes.recipient: (context) => RecipientHome(
+                selectedAward: ModalRoute.of(context).settings.arguments,
+              ),
         },
         home: HomePage(),
         debugShowCheckedModeBanner: false,

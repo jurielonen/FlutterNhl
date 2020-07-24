@@ -11,6 +11,8 @@ abstract class TeamAction {}
 
 abstract class DraftAction {}
 
+abstract class AwardAction {}
+
 class InitAction {}
 
 class DownloadAction {}
@@ -40,3 +42,5 @@ class TeamEntered extends TeamAction {
 }
 
 class DraftEntered extends DraftAction {}
+
+class AwardEntered extends AwardAction {}

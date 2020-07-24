@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
+import 'package:FlutterNhl/redux/states/award/award_state.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
@@ -19,6 +20,7 @@ class AppState {
   final PlayerState playerState;
   final TeamState teamState;
   final DraftState draftState;
+  final AwardState awardState;
   final Config config;
 
   AppState({
@@ -30,6 +32,7 @@ class AppState {
     @required this.playerState,
     @required this.teamState,
     @required this.draftState,
+    @required this.awardState,
     @required this.config,
   });
 
@@ -37,12 +40,13 @@ class AppState {
     return AppState(
       loadingStatus: LoadingStatus.IDLE,
       errorMsg: '',
-      currentPage: DrawerPages.DRAFT,
+      currentPage: DrawerPages.AWARDS,
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),
       playerState: PlayerState.initial(),
       teamState: TeamState.initial(),
       draftState: DraftState.initial(),
+      awardState: AwardState.initial(),
       config: Config(),
     );
   }
@@ -56,6 +60,7 @@ class AppState {
     PlayerState playerState,
     TeamState teamState,
     DraftState draftState,
+    AwardState awardState,
     Config config,
   }) {
     return AppState(
@@ -67,6 +72,7 @@ class AppState {
       playerState: playerState ?? this.playerState,
       teamState: teamState ?? this.teamState,
       draftState: draftState ?? this.draftState,
+      awardState: awardState ?? this.awardState,
       config: config ?? this.config,
     );
   }

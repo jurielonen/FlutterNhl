@@ -11,14 +11,19 @@ class AppViewModel {
   final DrawerPages currentPage;
   final Function(DrawerPages) pageChanged;
 
-  AppViewModel({@required this.loadingStatus, @required this.errorMsg, @required this.currentPage, @required this.pageChanged});
+  AppViewModel(
+      {@required this.loadingStatus,
+      @required this.errorMsg,
+      @required this.currentPage,
+      @required this.pageChanged});
 
-  static AppViewModel fromStore(Store<AppState> store){
+  static AppViewModel fromStore(Store<AppState> store) {
     return AppViewModel(
       loadingStatus: store.state.loadingStatus,
       errorMsg: store.state.errorMsg,
       currentPage: store.state.currentPage,
-      pageChanged: (DrawerPages page) => store.dispatch(PageChangedAction(page)),
+      pageChanged: (DrawerPages page) =>
+          store.dispatch(PageChangedAction(page)),
     );
   }
 }

@@ -3,6 +3,62 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+class ImageCard extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String imageUrl;
+  final String title;
+  final String description;
+
+  const ImageCard({Key key, this.onPressed, this.imageUrl, this.title, this.description}) : super(key: key);
+
+  Widget _buildDetails() {
+    return FrostyBackground(
+      color: Color(0x9049473d),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListTile(
+          title: Text(title),
+          subtitle: Text(description),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: PressableCard(
+        onPressed: () => onPressed(),
+        child: Stack(
+          children: [
+            Semantics(
+              label: 'A card background featuring $title',
+              child: Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  image: DecorationImage(
+                    fit: BoxFit.fitHeight,
+                    image: NetworkImage(imageUrl),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildDetails(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class FrostyBackground extends StatelessWidget {
   const FrostyBackground({
     this.color,

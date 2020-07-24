@@ -96,6 +96,16 @@ List<dynamic> getJsonList(List<dynamic> keys, dynamic json) {
   return [];
 }
 
+bool isJsonNull(List<dynamic> keys, dynamic json){
+  if (keys.length < 1 || json == null) return true;
+
+  dynamic obj = _getJsonItem(keys, json);
+
+  if(obj == null) return true;
+
+  return false;
+}
+
 dynamic _getJsonItem(List<dynamic> keys, dynamic json) {
   dynamic obj = json;
 

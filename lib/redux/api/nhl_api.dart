@@ -103,3 +103,5 @@ class NHLApi {
     throw Exception('Error while fetching data in $printMsg');
   }
 }
+
+///TODO: add fetch https://api.nhle.com/stats/rest/en/glossary?sort=fullName
