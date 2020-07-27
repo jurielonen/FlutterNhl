@@ -52,7 +52,7 @@ final Game gameEmpty = Game(
     dateTime: DateTime(1990),
     homeTeam: scheduleTeamEmpty,
     awayTeam: scheduleTeamEmpty,
-    state: GameState.UNKNOWN,
+    state: GameStateEnum.UNKNOWN,
     content: Content(videos: []),
     lineScore: LineScore(
         period: -1, periodString: '', timeRemaining: '', periods: []));
@@ -66,7 +66,7 @@ final Game gameSchedule = Game(
         score: 6,
         record: {"wins": 32, "losses": 30, "ot": 8, "type": "league"}),
     awayTeam: scheduleTeam,
-    state: GameState.FINAL_2,
+    state: GameStateEnum.FINAL_2,
     content: Content(videos: [
       Video(
           title: 'SJS @ CHI',

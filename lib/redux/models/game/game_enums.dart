@@ -26,7 +26,7 @@ GameType gameTypeFromString(String value){
   }
 }
 
-enum GameState {
+enum GameStateEnum {
   SCHEDULED,
   PRE_GAME,
   IN_PROGRESS,
@@ -39,32 +39,32 @@ enum GameState {
   UNKNOWN
 }
 
-GameState gameStateFromString(String value){
+GameStateEnum gameStateFromString(String value){
   switch(value){
-    case "1" : return GameState.SCHEDULED;
-    case "2" : return GameState.PRE_GAME;
-    case "3" : return GameState.IN_PROGRESS;
-    case "4" : return GameState.IN_PROGRESS_CRITICAL;
-    case "5" : return GameState.GAME_OVER;
-    case "6" : return GameState.FINAL;
-    case "7" : return GameState.FINAL_2;
-    case "8" : return GameState.SCHEDULED_TBD;
-    case "9" : return GameState.POSTPONED;
-    default : return GameState.UNKNOWN;
+    case "1" : return GameStateEnum.SCHEDULED;
+    case "2" : return GameStateEnum.PRE_GAME;
+    case "3" : return GameStateEnum.IN_PROGRESS;
+    case "4" : return GameStateEnum.IN_PROGRESS_CRITICAL;
+    case "5" : return GameStateEnum.GAME_OVER;
+    case "6" : return GameStateEnum.FINAL;
+    case "7" : return GameStateEnum.FINAL_2;
+    case "8" : return GameStateEnum.SCHEDULED_TBD;
+    case "9" : return GameStateEnum.POSTPONED;
+    default : return GameStateEnum.UNKNOWN;
   }
 }
 
-String gameStateToString(GameState value){
+String gameStateToString(GameStateEnum value){
   switch(value){
-    case GameState.SCHEDULED: return 'Scheduled';
-    case GameState.PRE_GAME:
-    case GameState.IN_PROGRESS:
-    case GameState.IN_PROGRESS_CRITICAL: return 'Live';
-    case GameState.GAME_OVER:
-    case GameState.FINAL:
-    case GameState.FINAL_2: return 'Final';
-    case GameState.SCHEDULED_TBD: return 'TBD';
-    case GameState.POSTPONED: return 'Postponed';
+    case GameStateEnum.SCHEDULED: return 'Scheduled';
+    case GameStateEnum.PRE_GAME:
+    case GameStateEnum.IN_PROGRESS:
+    case GameStateEnum.IN_PROGRESS_CRITICAL: return 'Live';
+    case GameStateEnum.GAME_OVER:
+    case GameStateEnum.FINAL:
+    case GameStateEnum.FINAL_2: return 'Final';
+    case GameStateEnum.SCHEDULED_TBD: return 'TBD';
+    case GameStateEnum.POSTPONED: return 'Postponed';
     default : return 'Unknown';
   }
 }

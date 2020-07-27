@@ -1,0 +1,20 @@
+import 'package:FlutterNhl/redux/models/game/game.dart';
+import 'package:FlutterNhl/redux/states/app_state_actions.dart';
+
+class GameRequestingAction extends GameAction {}
+
+class GameAlreadyDownloadedAction extends GameAction {}
+
+class GameDownloadedAction extends GameAction {
+  final Game game;
+  GameDownloadedAction(this.game);
+}
+
+class GameErrorAction extends GameAction {
+  final String msg;
+  GameErrorAction(this.msg);
+}
+
+class GameRefreshAction extends GameAction {}
+
+class GameExited extends GameAction {}

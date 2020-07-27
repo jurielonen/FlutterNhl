@@ -52,7 +52,7 @@ final ScheduleGames schedulePreview = ScheduleGames(
         id: 2017020659,
         type: GameType.REGULAR,
         dateTime: DateTime(2018,1,10,1),
-        state: GameState.SCHEDULED,
+        state: GameStateEnum.SCHEDULED,
         content: Content(videos: []),
         homeTeam: TeamSchedule(
           team: Team(id: 30, name: 'Minnesota Wild', abb: ''),

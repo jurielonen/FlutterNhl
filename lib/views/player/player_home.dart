@@ -6,6 +6,7 @@ import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
+import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'file:///C:/Users/juri/Documents/GitHub/FlutterNhl/lib/views/player/widgets/player_game_log.dart';
 import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
@@ -80,7 +81,7 @@ class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
 class PlayerHome extends StatelessWidget {
   static const String routeName = '/player';
   static const List<String> _tabs = ['Bio', 'Stats', 'Game Logs'];
-  final PlayerPageArguments playerArgs;
+  final PlayerArguments playerArgs;
 
   const PlayerHome({
     this.playerArgs,

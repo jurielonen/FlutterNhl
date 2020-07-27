@@ -1,7 +1,7 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
 import 'package:FlutterNhl/redux/models/game/play/play_enum.dart';
-import 'package:FlutterNhl/views/game/game_final/play_card.dart';
+import 'package:FlutterNhl/views/game/game_widgets/play_card.dart';
 import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:flutter/material.dart';
 

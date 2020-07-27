@@ -19,7 +19,7 @@ class ScheduleState {
   factory ScheduleState.initial() {
     return ScheduleState(
         loadingStatus: LoadingStatus.IDLE,
-        selectedDate: DateTime(2020, 2, 1),
+        selectedDate: DateTime.now(),
         schedules: emptyMap(),
         errorMsg: '');
   }

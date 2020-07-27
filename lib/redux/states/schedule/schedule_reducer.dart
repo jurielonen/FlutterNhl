@@ -24,10 +24,10 @@ ScheduleState scheduleReducer(ScheduleState state, dynamic action) {
   } else if (action is ErrorScheduleAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.ERROR, errorMsg: action.error);
-  } else if (action is SeasonConfigReceived) {
+  }/* else if (action is SeasonConfigReceived) {
     return state.copyWith(
         selectedDate: DateTime.parse(Config().regularSeasonEndDate));
-  }
+  }*/
 
   return state;
 }

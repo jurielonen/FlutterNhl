@@ -5,6 +5,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/team_view_model.dart';
+import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/team/widgets/team_bio.dart';
 import 'package:FlutterNhl/views/team/widgets/team_game_log.dart';
 import 'package:FlutterNhl/views/team/widgets/team_player.dart';
@@ -13,7 +14,6 @@ import 'package:FlutterNhl/widgets/custom_list_tile.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:flutter/material.dart';
-import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class TeamPageAppBarContent implements NestedTemplateViewAppBarContent {
@@ -54,7 +54,7 @@ class TeamPageAppBarContent implements NestedTemplateViewAppBarContent {
 class TeamHome extends StatelessWidget {
   static const String routeName = '/team';
   static const List<String> _tabs = ['Bio', 'Players', 'Stats', 'Game Logs'];
-  final TeamPageArguments teamArguments;
+  final TeamArguments teamArguments;
 
   const TeamHome({Key key, this.teamArguments}) : super(key: key);
   @override

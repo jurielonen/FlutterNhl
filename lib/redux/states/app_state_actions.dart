@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/models/game/game.dart';
 
 abstract class ScheduleAction {}
 
@@ -12,6 +13,8 @@ abstract class TeamAction {}
 abstract class DraftAction {}
 
 abstract class AwardAction {}
+
+abstract class GameAction {}
 
 class InitAction {}
 
@@ -44,3 +47,8 @@ class TeamEntered extends TeamAction {
 class DraftEntered extends DraftAction {}
 
 class AwardEntered extends AwardAction {}
+
+class GameEntered extends GameAction {
+  final Game game;
+  GameEntered(this.game);
+}

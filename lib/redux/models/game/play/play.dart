@@ -24,7 +24,8 @@ class Play {
           players: List<PlayerPlay>.from(
               getJsonList(['players'], json).map<Player>(
                   (player) => PlayerPlay.fromJson(player))),
-          team: Team.fromJson(getJsonObject(['team'], json)));
+          team: Team.fromJson(getJsonObject(['team'], json)),
+          desc: getJsonString2(['result', 'description'], json));
     } else {
       return tPlay;
     }
@@ -34,8 +35,9 @@ class Play {
 class PlayWithPlayers extends Play {
   final List<PlayerPlay> players;
   final Team team;
+  final String desc;
 
-  PlayWithPlayers({Play play, this.players, this.team})
+  PlayWithPlayers({@required Play play,@required  this.players,@required  this.team,@required  this.desc})
       : super(type: play.type, event: play.event, about: play.about);
 }
 

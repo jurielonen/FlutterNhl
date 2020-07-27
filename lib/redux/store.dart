@@ -6,6 +6,7 @@ import 'package:FlutterNhl/redux/states/app_state_middleware.dart';
 import 'package:FlutterNhl/redux/states/app_state_reducer.dart';
 import 'package:FlutterNhl/redux/states/award/award_middleware.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_middleware.dart';
+import 'package:FlutterNhl/redux/states/game/game_middleware.dart';
 import 'package:FlutterNhl/redux/states/player/player_middleware.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_middleware.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_middleware.dart';
@@ -29,5 +30,6 @@ Store<AppState> createStore(Client client) {
         TeamMiddleware(statsApi, nhlApi),
         DraftMiddleware(statsApi),
         AwardMiddleware(recordsApi),
+        GameMiddleware(statsApi),
       ]);
 }

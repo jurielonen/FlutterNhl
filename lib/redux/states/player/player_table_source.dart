@@ -1,6 +1,6 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
-import 'package:FlutterNhl/redux/models/constants.dart';
+import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:flutter/material.dart';
 

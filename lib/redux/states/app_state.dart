@@ -2,6 +2,7 @@ import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/award/award_state.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_state.dart';
+import 'package:FlutterNhl/redux/states/game/game_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
@@ -21,6 +22,7 @@ class AppState {
   final TeamState teamState;
   final DraftState draftState;
   final AwardState awardState;
+  final GameState gameState;
   final Config config;
 
   AppState({
@@ -33,6 +35,7 @@ class AppState {
     @required this.teamState,
     @required this.draftState,
     @required this.awardState,
+    @required this.gameState,
     @required this.config,
   });
 
@@ -47,6 +50,7 @@ class AppState {
       teamState: TeamState.initial(),
       draftState: DraftState.initial(),
       awardState: AwardState.initial(),
+      gameState: GameState.initial(),
       config: Config(),
     );
   }
@@ -61,6 +65,7 @@ class AppState {
     TeamState teamState,
     DraftState draftState,
     AwardState awardState,
+    GameState gameState,
     Config config,
   }) {
     return AppState(
@@ -73,6 +78,7 @@ class AppState {
       teamState: teamState ?? this.teamState,
       draftState: draftState ?? this.draftState,
       awardState: awardState ?? this.awardState,
+      gameState: gameState ?? this.gameState,
       config: config ?? this.config,
     );
   }

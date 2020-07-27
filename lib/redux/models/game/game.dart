@@ -17,7 +17,7 @@ class Game {
   final DateTime dateTime;
   final TeamSchedule homeTeam;
   final TeamSchedule awayTeam;
-  GameState state;
+  GameStateEnum state;
   Content content;
   LineScore lineScore;
 
@@ -77,6 +77,10 @@ class Game {
   bool isHomeTeam(Team team){
     return team.id == homeTeam.id ? true : (team.id == awayTeam.id ? false : throw Exception('Given team hasnt played in $this'));
   }
+
+  bool get isPreview => state == GameStateEnum.SCHEDULED || state == GameStateEnum.POSTPONED || state == GameStateEnum.SCHEDULED_TBD || state == GameStateEnum.PRE_GAME;
+  bool get isLive => state == GameStateEnum.IN_PROGRESS_CRITICAL || state == GameStateEnum.IN_PROGRESS;
+  bool get isFinal => !isPreview && !isLive;
 }
 
 class GamePreview extends Game {

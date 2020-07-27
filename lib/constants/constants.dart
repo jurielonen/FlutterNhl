@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 String getColumnAbb(String value) {
   if (constantColumns.containsKey(value)) {
     return constantColumns[value];
@@ -496,5 +498,105 @@ String changeNameToAbb(String teamName) {
 
     default:
       return 'UNK';
+  }
+}
+
+Color getTeamColor(String teamName){
+  switch(teamName){
+    case "Anaheim Ducks":
+      return Color(0x50000000);
+
+    case "Arizona Coyotes":
+      return Color(0x50862633);
+
+    case "Boston Bruins":
+      return Color(0x50000000);
+
+    case "Buffalo Sabres":
+      return Color(0x50041E42);
+
+    case "Carolina Hurricanes":
+      return Color(0x50C8102E);
+
+    case "Columbus Blue Jackets":
+      return Color(0x50041E42);
+
+    case "Calgary Flames":
+      return Color(0x50C8102E);
+
+    case "Chicago Blackhawks":
+      return Color(0x50C8102E);
+
+    case "Colorado Avalanche":
+      return Color(0x506F263D);
+
+    case "Dallas Stars":
+      return Color(0x50006341);
+
+    case "Detroit Red Wings":
+      return Color(0x50C8102E);
+
+    case "Edmonton Oilers":
+      return Color(0x50FC4C02);
+
+    case "Florida Panthers":
+      return Color(0x50C8102E);
+
+    case "Los Angeles Kings":
+      return Color(0x50000000);
+
+    case "Minnesota Wild":
+      return Color(0x50154734);
+
+    case "Montréal Canadiens":
+      return Color(0x50A6192E);
+
+    case "Nashville Predators":
+      return Color(0x50FFB81C);
+
+    case "New Jersey Devils":
+      return Color(0x50C8102E);
+
+    case "New York Islanders":
+      return Color(0x50003087);
+
+    case "New York Rangers":
+      return Color(0x500033A0);
+
+    case "Ottawa Senators":
+      return Color(0x50C8102E);
+
+    case "Philadelphia Flyers":
+      return Color(0x50FA4616);
+
+    case "Pittsburgh Penguins":
+      return Color(0x50000000);
+
+    case "San Jose Sharks":
+      return Color(0x50006272);
+
+    case "St. Louis Blues":
+      return Color(0x50003087);
+
+    case "Tampa Bay Lightning":
+      return Color(0x5000205B);
+
+    case "Toronto Maple Leafs":
+      return Color(0x5000205B);
+
+    case "Vancouver Canucks":
+      return Color(0x5000205B);
+
+    case "Vegas Golden Knights":
+      return Color(0x50333F48);
+
+    case "Washington Capitals":
+      return Color(0x50C8102E);
+
+    case "Winnipeg Jets":
+      return Color(0x50041E42);
+
+    default:
+      return Color(0x50FFFFFF);
   }
 }

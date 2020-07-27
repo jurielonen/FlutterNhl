@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/award/award_reducer.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_reducer.dart';
+import 'package:FlutterNhl/redux/states/game/game_reducer.dart';
 import 'package:FlutterNhl/redux/states/player/player_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_reducer.dart';
@@ -46,6 +47,8 @@ AppState appReducer(AppState state, dynamic action) {
     return state.copyWith(draftState: draftReducer(state.draftState, action));
   } else if (action is AwardAction) {
     return state.copyWith(awardState: awardReducer(state.awardState, action));
+  } else if(action is GameAction){
+    return state.copyWith(gameState: gameReducer(state.gameState, action));
   }
   return state;
 }

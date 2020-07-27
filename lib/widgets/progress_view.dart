@@ -1,6 +1,19 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:flutter/material.dart';
 
+class SliverProgressView extends StatelessWidget {
+  final String msg;
+
+  const SliverProgressView({Key key, this.msg}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      child: ProgressView(msg),
+    );
+  }
+}
+
+
 class ProgressView extends StatelessWidget {
 
   final String msg;

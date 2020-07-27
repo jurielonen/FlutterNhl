@@ -1,4 +1,6 @@
-import 'package:FlutterNhl/redux/models/constants.dart';
+import 'dart:ui';
+
+import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
@@ -9,6 +11,7 @@ class Team {
   final int id;
   final String name;
   final String abb;
+
 
   Team({@required this.id, @required this.name, @required this.abb});
   Team.clone(Team team) : this(id: team.id, name: team.name, abb: team.abb);
@@ -64,6 +67,7 @@ class Team {
   }
 
   String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
+  Color get teamColor => getTeamColor(name);
 }
 
 class TeamSchedule extends Team {

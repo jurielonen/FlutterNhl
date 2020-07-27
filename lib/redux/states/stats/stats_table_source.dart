@@ -1,10 +1,11 @@
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
-import 'package:FlutterNhl/redux/models/constants.dart';
+import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
+import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:flutter/material.dart';
 
 class StatsTableSource {
@@ -65,8 +66,8 @@ class StatsTableSource {
                 ])),
             onTap: () => Navigator.pushNamed(context, route,
                 arguments: type == StatType.TEAM
-                    ? TeamPageArguments(Team.fromJson(statRow))
-                    : PlayerPageArguments(Player.fromJson(statRow), type))));
+                    ? TeamArguments(Team.fromJson(statRow))
+                    : PlayerArguments(Player.fromJson(statRow), type))));
         displayItems.forEach((element) {
           if (statRow.containsKey(element)) {
             tCells.add(DataCell(Text(statRow[element].toString())));
@@ -78,24 +79,4 @@ class StatsTableSource {
     });
     return tRows;
   }
-}
-
-class PlayerPageArguments {
-  final Player player;
-  final StatType type;
-
-  int get playerId => player.id;
-  String get playerFullName => player.fullname;
-
-  PlayerPageArguments(this.player, this.type);
-}
-
-class TeamPageArguments {
-  final Team team;
-  final StatType type = StatType.TEAM;
-
-  int get teamId => team.id;
-  String get teamName => team.name;
-
-  TeamPageArguments(this.team);
 }

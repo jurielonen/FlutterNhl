@@ -5,12 +5,23 @@ import 'package:flutter/material.dart';
 import 'error_view.dart';
 
 class NestedTemplateViewAppBarContent {
-  double expandedHeight() { return 0; }
+  double expandedHeight() {
+    return 0;
+  }
+
   /*bool titleUsed() { return false;}
   bool expandedUsed() { return false;}*/
-  Widget getLeading() {return null;}
-  Widget getTitle(bool isScrolled) {return null;}
-  Widget getExpanded() { return null;}
+  Widget getLeading() {
+    return null;
+  }
+
+  Widget getTitle(bool isScrolled) {
+    return null;
+  }
+
+  Widget getExpanded() {
+    return null;
+  }
 }
 
 class NestedTemplateView extends StatefulWidget {
@@ -22,11 +33,11 @@ class NestedTemplateView extends StatefulWidget {
 
   const NestedTemplateView(
       {Key key,
-      this.tabs,
-      this.loadingStatus,
-      this.errorMsg,
-      this.onTabPressed,
-      this.content})
+      @required this.tabs,
+      @required this.loadingStatus,
+      @required this.errorMsg,
+      @required this.onTabPressed,
+      @required this.content})
       : super(key: key);
 
   @override

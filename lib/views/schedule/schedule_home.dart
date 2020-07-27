@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/viewmodel/schedule_view_model.dart';
 import 'package:FlutterNhl/views/schedule/schedule_game.dart';
+import 'package:FlutterNhl/widgets/custom_date_picker.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'file:///C:/Users/juri/Documents/GitHub/FlutterNhl/lib/widgets/template_view.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +38,13 @@ class ScheduleHome extends StatelessWidget {
       snap: false,
       title: Text('NHL'),
       expandedHeight: 150.0,
-      flexibleSpace: FlexibleSpaceBar(
-        background: _buildDatePicker(date, onChangeDate),
+      bottom: PreferredSize(
+        child: _buildDatePicker(date, onChangeDate),
+        preferredSize: Size.fromHeight(60),
       ),
+      /*flexibleSpace: FlexibleSpaceBar(
+        background: _buildDatePicker(date, onChangeDate),
+      ),*/
     );
   }
 
@@ -56,7 +61,13 @@ class ScheduleHome extends StatelessWidget {
               tooltip: 'Previous days games',
               onPressed: () => onChangeDate(date.subtract(Duration(days: 1))),
             ),
-            Text(Styles.dateFormat.format(date)),
+            CustomDateTimePicker(
+                config: CustomDatePickerConfig(
+                    DateTime(2010),
+                    DateTime.now().add(Duration(days: 365)),
+                    (DateTime date) => onChangeDate(date),
+                    DatePickerMode.day),
+                selectedDate: date),
             IconButton(
               icon: Icon(Icons.navigate_next),
               tooltip: 'Next days games',
@@ -69,7 +80,7 @@ class ScheduleHome extends StatelessWidget {
   }
 
   Widget _getGamesView(ScheduleGames selectedSchedule) {
-    if(selectedSchedule == null){
+    if (selectedSchedule == null) {
       return SliverFillRemaining(
         child: ErrorView('No data downloaded yet'),
       );
@@ -86,7 +97,7 @@ class ScheduleHome extends StatelessWidget {
   }
 
   Widget _getEmptyView(Schedule selectedSchedule) {
-    if(selectedSchedule == null){
+    if (selectedSchedule == null) {
       return SliverFillRemaining(
         child: ErrorView('No data downloaded yet'),
       );
