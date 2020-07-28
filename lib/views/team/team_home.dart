@@ -46,8 +46,8 @@ class TeamPageAppBarContent implements NestedTemplateViewAppBarContent {
   }
 
   @override
-  Widget getLeading() {
-    return Text('');
+  bool getLeading() {
+    return false;
   }
 }
 

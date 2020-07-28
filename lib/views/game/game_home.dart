@@ -14,7 +14,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 class GameHome extends StatelessWidget {
   static const String routeName = '/game';
   final GameArgument argument;
-  const GameHome({Key key, this.argument}) : super(key: key);
+  const GameHome({Key key, @required this.argument}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,9 +25,9 @@ class GameHome extends StatelessWidget {
         onDispose: (store) => store.dispatch(GameExited()),
           builder: (ctx, viewModel) {
             if (viewModel.game is GameFinal) {
-              return GameFinalView(game: viewModel.game,);
+              return GameFinalView(game: viewModel.game, loadingStatus: viewModel.loadingStatus, errorMsg: viewModel.errorMsg,);
             } else if (viewModel.game is GamePreview) {
-              return GamePreviewView(game: viewModel.game);
+              return GamePreviewView(game: viewModel.game, loadingStatus: viewModel.loadingStatus, errorMsg: viewModel.errorMsg,);
             } else {
               if (viewModel.errorMsg != '') {
                 return ErrorView(viewModel.errorMsg);

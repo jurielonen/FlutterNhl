@@ -63,8 +63,8 @@ class PlayerPageAppBarContent implements NestedTemplateViewAppBarContent {
   }
 
   @override
-  Widget getLeading() {
-    return Text('');
+  bool getLeading() {
+    return false;
   }
 
  /* @override

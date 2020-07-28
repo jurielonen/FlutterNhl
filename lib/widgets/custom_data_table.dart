@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
+import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ abstract class CustomDataTableSource {
 class CustomDataTable extends StatefulWidget {
   final CustomDataTableSource dataTableSource;
 
-  const CustomDataTable({Key key, this.dataTableSource}) : super(key: key);
+  const CustomDataTable({Key key, @required this.dataTableSource}) : super(key: key);
 
   @override
   _CustomDataTableState createState() => _CustomDataTableState();
@@ -38,47 +39,51 @@ class _CustomDataTableState extends State<CustomDataTable> {
       });
     };
     return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              SizedBox(
-                width: 100,
-                height: 30,
-                child: Center(
-                  child: Text(widget.dataTableSource.tableCorner,
-                      style: Styles.playerTableText),
+          scrollDirection: Axis.vertical,
+          child: Row(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 100,
+                      height: 30,
+                      child: Center(
+                        child: Text(widget.dataTableSource.tableCorner,
+                            style: Styles.playerTableText),
+                      ),
+                    ),
+                    ...widget.dataTableSource.firstColumn
+                        .map((row) => SizedBox(
+                              width: 100,
+                              height: 20,
+                              child: Center(
+                                child: Text(
+                                  row,
+                                  style: Styles.playerTableText,
+                                ),
+                              ),
+                            ))
+                        .toList()
+                  ],
                 ),
-              ),
-              ...widget.dataTableSource.firstColumn
-                  .map((row) => SizedBox(
-                        width: 100,
-                        height: 20,
-                        child: Center(
-                          child: Text(
-                            row,
-                            style: Styles.playerTableText,
-                          ),
-                        ),
-                      ))
-                  .toList()
-            ],
-          ),
-          DataTable(
-            headingRowHeight: 30.0,
-            horizontalMargin: 5.0,
-            columnSpacing: 3.0,
-            dataRowHeight: 20.0,
-            columns: widget.dataTableSource.columns,
-            rows: widget.dataTableSource.rows,
-            sortAscending: widget.dataTableSource.sortAscending,
-            sortColumnIndex: widget.dataTableSource.sortColumn,
-          ),
-        ],
-      ),
-    );
-    return Container();
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      headingRowHeight: 30.0,
+                      horizontalMargin: 5.0,
+                      columnSpacing: 3.0,
+                      dataRowHeight: 20.0,
+                      columns: widget.dataTableSource.columns,
+                      rows: widget.dataTableSource.rows,
+                      sortAscending: widget.dataTableSource.sortAscending,
+                      sortColumnIndex: widget.dataTableSource.sortColumn,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        );
   }
 
   void rowCallBack(Argument args, String route){

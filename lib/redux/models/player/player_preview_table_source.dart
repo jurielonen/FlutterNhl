@@ -2,7 +2,6 @@ import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
-import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +13,8 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   DataColumnSortCallback _dataColumnSortCallback =
       (int columnIndex, bool ascending) =>
           print('Pressed $columnIndex $ascending');
-  DataRowTapCallBack _dataRowTapCallBack = (args, route) => print('pressed row: $args, $route');
+  DataRowTapCallBack _dataRowTapCallBack =
+      (args, route) => print('pressed row: $args, $route');
   int _sortColumn = 0;
   bool _sortAscending = true;
   List<DataColumn> _column = [];
@@ -56,13 +56,18 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
 
   DataRow _getRow(PlayerGame player) {
     _firstColumn.add(player.fullname);
-
+    List<DataCell> cells = _keys
+        .map(
+          (key) => DataCell(
+            Text(getStatFromMap(key, player.stats)),
+            onTap: () => _dataRowTapCallBack(
+                PlayerArguments(player, type), Routes.player),
+          ),
+        ).toList();
     return DataRow(
-      cells:
-          _keys.map((key) => DataCell(Text(getStatFromMap(key, player.stats)), onTap: () => _dataRowTapCallBack(PlayerArguments(player, type), Routes.player))),
+      cells: cells,
     );
   }
-
 
   @override
   bool get sortAscending => _sortAscending;
@@ -87,7 +92,6 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   set setRowCallBack(dataRowTapCallBack) {
     _dataRowTapCallBack = dataRowTapCallBack;
   }
-
 }
 
 const List<String> playerKeys = [

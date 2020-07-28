@@ -1,48 +1,33 @@
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 
-import 'error_view.dart';
-
-class NestedTemplateViewAppBarContent {
-  double expandedHeight() {
-    return 0;
-  }
-
-  bool getLeading() {
-    return true;
-  }
-
-  Widget getTitle(bool isScrolled) {
-    return null;
-  }
-
-  Widget getExpanded() {
-    return null;
-  }
-}
-
-class NestedTemplateView extends StatefulWidget {
-  final Map<String, List<Widget>> tabs;
+class NestedTemplateView2 extends StatefulWidget {
+  final List<String> tabs;
   final LoadingStatus loadingStatus;
   final String errorMsg;
   final Function(int) onTabPressed;
   final NestedTemplateViewAppBarContent content;
+  final Widget Function(String tab) successContent;
 
-  const NestedTemplateView(
+  const NestedTemplateView2(
       {Key key,
-      @required this.tabs,
-      @required this.loadingStatus,
-      @required this.errorMsg,
-      @required this.onTabPressed,
-      @required this.content})
+        @required this.tabs,
+        @required this.loadingStatus,
+        @required this.errorMsg,
+        @required this.onTabPressed,
+        @required this.content,
+        @required this.successContent,
+      })
       : super(key: key);
 
   @override
-  _NestedTemplateViewState createState() => _NestedTemplateViewState();
+  _NestedTemplateView2State createState() => _NestedTemplateView2State();
 }
 
-class _NestedTemplateViewState extends State<NestedTemplateView>
+class _NestedTemplateView2State extends State<NestedTemplateView2>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   ScrollController _scrollController;
@@ -82,7 +67,7 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
       },
       body: TabBarView(
         controller: _tabController,
-        children: widget.tabs.keys.map((String name) {
+        children: widget.tabs.map((String name) {
           return SafeArea(
             key: PageStorageKey<String>(name),
             top: false,
@@ -90,7 +75,14 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
             child: Builder(
               builder: (BuildContext context) {
                 return CustomScrollView(
-                    slivers: _getStateWidget(context, name));
+                  slivers: <Widget>[
+                    SliverOverlapInjector(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    ),
+                    _getStateWidget(context, name),
+                  ],
+                );
+                //return _getStateWidget(context, name);
               },
             ),
           );
@@ -110,49 +102,35 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
       flexibleSpace: content.getExpanded(),
       bottom: TabBar(
         controller: controller,
-        tabs: widget.tabs.keys
+        tabs: widget.tabs
             .map((String name) => Tab(
-                  text: name,
-                ))
+          text: name,
+        ))
             .toList(),
       ),
     );
   }
 
-  List<Widget> _getStateWidget(BuildContext context, String tab) {
-    List<Widget> widgets = [
+  Widget _getStateWidget(BuildContext context, String tab) {
+    /*List<Widget> widgets = [
       SliverOverlapInjector(
         handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
       )
-    ];
+    ];*/
     switch (widget.loadingStatus) {
       case LoadingStatus.IDLE:
       case LoadingStatus.LOADING:
-        widgets.add(SliverPadding(
-          padding: const EdgeInsets.all(8.0),
-          sliver: SliverFillRemaining(
-            child: ProgressView('Loading player'),
-          ),
-        ));
+        return SliverProgressView(msg: 'Loading player');
         break;
       case LoadingStatus.ERROR:
-        widgets.add(SliverPadding(
-          padding: const EdgeInsets.all(8.0),
-          sliver: SliverFillRemaining(
-            child: ErrorView(widget.errorMsg),
-          ),
-        ));
+        return SliverErrorView(msg: widget.errorMsg);
         break;
       case LoadingStatus.SUCCESS:
-        widgets.addAll(widget.tabs[tab]);
+        return widget.successContent(tab);
         break;
       default:
-        widgets.add(SliverPadding(
-          padding: const EdgeInsets.all(8.0),
-          sliver: ErrorView('Unknown state'),
-        ));
+        return SliverErrorView(msg: 'Unknown state');
     }
-    return widgets;
   }
 
   void _listenToScrollChange() {
@@ -167,5 +145,3 @@ class _NestedTemplateViewState extends State<NestedTemplateView>
     }
   }
 }
-
-

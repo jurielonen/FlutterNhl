@@ -9,7 +9,7 @@ class ImageCard extends StatelessWidget {
   final String title;
   final String description;
 
-  const ImageCard({Key key, this.onPressed, this.imageUrl, this.title, this.description}) : super(key: key);
+  const ImageCard({Key key, @required this.onPressed, @required this.imageUrl, @required this.title, @required this.description}) : super(key: key);
 
   Widget _buildDetails() {
     return FrostyBackground(

@@ -1,8 +1,10 @@
 import 'package:FlutterNhl/constants/colors.dart';
+import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/game/game_enums.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
+import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/content_card.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +20,7 @@ class ScheduleGameCard extends StatelessWidget {
       child: PressableCard(
         onPressed: (){
           print('Pressed');
-          //Navigator.pushNamed(context, Routes.game, arguments: _game);
+          Navigator.pushNamed(context, Routes.game, arguments: GameArgument(_game));
         },
         color: kNHLBackground,
         child: Row(

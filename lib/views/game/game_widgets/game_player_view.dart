@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
-import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
+import 'package:FlutterNhl/redux/models/player/player_preview_table_source.dart';
+import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 
@@ -11,15 +12,11 @@ class GamePlayerView extends StatelessWidget {
   const GamePlayerView({Key key, this.players, this.type}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [];
     if(players != null && players.isNotEmpty){
-
+      final PlayerPreviewTableSource source = PlayerPreviewTableSource(type: type, players: players);
+      return SliverToBoxAdapter(child: CustomDataTable(dataTableSource: source,));
     } else {
-      widgets.add(SliverErrorView(msg: 'No players downloaded',));
+      return SliverErrorView(msg: 'No players downloaded',);
     }
-
-    return CustomScrollTemplateView(
-      slivers: widgets,
-    );
   }
 }

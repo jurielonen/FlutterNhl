@@ -26,8 +26,8 @@ class StatsAppBarContent implements NestedTemplateViewAppBarContent {
   }
 
   @override
-  Widget getLeading() {
-    return null;
+  bool getLeading() {
+    return true;
   }
 
 }
