@@ -18,21 +18,31 @@ class GameHome extends StatelessWidget {
   const GameHome({Key key, @required this.argument}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return /*Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: _getTitle(),
       ),
-      body: StoreConnector<AppState, GameViewModel>(
-        distinct: true,
-        onInit: (store) => store.dispatch(GameEntered(argument.game)),
-        converter: (store) => GameViewModel.fromStore(store),
-        onDispose: (store) => store.dispatch(GameExited()),
+      body: */
+        Material(
+      child: StoreConnector<AppState, GameViewModel>(
+          distinct: true,
+          onInit: (store) => store.dispatch(GameEntered(argument.game)),
+          converter: (store) => GameViewModel.fromStore(store),
+          onDispose: (store) => store.dispatch(GameExited()),
           builder: (ctx, viewModel) {
             if (viewModel.game is GameFinal) {
-              return GameFinalView(game: viewModel.game, loadingStatus: viewModel.loadingStatus, errorMsg: viewModel.errorMsg,);
+              return GameFinalView(
+                game: viewModel.game,
+                loadingStatus: viewModel.loadingStatus,
+                errorMsg: viewModel.errorMsg,
+              );
             } else if (viewModel.game is GamePreview) {
-              return GamePreviewView(game: viewModel.game, loadingStatus: viewModel.loadingStatus, errorMsg: viewModel.errorMsg,);
+              return GamePreviewView(
+                game: viewModel.game,
+                loadingStatus: viewModel.loadingStatus,
+                errorMsg: viewModel.errorMsg,
+              );
             } else {
               if (viewModel.errorMsg != '') {
                 return ErrorView(viewModel.errorMsg);
@@ -40,8 +50,7 @@ class GameHome extends StatelessWidget {
                 return ProgressView('Loading game');
               }
             }
-          }
-      ),
+          }),
     );
   }
 

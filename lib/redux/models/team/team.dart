@@ -10,6 +10,7 @@ import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:kt_dart/collection.dart';
 
 class Team {
   final int id;
@@ -130,24 +131,34 @@ class TeamSchedule extends Team {
 }
 
 class TeamPreview extends Team {
-  Map<String, dynamic> teamStats;
-  PlayerPreviewTableSource playerTableSource;
-  PlayerPreviewTableSource goalieTableSource;
+  final List<Game> previousGames;
+  final Map<String, dynamic> teamStats;
+  final PlayerPreviewTableSource playerTableSource;
+  final PlayerPreviewTableSource goalieTableSource;
+  final Map<String, PlayerLastFive> leadersLastFive;
 
   static final Map<int, TeamPreview> _cache = <int, TeamPreview>{};
-
+  static const List<String> lastFiveKeys = ['points', 'assists', 'goals', 'plusMinus', 'timeOnIce'];
   static bool teamStatsDownloaded(int teamId) {
     return _cache.containsKey(teamId);
   }
 
-  TeamPreview({Team team, this.teamStats, this.playerTableSource, this.goalieTableSource})
+  TeamPreview({Team team, this.teamStats, this.playerTableSource, this.goalieTableSource, this.leadersLastFive, this.previousGames})
       : super.clone(team);
 
-  factory TeamPreview.fromJson(Map<String, dynamic> json) {
+  factory TeamPreview.fromJson(Map<String, dynamic> json, {Map<String, dynamic> lastFive}) {
     int tId = getJsonInt('id', json);
     if (_cache.containsKey(tId)) {
       return _cache[tId];
     } else {
+      Map<String, PlayerLastFive> leadersLastFive = {};
+      if(lastFive != null){
+        lastFiveKeys.forEach((stat) {
+          if(lastFive.containsKey(stat)){
+            leadersLastFive[stat] = PlayerLastFive.fromJson(stat, getJsonObject([stat], lastFive));
+          }
+        });
+      }
       List<PlayerGame> players = List<PlayerGame>.from(
           getJsonList(['roster', 'roster'], json)
               .map((e) => PlayerGame.fromJsonPreview(e)));
@@ -158,6 +169,8 @@ class TeamPreview extends Team {
         teamStats: getJsonObject(['teamStats', 0, 'splits', 0, 'stat'], json),
         playerTableSource: PlayerPreviewTableSource(type: StatType.PLAYER, players: skaters),
         goalieTableSource: PlayerPreviewTableSource(type: StatType.GOALIE, players: goalies),
+        leadersLastFive: leadersLastFive,
+        previousGames: List<Game>.from(getJsonList(['previousSchedule', 'dates'], json).map((date) => Game.fromJson(getJsonObject(['games', 0], date))))
       );
     }
   }
@@ -165,8 +178,6 @@ class TeamPreview extends Team {
 
 class TeamFinal extends Team {
   Map<String, dynamic> teamStats;
-  //List<PlayerGame> playerStats;
-  //List<PlayerGame> goalieStats;
   PlayerPreviewTableSource playerTableSource;
   PlayerPreviewTableSource goalieTableSource;
 

@@ -16,6 +16,7 @@ class StatsApi {
   StatsApi(this.client);
 
   static final String baseUrl = 'statsapi.web.nhl.com';
+  static const String baseUrl2 = 'www-league.nhlstatic.com';
   static final String printMsg = 'StatsApi';
 
   Future<Null> fetchSeason() async {
@@ -43,13 +44,26 @@ class StatsApi {
   }
 
   Future<GamePreview> fetchGamePreview(Game game) async {
+    final searchUri2 = Uri.https(
+        baseUrl2, '/perseus/lastFive/v1/all/${game.homeTeam.id}.json');
+    Map<String, dynamic> homeLastFive = {};
+    await fetch(searchUri2, client).then((value) => homeLastFive = value);
+
+    final searchUri3 = Uri.https(
+        baseUrl2, '/perseus/lastFive/v1/all/${game.awayTeam.id}.json');
+    Map<String, dynamic> awayLastFive = {};
+    await fetch(searchUri3, client).then((value) => awayLastFive = value);
+
     final searchUri = Uri.https(baseUrl, '/api/v1/teams', {
       'teamId': '${game.homeTeam.id},${game.awayTeam.id}',
-      'expand': 'team.roster,team.stats,roster.person,person.stats,team.schedule.previous,team.schedule.next',
-      'stats': 'statsSingleSeason'
+      'hydrate':
+          'previousSchedule(limit=5,linescore,team),roster(person(stats(splits=statsSingleSeason))),stats',
+      'gameType': 'P,R'
     });
-    print('$printMsg fetchGamePreview: $searchUri');
-    return GamePreview.fromJson(game, await fetch(searchUri, client));
+    print('$printMsg fetchGamePreview: $searchUri, $searchUri2, $searchUri3');
+    return GamePreview.fromJson(game, await fetch(searchUri, client),
+        homeLastFive: getJsonObject(['stats'], homeLastFive),
+        awayLastFive: getJsonObject(['stats'], awayLastFive));
   }
 
   Future<Content> fetchGameContent(int gameId) async {

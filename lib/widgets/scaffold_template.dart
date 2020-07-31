@@ -1,0 +1,92 @@
+import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/progress_view.dart';
+import 'package:flutter/material.dart';
+import 'nested_template_view2.dart';
+
+class ScaffoldTemplate extends StatefulWidget {
+  final Widget appBarTitle;
+  final List<NestedTemplateTab> tabs;
+  final LoadingStatus loadingStatus;
+  final String errorMsg;
+  final Widget Function(String tab) onTabChanged;
+  final String loadingText;
+
+  const ScaffoldTemplate(
+      {Key key,
+      @required this.loadingStatus,
+      @required this.errorMsg,
+      @required this.onTabChanged,
+      @required this.appBarTitle,
+      @required this.tabs, @required this.loadingText})
+      : super(key: key);
+
+  @override
+  _ScaffoldTemplateState createState() => _ScaffoldTemplateState();
+}
+
+class _ScaffoldTemplateState extends State<ScaffoldTemplate> with SingleTickerProviderStateMixin {
+  TabController _tabController;
+  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: widget.tabs.length, initialIndex: 0);
+    _pageController = PageController(initialPage: _tabController.index);
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: widget.appBarTitle,
+
+        bottom: TabBar(
+          isScrollable: widget.tabs.length > 4 ? true : false,
+          controller: _tabController,
+          tabs: widget.tabs
+              .map((tab) => Tab(
+                    child: tab.child,
+                  ))
+              .toList(),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        physics: NeverScrollableScrollPhysics(),
+        children: widget.tabs.map((tab) {
+          print('TabBarView: $tab');
+          String text = tab.text;
+          return SafeArea(
+            top: false,
+            bottom: false,
+            child: PageView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              itemBuilder: (context, position) {
+                print('PageView.builder: $position');
+                return _getPageContent(text);
+              },
+              itemCount: widget.tabs.length,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _getPageContent(String text){
+    switch(widget.loadingStatus){
+      case LoadingStatus.IDLE:
+      case LoadingStatus.LOADING:
+        return ProgressView(widget.loadingText);
+      case LoadingStatus.SUCCESS:
+        return widget.onTabChanged(text);
+      case LoadingStatus.ERROR:
+        return ErrorView(widget.errorMsg == '' ? 'Error' : widget.errorMsg);
+    }
+  }
+}

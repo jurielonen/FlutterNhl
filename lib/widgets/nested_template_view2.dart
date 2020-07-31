@@ -5,8 +5,15 @@ import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 
+class NestedTemplateTab {
+  final Widget child;
+  final String text;
+
+  NestedTemplateTab({@required this.child, @required this.text});
+}
+
 class NestedTemplateView2 extends StatefulWidget {
-  final List<String> tabs;
+  final List<NestedTemplateTab> tabs;
   final LoadingStatus loadingStatus;
   final String errorMsg;
   final Function(int) onTabPressed;
@@ -73,7 +80,7 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
         controller: _tabController,
         physics: NeverScrollableScrollPhysics(),
         children: widget.tabs.map(
-          (String name) {
+          (NestedTemplateTab name) {
             return SafeArea(
               top: false,
               bottom: false,
@@ -81,7 +88,7 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
                 physics: NeverScrollableScrollPhysics(),
                 controller: _pageController,
                 itemBuilder: (context, position) {
-                  return _getStateWidget(context, widget.tabs[_tabController.index]);
+                  return _getStateWidget(context, widget.tabs[_tabController.index].text);
                 },
                 itemCount: widget.tabs.length,
               ),
@@ -119,8 +126,8 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
         child: TabBar(
           controller: controller,
           tabs: widget.tabs
-              .map((String name) => Tab(
-                    text: name,
+              .map((NestedTemplateTab tab) => Tab(
+                    child: tab.child,
                   ))
               .toList(),
         ),

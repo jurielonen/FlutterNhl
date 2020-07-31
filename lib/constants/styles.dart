@@ -8,12 +8,27 @@ import 'package:intl/intl.dart';
 import 'colors.dart';
 
 abstract class Styles {
-
   static DateFormat apiDateFormat = DateFormat('yyyy-MM-dd');
   static DateFormat dateFormat = DateFormat('dd.MM.yyyy');
   static DateFormat dateWithoutYearFormat = DateFormat('dd.MM');
   static DateFormat timeFormat = DateFormat('HH:mm');
   static DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
+
+  static const statTileText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 10,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
+  static const statTileNumber = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 16,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
 
   static const playerTableText = TextStyle(
     color: kPrimaryTextColor,
@@ -23,7 +38,6 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
-
   static const playerTableTeamText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
@@ -31,7 +45,6 @@ abstract class Styles {
     fontStyle: FontStyle.italic,
     fontWeight: FontWeight.normal,
   );
-
 
   static const cardTeamWinnerText = TextStyle(
     color: kPrimaryTextColor,
@@ -145,7 +158,6 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
-
   static const playTitleText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
@@ -153,7 +165,6 @@ abstract class Styles {
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.bold,
   );
-
 
   static const playSubtitleText = TextStyle(
     color: kPrimaryTextColor,
@@ -163,69 +174,79 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
-  static Widget buildPlayerCircleIcon(Player player){
-    if(player != null && player.id != -1){
-      return CircleAvatar(backgroundImage: NetworkImage(player.headShotUrl), backgroundColor: Colors.black, );
+  static Widget buildPlayerCircleIcon(Player player) {
+    if (player != null && player.id != -1) {
+      return CircleAvatar(
+        backgroundImage: NetworkImage(player.headShotUrl),
+        backgroundColor: Colors.black,
+      );
     } else {
-      return CircleAvatar(backgroundImage: AssetImage('assets/noimage.png'), backgroundColor: Colors.black,);
+      return CircleAvatar(
+        backgroundImage: AssetImage('assets/noimage.png'),
+        backgroundColor: Colors.black,
+      );
     }
   }
 
-  static Widget buildPlayerBoxIcon(Player player){
-    if(player != null && player.id != -1){
-      return
-        Image.network(
-          player.headShotUrl,
-          fit: BoxFit.cover,
-        );
+  static Widget buildPlayerBoxIcon(Player player) {
+    if (player != null && player.id != -1) {
+      return Image.network(
+        player.headShotUrl,
+        fit: BoxFit.cover,
+      );
     } else {
-      return
-        Image.asset(
-          'assets/noimage.png',
-          fit: BoxFit.cover,
-        );
+      return Image.asset(
+        'assets/noimage.png',
+        fit: BoxFit.cover,
+      );
     }
   }
 
-  static Widget buildTeamBoxIcon(Team team){
-    if(team != null && team.id != -1){
-      return
-        Image.asset(
-          team.logoUrl,
-          fit: BoxFit.cover,
-        );
+  static Widget buildTeamBoxIcon(Team team) {
+    if (team != null && team.id != -1) {
+      return Image.asset(
+        team.logoUrl,
+        fit: BoxFit.cover,
+      );
     } else {
-      return
-        Image.asset(
-          'assets/noimage.png',
-          fit: BoxFit.cover,
-        );
+      return Image.asset(
+        'assets/noimage.png',
+        fit: BoxFit.cover,
+      );
     }
   }
 
-  static Widget buildNetworkImage(String url){
-    if(url != null && url != ''){
-      return Image.network(url, fit: BoxFit.cover,);
+  static Widget buildNetworkImage(String url) {
+    if (url != null && url != '') {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+      );
     } else {
-      return
-        Image.asset(
-          'assets/noimage.png',
-          fit: BoxFit.cover,
-        );
+      return Image.asset(
+        'assets/noimage.png',
+        fit: BoxFit.cover,
+      );
     }
   }
 
-  static Widget buildTeamSvgImage(Team team){
+  static Widget buildTeamSvgImage(Team team, {double size = 30}) {
     return SvgPicture.network(
       team.logoSvg,
-      width: 30,
-      height: 30,
+      width: size,
+      height: size,
       placeholderBuilder: (_) => Container(
         child: SizedBox(
-          width: 30,
-          height: 30,
+          width: size,
+          height: size,
         ),
       ),
     );
   }
+
+  static bool containsPercentage(String statName) =>
+      statName.contains('Percentage') ||
+      statName.contains('Pctg') ||
+      statName.contains('percentage') ||
+      statName.contains('pctg');
 }

@@ -65,13 +65,43 @@ class Player {
     String name = '';
 
     names.asMap().forEach((key, value) {
-      if(key == 0){
-        name += '${value.substring(0,1)}. ';
+      if (key == 0) {
+        name += '${value.substring(0, 1)}. ';
       } else {
         name += '$value ';
       }
     });
     return name;
+  }
+}
+
+class PlayerLastFive extends Player {
+  final String stat;
+  final dynamic value;
+  final String shortName;
+  final String number;
+  final PersonPosition position;
+
+  PlayerLastFive({
+    @required Player player,
+    @required this.stat,
+    @required this.value,
+    @required this.shortName,
+    @required this.number,
+    @required this.position,
+  }) : super.clone(player);
+
+  factory PlayerLastFive.fromJson(String stat, Map<String, dynamic> json) {
+    Map<String, dynamic> player = getJsonObject(['players', 0], json);
+    return PlayerLastFive(
+      player: Player.fromJson(player),
+      stat: stat,
+      value: getJsonDynamic('statValue', json),
+      shortName: getJsonString('shortName', player),
+      number: getJsonString('primaryNumber', player),
+      position:
+          PersonPosition.fromJson(getJsonObject(['primaryPosition'], player)),
+    );
   }
 }
 
@@ -152,6 +182,18 @@ class PersonPosition {
         code == Position.L ||
         code == Position.R) return true;
     return false;
+  }
+
+  String get positionString {
+    switch(code){
+      case Position.C: return 'C';
+      case Position.L: return 'LW';
+      case Position.R: return 'RW';
+      case Position.D: return 'D';
+      case Position.G: return 'G';
+      case Position.HC: return 'HC';
+      default: return 'NA';
+    }
   }
 }
 

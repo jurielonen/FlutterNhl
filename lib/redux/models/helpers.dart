@@ -1,3 +1,13 @@
+///TODO Testing for functions
+dynamic getJsonDynamic(String key, Map<String, dynamic> json){
+  if (json != null) {
+    if (json.containsKey(key)) {
+      return json[key];
+    }
+  }
+  return null;
+}
+
 DateTime getJsonDateTime(String key, Map<String, dynamic> json) {
   try {
     if (json != null) {
@@ -137,7 +147,7 @@ String getStatFromMap(String key, Map<String, dynamic> json, {defaultString = '0
   if(json != null && json.containsKey(key)){
     dynamic value = json[key];
     if(value is double)
-      return value.toStringAsFixed(2);
+      return value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 2);
     return value.toString();
   }
 

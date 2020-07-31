@@ -1,6 +1,6 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
-import 'package:FlutterNhl/views/game/game_preview_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_play_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
@@ -60,13 +60,24 @@ class GameFinalView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NestedTemplateView2(
-      tabs: _tabs,
+      tabs: _createTabs.toList(),
       loadingStatus: loadingStatus,
       errorMsg: errorMsg,
       onTabPressed: (tab) => print('pressed tab $tab'),
       content: GameFinalAppBarContent(game),
       successContent: _buildTabContent(game),
     );
+  }
+
+  Iterable<NestedTemplateTab> get _createTabs sync* {
+    for(String tab in _tabs){
+      if(tab == 'Home')
+        yield NestedTemplateTab(child: Center(child: Row(children: <Widget>[Styles.buildTeamSvgImage(game.home), Text(tab)],),), text: tab);
+      else if(tab == 'Away')
+        yield NestedTemplateTab(child: Center(child: Row(children: <Widget>[Styles.buildTeamSvgImage(game.away), Text(tab)],),), text: tab);
+      else
+        yield NestedTemplateTab(child: Center(child: Text(tab)), text: tab);
+    }
   }
 
   Map<String, Widget> _buildTabContent(GameFinal game) {
