@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'colors.dart';
 
@@ -214,4 +215,17 @@ abstract class Styles {
     }
   }
 
+  static Widget buildTeamSvgImage(Team team){
+    return SvgPicture.network(
+      team.logoSvg,
+      width: 30,
+      height: 30,
+      placeholderBuilder: (_) => Container(
+        child: SizedBox(
+          width: 30,
+          height: 30,
+        ),
+      ),
+    );
+  }
 }

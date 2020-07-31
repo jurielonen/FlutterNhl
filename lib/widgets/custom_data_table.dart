@@ -21,7 +21,6 @@ abstract class CustomDataTableSource {
   set setColumnSortCallBack(DataColumnSortCallback dataColumnSortCallback);
   void callback(int columnIndex, bool ascending);
   set setRowCallBack(DataRowTapCallBack dataRowTapCallBack);
-  Iterable<Widget> get firstColumnTest;
 }
 
 class CustomDataTable extends StatefulWidget {

@@ -154,12 +154,6 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   set setRowCallBack(dataRowTapCallBack) {
     _dataRowTapCallBack = dataRowTapCallBack;
   }
-
-  @override
-  Iterable<Widget> get firstColumnTest sync* {
-    print('firstColumnTest');
-    for (Widget column in _firstColumn) yield column;
-  }
 }
 
 const List<String> playerKeys = [

@@ -33,18 +33,11 @@ class ScheduleHome extends StatelessWidget {
 
   Widget _buildSliverAppBar(DateTime date, Function onChangeDate) {
     return SliverAppBar(
-      pinned: true,
-      floating: false,
-      snap: false,
       title: Text('NHL'),
-      expandedHeight: 150.0,
       bottom: PreferredSize(
         child: _buildDatePicker(date, onChangeDate),
-        preferredSize: Size.fromHeight(60),
+        preferredSize: Size.fromHeight(50),
       ),
-      /*flexibleSpace: FlexibleSpaceBar(
-        background: _buildDatePicker(date, onChangeDate),
-      ),*/
     );
   }
 

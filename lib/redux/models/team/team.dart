@@ -70,6 +70,7 @@ class Team {
   }
 
   String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
+  String get logoSvg => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
   Color get teamColor => getTeamColor(name);
 
   static parsePlayerStats(List<PlayerGame> players, List<PlayerGame> skaters,

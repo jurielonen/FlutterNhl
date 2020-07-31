@@ -1,12 +1,19 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
+import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view.dart';
+import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class GamePreviewAppBarContent implements NestedTemplateViewAppBarContent {
+  final GamePreview game;
+
+  GamePreviewAppBarContent(this.game);
   @override
   double expandedHeight() {
     return 200.0;
@@ -14,19 +21,51 @@ class GamePreviewAppBarContent implements NestedTemplateViewAppBarContent {
 
   @override
   Widget getExpanded() {
-    return FlexibleSpaceBar(
-      title: Text('Game'),
-    );
+    return null;
   }
 
   @override
   bool getLeading() {
-    return true;
+    return false;
   }
 
   @override
   Widget getTitle(bool isScrolled) {
-    return null;//Text('Game');
+    return null;
+  }
+
+  Widget _getTitle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Styles.buildTeamSvgImage(game.home),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RichText(
+              text: TextSpan(
+                style: Styles.scaffoldGameLoserText,
+                children: <TextSpan>[
+                  TextSpan(
+                      text: '${game.homeTeam.abb}',
+                      style: Styles.scaffoldGameWinnerText),
+                  TextSpan(text: ' VS ', style: Styles.scaffoldGameVsText),
+                  TextSpan(
+                      text: '${game.awayTeam.abb}',
+                      style: Styles.scaffoldGameWinnerText),
+                ],
+              ),
+            ),
+            Text(
+              Styles.dateTimeFormat.format(game.dateTime),
+              style: Styles.scaffoldGameVsText,
+            ),
+          ],
+        ),
+        Styles.buildTeamSvgImage(game.away),
+      ],
+    );
   }
 }
 
@@ -45,71 +84,55 @@ class GamePreviewView extends StatelessWidget {
   static const List<String> _tabs = ['Stats', 'Home', 'Away'];
   @override
   Widget build(BuildContext context) {
-    return NestedTemplateView(
-        tabs: _buildTabContent(game),
+    return NestedTemplateView2(
+        tabs: _tabs, //_buildTabContent(game),
         loadingStatus: loadingStatus,
         errorMsg: errorMsg,
         onTabPressed: (tab) => print('pressed tab $tab'),
-        content: GamePreviewAppBarContent());
-        //successContent: (tab) => _buildTabContent(tab, game));
+        content: GamePreviewAppBarContent(game), //);
+        successContent: _buildTabContent(game));
   }
 
-  Map<String, List<Widget>> _buildTabContent(GamePreview game) {
+  Map<String, Widget> _buildTabContent(GamePreview game) {
     return Map.fromIterable(_tabs,
         key: (tab) => tab.toString(),
         value: (tab) {
           switch (tab) {
             case 'Stats':
-              return [
-                GameStats(
+              return CustomScrollTemplateView(
+                slivers: <Widget>[
+                  GameStats(
                     homeStats: game.home.teamStats,
                     awayStats: game.away.teamStats,
-                    homeColor: game.home.teamColor)
-              ];
+                    homeColor: game.home.teamColor,
+                  ),
+                ],
+              );
             case 'Home':
-              return [
-                GamePlayerView(
-                  players: game.home.playerTableSource,
-                  goalies: game.home.goalieTableSource,
-                )
-              ];
+              return CustomScrollTemplateView(
+                slivers: <Widget>[
+                  GamePlayerView(
+                    players: game.home.playerTableSource,
+                    goalies: game.home.goalieTableSource,
+                  ),
+                ],
+              );
             case 'Away':
-              return [
-                GamePlayerView(
-                  players: game.away.playerTableSource,
-                  goalies: game.away.goalieTableSource,
-                )
-              ];
+              return CustomScrollTemplateView(
+                slivers: <Widget>[
+                  GamePlayerView(
+                    players: game.away.playerTableSource,
+                    goalies: game.away.goalieTableSource,
+                  ),
+                ],
+              );
             default:
-              return [ErrorView(errorMsg)];
+              return CustomScrollTemplateView(
+                slivers: <Widget>[
+                  SliverErrorView(msg: errorMsg == '' ? 'Error' : errorMsg)
+                ],
+              );
           }
         });
   }
-
-  /*Widget _buildTabContent(String tab, GamePreview game){
-    switch (tab) {
-      case 'Stats':
-        return
-          GameStats(
-              homeStats: game.home.teamStats,
-              awayStats: game.away.teamStats,
-              homeColor: game.home.teamColor)
-        ;
-      case 'Home':
-        return
-          GamePlayerView(
-            players: game.home.playerTableSource,
-            goalies: game.home.goalieTableSource,
-          )
-        ;
-      case 'Away':
-        return
-          GamePlayerView(
-            players: game.away.playerTableSource,
-            goalies: game.away.goalieTableSource,
-          );
-      default:
-        return SliverErrorView(errorMsg);
-    }
-  }*/
 }

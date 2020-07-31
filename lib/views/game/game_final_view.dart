@@ -5,9 +5,39 @@ import 'package:FlutterNhl/views/game/game_widgets/game_play_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
+import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:flutter/material.dart';
+
+class GameFinalAppBarContent implements NestedTemplateViewAppBarContent {
+  final GameFinal game;
+
+  GameFinalAppBarContent(this.game);
+  @override
+  double expandedHeight() {
+    return 200.0;
+  }
+
+  @override
+  Widget getExpanded() {
+    return FlexibleSpaceBar(
+      title: Text('Game'),
+    );
+  }
+
+  @override
+  bool getLeading() {
+    return false;
+  }
+
+  @override
+  Widget getTitle(bool isScrolled) {
+    return Text('Game final');
+  }
+
+}
 
 class GameFinalView extends StatelessWidget {
   final GameFinal game;
@@ -34,34 +64,46 @@ class GameFinalView extends StatelessWidget {
       loadingStatus: loadingStatus,
       errorMsg: errorMsg,
       onTabPressed: (tab) => print('pressed tab $tab'),
-      content: GamePreviewAppBarContent(),
-      successContent: (tab) => _buildTabContent(tab, game),
+      content: GameFinalAppBarContent(game),
+      successContent: _buildTabContent(game),
     );
   }
 
-  Widget _buildTabContent(String tab, GameFinal game) {
-    switch (tab) {
-      case 'Stats':
-        return GameStats(
-            homeStats: game.home.teamStats,
-            awayStats: game.away.teamStats,
-            homeColor: game.home.teamColor);
-      case 'Plays':
-        return GamePlayView(plays: game.plays, homeId: game.home.id);
-      case 'Home':
-        return GamePlayerView(
-          players: game.home.playerTableSource,
-          goalies: game.home.goalieTableSource,
-        );
-      case 'Away':
-        return GamePlayerView(
-          players: game.away.goalieTableSource,
-          goalies: game.home.goalieTableSource,
-        );
-      case 'Videos':
-        return GameVideoView(content: game.content,);
-      default:
-        return SliverErrorView(msg: errorMsg);
-    }
+  Map<String, Widget> _buildTabContent(GameFinal game) {
+    return Map.fromIterable(_tabs,
+        key: (tab) => tab.toString(),
+        value: (tab) {
+          switch (tab) {
+            case 'Stats':
+              return CustomScrollTemplateView(
+                  slivers: <Widget>[GameStats(
+                  homeStats: game.home.teamStats,
+                  awayStats: game.away.teamStats,
+                  homeColor: game.home.teamColor),],);
+            case 'Plays':
+              return GamePlayView(plays: game.plays, homeId: game.home.id);
+            case 'Home':
+              return CustomScrollTemplateView(
+                slivers: <Widget>[
+                  GamePlayerView(
+                players: game.home.playerTableSource,
+                goalies: game.home.goalieTableSource,
+              ),],);
+            case 'Away':
+              return CustomScrollTemplateView(
+                slivers: <Widget>[
+                  GamePlayerView(
+                players: game.away.goalieTableSource,
+                goalies: game.home.goalieTableSource,
+              ),],);
+            case 'Videos':
+              return CustomScrollTemplateView(
+                slivers: <Widget>[GameVideoView(content: game.content,),],);
+            default:
+              return CustomScrollTemplateView(
+                  slivers: <Widget>[SliverErrorView(msg: errorMsg),],);
+          }
+        }
+    );
   }
 }

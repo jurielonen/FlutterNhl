@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
@@ -18,6 +19,10 @@ class GameHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: _getTitle(),
+      ),
       body: StoreConnector<AppState, GameViewModel>(
         distinct: true,
         onInit: (store) => store.dispatch(GameEntered(argument.game)),
@@ -37,6 +42,40 @@ class GameHome extends StatelessWidget {
             }
           }
       ),
+    );
+  }
+
+  Widget _getTitle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Styles.buildTeamSvgImage(argument.game.homeTeam),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RichText(
+              text: TextSpan(
+                style: Styles.scaffoldGameLoserText,
+                children: <TextSpan>[
+                  TextSpan(
+                      text: '${argument.game.homeTeam.abb}',
+                      style: Styles.scaffoldGameWinnerText),
+                  TextSpan(text: ' VS ', style: Styles.scaffoldGameVsText),
+                  TextSpan(
+                      text: '${argument.game.awayTeam.abb}',
+                      style: Styles.scaffoldGameWinnerText),
+                ],
+              ),
+            ),
+            Text(
+              Styles.dateTimeFormat.format(argument.game.dateTime),
+              style: Styles.scaffoldGameVsText,
+            ),
+          ],
+        ),
+        Styles.buildTeamSvgImage(argument.game.awayTeam),
+      ],
     );
   }
 }

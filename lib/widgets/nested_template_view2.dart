@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
@@ -10,7 +11,7 @@ class NestedTemplateView2 extends StatefulWidget {
   final String errorMsg;
   final Function(int) onTabPressed;
   final NestedTemplateViewAppBarContent content;
-  final Widget Function(String tab) successContent;
+  final Map<String, Widget> successContent;
 
   const NestedTemplateView2({
     Key key,
@@ -30,10 +31,13 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   ScrollController _scrollController;
+  PageController _pageController;
   bool _isScrolled = false;
+  //int _currentTab = 0;
 
   @override
   void initState() {
+    print('initState');
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_listenToScrollChange);
@@ -44,6 +48,7 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
         widget.onTabPressed(_tabController.index);
       }
     });
+    _pageController = new PageController(initialPage: _tabController.index);
   }
 
   @override
@@ -66,56 +71,65 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
       },
       body: TabBarView(
         controller: _tabController,
-        children: widget.tabs.map((String name) {
-          return SafeArea(
+        physics: NeverScrollableScrollPhysics(),
+        children: widget.tabs.map(
+          (String name) {
+            return SafeArea(
+              top: false,
+              bottom: false,
+              child: PageView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                itemBuilder: (context, position) {
+                  return _getStateWidget(context, widget.tabs[_tabController.index]);
+                },
+                itemCount: widget.tabs.length,
+              ),
+            );
+          },
+        ).toList(),
+      ),
+    );
+    /*return SafeArea(
             top: false,
             bottom: false,
             child: Builder(
               builder: (BuildContext context) {
-                return CustomScrollView(
-                  slivers: <Widget>[
-                    SliverOverlapInjector(
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                          context),
-                    ),
-                    _getStateWidget(context, name),
-                  ],
-                );
-                //return _getStateWidget(context, name);
+                return _getStateWidget(context, name);
               },
-            ),
-          );
+            ).toList(),
+          ),);
         }).toList(),
       ),
-    );
+    );*/
   }
 
   Widget _createAppBar(
       TabController controller, NestedTemplateViewAppBarContent content) {
     return SliverAppBar(
-      title: content.getTitle(_isScrolled),
+      //title: content.getTitle(_isScrolled),
       automaticallyImplyLeading: content.getLeading(),
       pinned: true,
+      floating: false,
       forceElevated: true,
       expandedHeight: content.expandedHeight(),
-      flexibleSpace: content.getExpanded(),
-      bottom: TabBar(
-        controller: controller,
-        tabs: widget.tabs
-            .map((String name) => Tab(
-                  text: name,
-                ))
-            .toList(),
+      //flexibleSpace: content.getExpanded(),
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: TabBar(
+          controller: controller,
+          tabs: widget.tabs
+              .map((String name) => Tab(
+                    text: name,
+                  ))
+              .toList(),
+        ),
       ),
     );
   }
 
   Widget _getStateWidget(BuildContext context, String tab) {
-    /*List<Widget> widgets = [
-      SliverOverlapInjector(
-        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-      )
-    ];*/
+    print('_getStateWidget: $tab');
     switch (widget.loadingStatus) {
       case LoadingStatus.IDLE:
       case LoadingStatus.LOADING:
@@ -125,10 +139,14 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
         return SliverErrorView(msg: widget.errorMsg);
         break;
       case LoadingStatus.SUCCESS:
-        return widget.successContent(tab);
+        return widget.successContent[tab];
         break;
       default:
-        return SliverErrorView(msg: 'Unknown state');
+        return CustomScrollTemplateView(
+          slivers: <Widget>[
+            SliverErrorView(msg: 'Unknown state'),
+          ],
+        );
     }
   }
 
