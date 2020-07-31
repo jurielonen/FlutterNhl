@@ -1,11 +1,11 @@
-import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
-import 'package:FlutterNhl/views/game/game_preview.dart';
+import 'package:FlutterNhl/views/game/game_preview_view.dart';
+import 'package:FlutterNhl/views/game/game_widgets/game_play_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
+import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:flutter/material.dart';
 
@@ -46,18 +46,22 @@ class GameFinalView extends StatelessWidget {
             homeStats: game.home.teamStats,
             awayStats: game.away.teamStats,
             homeColor: game.home.teamColor);
+      case 'Plays':
+        return GamePlayView(plays: game.plays, homeId: game.home.id);
       case 'Home':
         return GamePlayerView(
-          players: game.home.playerStats,
-          type: StatType.PLAYER,
+          players: game.home.playerTableSource,
+          goalies: game.home.goalieTableSource,
         );
       case 'Away':
         return GamePlayerView(
-          players: game.away.playerStats,
-          type: StatType.PLAYER,
+          players: game.away.goalieTableSource,
+          goalies: game.home.goalieTableSource,
         );
+      case 'Videos':
+        return GameVideoView(content: game.content,);
       default:
-        return ErrorView(errorMsg);
+        return SliverErrorView(msg: errorMsg);
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/models/game/play/play.dart';
 import 'package:FlutterNhl/redux/models/game/play/play_enum.dart';
 import 'package:FlutterNhl/views/game/game_widgets/play_card.dart';
 import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
+import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 
 class PlayFilterEntry {
@@ -43,32 +44,14 @@ class _GamePlayViewState extends State<GamePlayView> {
   Widget build(BuildContext context) {
     return CustomScrollTemplateView(
       slivers: <Widget>[
-        SliverAppBar(
-          expandedHeight: 150.0,
-          leading: null,
-          automaticallyImplyLeading: false,
-          flexibleSpace: FlexibleSpaceBar(
-            //centerTitle: true,
-            /*background: Wrap(
-                spacing: 1,
-                runSpacing: 1,
-                //scrollDirection: Axis.horizontal,
-                children: playWidgets.toList(),
-            ),*/
-            background: Container(
-              color: Colors.black,
-              alignment: Alignment.center,
-              child: Wrap(
-                spacing: 5,
-                runSpacing: 5,
-                //scrollDirection: Axis.horizontal,
-                children: playWidgets.toList(),
-              ),
-            ),
-          ),
-        ),
-        SliverList(
-          delegate: SliverChildListDelegate(filteredPlayList.toList()),
+        SliverFixedExtentList(
+          itemExtent: 100.0,
+          delegate: SliverChildBuilderDelegate((BuildContext context, int index){
+            if(playWidgets.length > index)
+              return playWidgets.elementAt(index);
+            else
+              return ErrorView('Unknown index');
+          }, childCount: playWidgets.length),
         ),
       ],
     );

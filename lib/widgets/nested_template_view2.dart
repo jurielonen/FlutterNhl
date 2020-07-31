@@ -12,16 +12,15 @@ class NestedTemplateView2 extends StatefulWidget {
   final NestedTemplateViewAppBarContent content;
   final Widget Function(String tab) successContent;
 
-  const NestedTemplateView2(
-      {Key key,
-        @required this.tabs,
-        @required this.loadingStatus,
-        @required this.errorMsg,
-        @required this.onTabPressed,
-        @required this.content,
-        @required this.successContent,
-      })
-      : super(key: key);
+  const NestedTemplateView2({
+    Key key,
+    @required this.tabs,
+    @required this.loadingStatus,
+    @required this.errorMsg,
+    @required this.onTabPressed,
+    @required this.content,
+    @required this.successContent,
+  }) : super(key: key);
 
   @override
   _NestedTemplateView2State createState() => _NestedTemplateView2State();
@@ -69,7 +68,6 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
         controller: _tabController,
         children: widget.tabs.map((String name) {
           return SafeArea(
-            key: PageStorageKey<String>(name),
             top: false,
             bottom: false,
             child: Builder(
@@ -77,7 +75,8 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
                 return CustomScrollView(
                   slivers: <Widget>[
                     SliverOverlapInjector(
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                          context),
                     ),
                     _getStateWidget(context, name),
                   ],
@@ -104,8 +103,8 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
         controller: controller,
         tabs: widget.tabs
             .map((String name) => Tab(
-          text: name,
-        ))
+                  text: name,
+                ))
             .toList(),
       ),
     );

@@ -59,6 +59,20 @@ class Player {
 
   String get headShotUrl =>
       'https://nhl.bamcontent.com/images/headshots/current/168x168/$id.jpg';
+
+  String get tableName {
+    List<String> names = fullname.split(' ');
+    String name = '';
+
+    names.asMap().forEach((key, value) {
+      if(key == 0){
+        name += '${value.substring(0,1)}. ';
+      } else {
+        name += '$value ';
+      }
+    });
+    return name;
+  }
 }
 
 class PlayerPlay extends Player {

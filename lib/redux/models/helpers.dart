@@ -133,7 +133,7 @@ dynamic _getJsonItem(List<dynamic> keys, dynamic json) {
   return obj;
 }
 
-String getStatFromMap(String key, Map<String, dynamic> json){
+String getStatFromMap(String key, Map<String, dynamic> json, {defaultString = '0'}){
   if(json != null && json.containsKey(key)){
     dynamic value = json[key];
     if(value is double)
@@ -141,5 +141,5 @@ String getStatFromMap(String key, Map<String, dynamic> json){
     return value.toString();
   }
 
-  return '0';
+  return defaultString;
 }

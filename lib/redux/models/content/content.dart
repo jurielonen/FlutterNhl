@@ -75,8 +75,8 @@ class Video {
     VideoPic pic = VideoPic.empty();
     Map<String, dynamic> image = getJsonObject(['image', 'cuts'], json);
     if (image != null && image.isNotEmpty) {
-      if (image.containsKey('248x140')) {
-        pic = VideoPic.fromJson(image['248x140']);
+      if (image.containsKey('960x540')) {
+        pic = VideoPic.fromJson(image['960x540']);
       } else {
         pic = VideoPic.fromJson(image[image.keys.first]);
       }

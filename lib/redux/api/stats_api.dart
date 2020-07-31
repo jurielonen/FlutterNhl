@@ -45,7 +45,7 @@ class StatsApi {
   Future<GamePreview> fetchGamePreview(Game game) async {
     final searchUri = Uri.https(baseUrl, '/api/v1/teams', {
       'teamId': '${game.homeTeam.id},${game.awayTeam.id}',
-      'expand': 'team.roster,team.stats,roster.person,person.stats',
+      'expand': 'team.roster,team.stats,roster.person,person.stats,team.schedule.previous,team.schedule.next',
       'stats': 'statsSingleSeason'
     });
     print('$printMsg fetchGamePreview: $searchUri');

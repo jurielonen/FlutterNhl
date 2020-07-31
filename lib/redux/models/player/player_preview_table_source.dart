@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
@@ -19,27 +20,50 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   bool _sortAscending = true;
   List<DataColumn> _column = [];
   List<DataRow> _rows = [];
-  List<String> _firstColumn = [];
+  List<Widget> _firstColumn = [];
 
-  PlayerPreviewTableSource({@required this.type, @required this.players});
+  PlayerPreviewTableSource({@required this.type, @required this.players}) {
+    _setRows();
+    _setColumns();
+  }
 
   @override
   List<DataColumn> get columns {
     if (_column != null && _column.isNotEmpty) return _column;
 
-    _column.addAll(
-      _keys.map((key) => DataColumn(
-          label: Text(key), onSort: (c, a) => _dataColumnSortCallback(c, a))),
-    );
+    _setColumns();
 
     return _column;
   }
 
+  void _setColumns() {
+    _column = [];
+    _column.addAll(_keys
+        .map(
+          (key) => DataColumn(
+            label: Container(
+              decoration: BoxDecoration(
+                  border:
+                      Border(bottom: BorderSide(color: Colors.grey, width: 3))),
+              child: Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Text(
+                  getColumnAbb(key),
+                  style: CustomDataTableSource.headerRowStyle,
+                ),
+              ),
+            ),
+            onSort: (c, a) => _dataColumnSortCallback(c, a),
+          ),
+        )
+        .toList());
+  }
+
   @override
-  List<String> get firstColumn {
+  List<Widget> get firstColumn {
     if (_firstColumn != null && _firstColumn.isNotEmpty) return _firstColumn;
 
-    rows;
+    _setRows();
 
     return _firstColumn;
   }
@@ -48,22 +72,44 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   List<DataRow> get rows {
     if (_rows != null && _rows.isNotEmpty) return _rows;
 
-    _firstColumn = [];
-    _rows.addAll(players.map((player) => _getRow(player)));
+    _setRows();
 
     return _rows;
   }
 
+  void _setRows() {
+    _firstColumn = [];
+    _rows = [];
+    _rows.addAll(players.map((player) => _getRow(player)));
+  }
+
   DataRow _getRow(PlayerGame player) {
-    _firstColumn.add(player.fullname);
+    _firstColumn.add(
+      GestureDetector(
+        onTap: () =>
+            _dataRowTapCallBack(PlayerArguments(player, type), Routes.player),
+        child: SizedBox(
+          width: CustomDataTableSource.firstColumnWidth,
+          height: CustomDataTableSource.dataRowHeight,
+          child: Center(
+            child: Text(
+              player.tableName,
+              style: CustomDataTableSource.firstColumnStyle,
+            ),
+          ),
+        ),
+      ),
+    );
     List<DataCell> cells = _keys
         .map(
           (key) => DataCell(
-            Text(getStatFromMap(key, player.stats)),
-            onTap: () => _dataRowTapCallBack(
-                PlayerArguments(player, type), Routes.player),
+            Text(
+              getStatFromMap(key, player.stats),
+              style: CustomDataTableSource.cellRowStyle,
+            ),
           ),
-        ).toList();
+        )
+        .toList();
     return DataRow(
       cells: cells,
     );
@@ -76,7 +122,23 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   int get sortColumn => _sortColumn;
 
   @override
-  String get tableCorner => type == StatType.PLAYER ? 'Player' : 'Goalie';
+  Widget get tableCorner {
+    return SizedBox(
+      width: CustomDataTableSource.firstColumnWidth,
+      height: CustomDataTableSource.headerRowHeight,
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Colors.grey, width: 3))),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 3.0, 8.0, 3.0),
+            child: Text(type == StatType.PLAYER ? 'Player' : 'Goalie',
+                style: CustomDataTableSource.firstColumnStyle),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   void callback(int columnIndex, bool ascending) {}
@@ -91,6 +153,12 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   @override
   set setRowCallBack(dataRowTapCallBack) {
     _dataRowTapCallBack = dataRowTapCallBack;
+  }
+
+  @override
+  Iterable<Widget> get firstColumnTest sync* {
+    print('firstColumnTest');
+    for (Widget column in _firstColumn) yield column;
   }
 }
 
@@ -114,7 +182,7 @@ const List<String> playerKeys = [
   'plusMinus',
   'evenTimeOnIce',
   'powerPlayTimeOnIce',
-  'shortHandedTimeOnIce'
+  'shortHandedTimeOnIce',
 ];
 
 const List<String> goalieKeys = [

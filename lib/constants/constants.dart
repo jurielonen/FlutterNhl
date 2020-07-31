@@ -4,14 +4,14 @@ String getColumnAbb(String value) {
   if (constantColumns.containsKey(value)) {
     return constantColumns[value];
   }
-  return '';
+  return 'EMPTY';
 }
 
 String getColumnTooltip(String value) {
   if (constantTooltips.containsKey(value)) {
     return constantTooltips[value];
   }
-  return '';
+  return 'EMPTY';
 }
 
 const Map<String, String> constantColumns = {
