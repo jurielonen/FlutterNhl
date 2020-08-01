@@ -33,6 +33,8 @@ class GamePreviewView extends StatelessWidget {
       onTabChanged: (String tab) => _buildTabContent(tab),
       appBarTitle: GameAppBar.getTitle(game),
       tabs: _createTabs.toList(),
+      loadingText: 'Loading game',
+      //onTabPressed: (int index) => print('tab pressed $index'),
     );
   }
 

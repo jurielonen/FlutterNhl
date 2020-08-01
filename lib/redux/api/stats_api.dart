@@ -19,6 +19,17 @@ class StatsApi {
   static const String baseUrl2 = 'www-league.nhlstatic.com';
   static final String printMsg = 'StatsApi';
 
+  Future<Null> fetchTeams() async {
+    final searchUri = Uri.https(baseUrl, '/api/v1/teams');
+    print('$printMsg fetchTeams: $searchUri');
+    return await fetch(searchUri, client).then((value) {
+      getJsonList(['teams'], value).forEach((team) {
+        print(Team.fromJson(team));
+      });
+    }).catchError((error) => throw Exception(error.toString()));
+
+  }
+
   Future<Null> fetchSeason() async {
     final searchUri = Uri.https(baseUrl, 'api/v1/seasons/current');
     print('$printMsg fetchSeason: $searchUri');

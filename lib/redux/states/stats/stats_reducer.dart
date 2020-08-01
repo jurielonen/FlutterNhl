@@ -9,11 +9,12 @@ StatsState statsReducer(StatsState state, dynamic action) {
   print('STATSSTATE: ${action.runtimeType}');
   if (action is StatsParametersChangedAction) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.IDLE, selectedStat: action.param);
+        loadingStatus: LoadingStatus.IDLE, selectedStat: action.param.copyWith(start: 0));
   } else if (action is StatsParamTypeChangedAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE,
-        selectedStat: StatParameters.create(action.type));
+        selectedStat: StatParameters.create(action.type),
+    );
   } else if (action is StatsRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is StatsNextAction) {

@@ -13,3 +13,16 @@ Position positionFromString(String value){
     default: return Position.N_A;
   }
 }
+
+String positionToFullString(Position position){
+  switch(position) {
+    case Position.C: return 'Center';
+    case Position.D: return 'Defenceman';
+    case Position.G: return 'Goalie';
+    case Position.HC: return 'Head coach';
+    case Position.L: return 'Left wing';
+    case Position.N_A: return 'Unknown';
+    case Position.R: return 'Right wing';
+    default: return 'Unknown';
+  }
+}

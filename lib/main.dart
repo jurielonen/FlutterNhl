@@ -5,6 +5,7 @@ import 'package:FlutterNhl/views/award/recipient/recipient_home.dart';
 import 'package:FlutterNhl/views/game/game_home.dart';
 import 'package:FlutterNhl/views/home_page.dart';
 import 'package:FlutterNhl/views/player/player_home.dart';
+import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/views/team/team_home.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterNhl/constants/theme.dart';
@@ -43,7 +44,9 @@ class _NHLAppState extends State<NHLApp> {
         routes: {
           //TODO: Add routes string from class
           Routes.homepage: (context) => HomePage(),
-          Routes.game: (context) => GameHome(argument: ModalRoute.of(context).settings.arguments,),
+          Routes.game: (context) => GameHome(
+                argument: ModalRoute.of(context).settings.arguments,
+              ),
           Routes.team: (context) => TeamHome(
                 teamArguments: ModalRoute.of(context).settings.arguments,
               ),
@@ -52,6 +55,8 @@ class _NHLAppState extends State<NHLApp> {
           Routes.recipient: (context) => RecipientHome(
                 selectedAward: ModalRoute.of(context).settings.arguments,
               ),
+          Routes.statFilter: (context) => StatFilterPage(
+              arguments: ModalRoute.of(context).settings.arguments)
         },
         home: HomePage(),
         debugShowCheckedModeBanner: false,

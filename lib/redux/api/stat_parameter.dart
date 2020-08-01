@@ -1,3 +1,5 @@
+import 'package:FlutterNhl/redux/models/player/player_enums.dart';
+
 enum StatType { GOALIE, PLAYER, TEAM }
 
 String statTypeToString(StatType type) {
@@ -70,8 +72,10 @@ class StatParameters {
   int start = 0;
   int gamesPlayed = 1;
   int gameType = 2;
-  String startSeason = _getCurrentSeason();
-  String endSeason = _getCurrentSeason();
+  String startSeason = getCurrentSeason();
+  String endSeason = getCurrentSeason();
+  Position position = Position.N_A;
+  int franchiseId = 0;
 
   static final Map<ParamType, StatParameters> _cache =
       <ParamType, StatParameters>{};
@@ -84,7 +88,22 @@ class StatParameters {
       this.gamesPlayed,
       this.gameType,
       this.startSeason,
-      this.endSeason});
+      this.endSeason,
+      this.position,
+      this.franchiseId});
+
+  factory StatParameters.clone(StatParameters params) {
+    return StatParameters.copy(
+      paramType: params.paramType,
+      start: params.start,
+      gamesPlayed: params.gamesPlayed,
+      gameType: params.gameType,
+      startSeason: params.startSeason,
+      endSeason: params.endSeason,
+      position: params.position,
+      franchiseId: params.franchiseId,
+    );
+  }
 
   factory StatParameters.create(ParamType paramType) {
     if (_cache.containsKey(paramType)) {
@@ -106,14 +125,19 @@ class StatParameters {
       int gamesPlayed,
       int gameType,
       String startSeason,
-      String endSeason}) {
+      String endSeason,
+      Position position,
+      int franchiseId}) {
     return StatParameters.copy(
-        paramType: paramType ?? this.paramType,
-        start: start ?? this.start,
-        gamesPlayed: gamesPlayed ?? this.gamesPlayed,
-        gameType: gameType ?? this.gameType,
-        startSeason: startSeason ?? this.startSeason,
-        endSeason: endSeason ?? this.endSeason);
+      paramType: paramType ?? this.paramType,
+      start: start ?? this.start,
+      gamesPlayed: gamesPlayed ?? this.gamesPlayed,
+      gameType: gameType ?? this.gameType,
+      startSeason: startSeason ?? this.startSeason,
+      endSeason: endSeason ?? this.endSeason,
+      position: position ?? this.position,
+      franchiseId: franchiseId ?? this.franchiseId,
+    );
   }
 
   StatParameters nextStats() {
@@ -131,11 +155,11 @@ class StatParameters {
     start = 0;
     gamesPlayed = 1;
     gameType = 2;
-    startSeason = _getCurrentSeason();
-    endSeason = _getCurrentSeason();
+    startSeason = getCurrentSeason();
+    endSeason = getCurrentSeason();
   }
 
-  static String _getCurrentSeason() {
+  static String getCurrentSeason() {
     DateTime currentTime = DateTime.now();
     int year = currentTime.year;
     if (currentTime.month >= DateTime.october && currentTime.day >= 15) {

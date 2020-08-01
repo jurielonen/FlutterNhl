@@ -36,11 +36,7 @@ class StatsMiddleware extends MiddlewareClass<AppState> {
       try {
         StatParameters statParameters = store.state.statsState.selectedParams;
         List<dynamic> tStats = await api.fetchStats(statParameters);
-
-        next(StatsReceived(StatsTableSource.fromData(
-            statParameters.paramType.type,
-            tStats,
-            filterTypeSelector(store.state))));
+        next(StatsReceived(StatTableSource(type: statParameters.paramType.type, displayItems: filterTypeSelector(store.state), stats: tStats),),);
       } catch (e) {
         next(StatsErrorAction(e.toString()));
       }
@@ -57,10 +53,7 @@ Future<Null> getConfig(
       next(ConfigReceived());
       StatParameters statParameters = store.state.statsState.selectedParams;
       List<dynamic> tStats = await api.fetchStats(statParameters);
-      next(StatsReceived(StatsTableSource.fromData(
-          statParameters.paramType.type,
-          tStats,
-          filterTypeSelector(store.state))));
+      next(StatsReceived(StatTableSource(type: statParameters.paramType.type, displayItems: filterTypeSelector(store.state), stats: tStats),),);
     } catch (e) {
       next(StatsErrorAction(e.toString()));
     }

@@ -10,6 +10,7 @@ class ScaffoldTemplate extends StatefulWidget {
   final LoadingStatus loadingStatus;
   final String errorMsg;
   final Widget Function(String tab) onTabChanged;
+  final Function(int) onTabPressed;
   final String loadingText;
 
   const ScaffoldTemplate(
@@ -18,7 +19,7 @@ class ScaffoldTemplate extends StatefulWidget {
       @required this.errorMsg,
       @required this.onTabChanged,
       @required this.appBarTitle,
-      @required this.tabs, @required this.loadingText})
+      @required this.tabs, @required this.loadingText, @required this.onTabPressed,})
       : super(key: key);
 
   @override
@@ -39,19 +40,22 @@ class _ScaffoldTemplateState extends State<ScaffoldTemplate> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    print('asd');
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: widget.appBarTitle,
-
         bottom: TabBar(
           isScrollable: widget.tabs.length > 4 ? true : false,
           controller: _tabController,
+          onTap: (int index) {
+            if(widget.onTabPressed != null)
+              widget.onTabPressed(index);
+          },
           tabs: widget.tabs
               .map((tab) => Tab(
                     child: tab.child,
-                  ))
-              .toList(),
+                  ),
+          ).toList(),
         ),
       ),
       body: TabBarView(
@@ -87,6 +91,8 @@ class _ScaffoldTemplateState extends State<ScaffoldTemplate> with SingleTickerPr
         return widget.onTabChanged(text);
       case LoadingStatus.ERROR:
         return ErrorView(widget.errorMsg == '' ? 'Error' : widget.errorMsg);
+      default:
+        return ErrorView('Unknown tab scaffold template: $text');
     }
   }
 }

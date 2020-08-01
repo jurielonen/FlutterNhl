@@ -93,7 +93,7 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
           height: CustomDataTableSource.dataRowHeight,
           child: Center(
             child: Text(
-              player.tableName,
+              Player.tableName(player.fullname),
               style: CustomDataTableSource.firstColumnStyle,
             ),
           ),

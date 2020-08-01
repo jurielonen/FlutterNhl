@@ -15,7 +15,7 @@ class StatsState {
   final LoadingStatus loadingStatus;
   //final KtMap<ParamType, StatParameters> parameters;
   final StatParameters selectedParams;
-  final StatsTableSource downloadedStats;
+  final StatTableSource downloadedStats;
   final String errorMsg;
 
   factory StatsState.initial() {
@@ -31,7 +31,7 @@ class StatsState {
       {LoadingStatus loadingStatus,
       //KtMap<ParamType, StatParameters> parameters,
       StatParameters selectedStat,
-      StatsTableSource downloadedStats,
+      StatTableSource downloadedStats,
       String errorMsg}) {
     return StatsState(
       loadingStatus: loadingStatus ?? this.loadingStatus,

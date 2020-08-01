@@ -14,14 +14,18 @@ import 'package:kt_dart/collection.dart';
 
 class Team {
   final int id;
+  final int franchiseId;
   final String name;
   final String abb;
 
-  Team({@required this.id, @required this.name, @required this.abb});
-  Team.clone(Team team) : this(id: team.id, name: team.name, abb: team.abb);
+  Team({@required this.id, @required this.name, @required this.abb, @required this.franchiseId});
+  Team.clone(Team team) : this(id: team.id, name: team.name, abb: team.abb, franchiseId: team.franchiseId);
+
+  static Map<int, Team> get teams => _cache;
 
   static final Map<int, Team> _cache = <int, Team>{};
 
+  ///TODO: can simplify this after gets teams from statsapi
   factory Team.fromJson(Map<String, dynamic> json) {
     int tId = getJsonInt('id', json);
     if (tId == -1) {
@@ -50,7 +54,9 @@ class Team {
         if (tAbb == '') {
           tAbb = changeNameToAbb(tName);
         }
-        final temp = Team(id: tId, name: tName, abb: tAbb);
+        
+        int tFId = getJsonInt('franchiseId', json);
+        final temp = Team(id: tId, name: tName, abb: tAbb, franchiseId: tFId);
         _cache[tId] = temp;
         return temp;
       }

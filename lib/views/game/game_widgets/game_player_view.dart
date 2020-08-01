@@ -17,23 +17,7 @@ class GamePlayerView extends StatelessWidget {
       return SliverPadding(
         padding: EdgeInsets.all(8.0),
         sliver: SliverList(
-          delegate:
-              /*SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
-            if(index == 0)
-              return ListTile(title: Text('Players'));
-            else if(index == 1)
-              return getPlayerTable();
-            else if(index == 2)
-              return ListTile(
-                title: Text('Goalies'),
-              );
-            else if(index == 3)
-              return getGoalieTable();
-            else
-              return ErrorView('Unknown index $index');
-    }, childCount: 4),*/
-              SliverChildListDelegate(
+          delegate: SliverChildListDelegate(
             [
               ListTile(title: Text('Players')),
               getPlayerTable(),

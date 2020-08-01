@@ -60,8 +60,8 @@ class Player {
   String get headShotUrl =>
       'https://nhl.bamcontent.com/images/headshots/current/168x168/$id.jpg';
 
-  String get tableName {
-    List<String> names = fullname.split(' ');
+  static String tableName(String fName) {
+    List<String> names = fName.split(' ');
     String name = '';
 
     names.asMap().forEach((key, value) {

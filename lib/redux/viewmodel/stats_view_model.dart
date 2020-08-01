@@ -11,7 +11,7 @@ import 'package:meta/meta.dart';
 class StatsViewModel {
   final LoadingStatus loadingStatus;
   final StatParameters selectedParams;
-  final StatsTableSource downloadedStats;
+  final StatTableSource downloadedStats;
   final List<String> displayItems;
   final List<String> statTypes;
   final String errorMsg;

@@ -5,8 +5,9 @@ class CustomYearPicker extends StatelessWidget {
   final Function(int) onSelected;
   final int maxValue;
   final int minValue;
+  final int reducer;
 
-  const CustomYearPicker({Key key, @required this.selected, @required this.onSelected, @required this.maxValue, @required this.minValue}) : super(key: key);
+  const CustomYearPicker({Key key, @required this.selected, @required this.onSelected, @required this.maxValue, @required this.minValue, this.reducer = 1}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +34,8 @@ class CustomYearPicker extends StatelessWidget {
       grids.add(Row(
         children: <Widget>[
           FlatButton(onPressed: () => Navigator.pop(context, x),child: Text(x.toString()),),
-          FlatButton(onPressed: () => Navigator.pop(context, x-1),child: Text((x-1).toString()),),
-          FlatButton(onPressed: () => Navigator.pop(context, x-2),child: Text((x-2).toString()),),
+          FlatButton(onPressed: () => Navigator.pop(context, x-reducer),child: Text((x-reducer).toString()),),
+          FlatButton(onPressed: () => Navigator.pop(context, x-(2*reducer)),child: Text((x-(2*reducer)).toString()),),
         ],
       ));
     }

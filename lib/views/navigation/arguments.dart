@@ -20,7 +20,7 @@ class PlayerArguments extends Argument {
   PlayerArguments(this.player, this.type);
 }
 
-class TeamArguments {
+class TeamArguments extends Argument {
   final Team team;
   final StatType type = StatType.TEAM;
 
@@ -28,4 +28,9 @@ class TeamArguments {
   String get teamName => team.name;
 
   TeamArguments(this.team);
+}
+
+class FilterArguments extends Argument {
+  final StatParameters currentParams;
+  FilterArguments(this.currentParams);
 }
