@@ -15,7 +15,7 @@ import 'award/award_home.dart';
 import 'draft/draft_home.dart';
 
 class HomePage extends StatelessWidget {
-  static final GlobalKey  scaffoldKey = GlobalKey ();
+  static final GlobalKey  scaffoldKey = GlobalKey();
   static const String routeName = '/homepage';
   @override
   Widget build(BuildContext context) {

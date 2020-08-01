@@ -61,6 +61,8 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 

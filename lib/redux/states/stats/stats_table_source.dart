@@ -60,8 +60,9 @@ class StatTableSource extends CustomDataTableSource {
         child: SizedBox(
           width: CustomDataTableSource.firstColumnWidth,
           height: CustomDataTableSource.dataRowHeight,
-          child: Center(
-            child: _getNameCell(stat),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Align( alignment: Alignment.centerLeft ,child: _getNameCell(stat)),
           ),
         ),
       ),
@@ -92,7 +93,7 @@ class StatTableSource extends CustomDataTableSource {
   Widget _getNameCell(Map<String, dynamic> stat) {
     if (_isTeam) {
       return Text(getJsonString(statTypeNameKey(type), stat),
-          style: CustomDataTableSource.firstColumnStyle);
+          style: CustomDataTableSource.firstColumnStyle, textAlign: TextAlign.start,);
     } else {
       return Text.rich(
         TextSpan(
@@ -100,10 +101,11 @@ class StatTableSource extends CustomDataTableSource {
           style: CustomDataTableSource.firstColumnStyle,
           children: <TextSpan>[
             TextSpan(
-                text: ' ' + getJsonString('teamAbbrevs', stat),
+                text: '\n' + getJsonString('teamAbbrevs', stat),
                 style: Styles.playerTableTeamText)
           ],
         ),
+        textAlign: TextAlign.start,
       );
     }
   }

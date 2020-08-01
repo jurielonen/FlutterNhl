@@ -8,36 +8,17 @@ import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
+import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view.dart';
 import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:FlutterNhl/widgets/scaffold_template.dart';
+import 'package:FlutterNhl/widgets/template_view.dart';
+import 'package:FlutterNhl/widgets/template_view2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-
-class StatsAppBarContent implements NestedTemplateViewAppBarContent {
-  @override
-  double expandedHeight() {
-    return 0.0;
-  }
-
-  @override
-  Widget getExpanded() {
-    return null;
-  }
-
-  @override
-  Widget getTitle(bool isScrolled) {
-    return const Text('Stats');
-  }
-
-  @override
-  bool getLeading() {
-    return true;
-  }
-}
 
 class StatsHome extends StatelessWidget {
   static const String routeName = '/stats';
@@ -49,7 +30,18 @@ class StatsHome extends StatelessWidget {
       distinct: true,
       onInit: (store) => store.dispatch(StatsEntered()),
       converter: (store) => StatsViewModel.fromStore(store),
-      builder: (ctx, viewModel) => ScaffoldTemplate(
+      builder: (ctx, viewModel) => TemplateView2(
+        loadingStatus: viewModel.loadingStatus,
+        errorMsg: viewModel.errorMsg,
+        tabs: _tabs,
+        onTabPressed: (int index) {
+          viewModel.typeChanged(index == 0
+              ? StatType.PLAYER
+              : index == 1 ? StatType.GOALIE : StatType.TEAM);
+        },
+        pageContent: (int index) => _buildStatsView(context, viewModel),
+      ),
+      /*ScaffoldTemplate(
           loadingStatus: viewModel.loadingStatus,
           errorMsg: viewModel.errorMsg,
           onTabChanged: (String tab) => _buildStatsView(context, tab, viewModel),
@@ -61,7 +53,7 @@ class StatsHome extends StatelessWidget {
                 ? StatType.PLAYER
                 : index == 1 ? StatType.GOALIE : StatType.TEAM);
           },
-      ),
+      ),*/
       /*NestedTemplateView(
         tabs: Map.fromIterable(_tabs,
         key: (name) => name.toString(),
@@ -78,68 +70,82 @@ class StatsHome extends StatelessWidget {
     );
   }
 
-  Iterable<NestedTemplateTab> get _createTabs sync* {
+  /*Iterable<NestedTemplateTab> get _createTabs sync* {
     for(String tab in _tabs){
       yield NestedTemplateTab(child: Center(child: Text(tab)), text: tab);
     }
-  }
+  }*/
 
-  Widget _buildStatsView(BuildContext context, String tab, StatsViewModel viewModel) {
-    if(viewModel.downloadedStats == null){
-      return ErrorView('Error while downloading stats');
+  List<Widget> _buildStatsView(BuildContext context, StatsViewModel viewModel) {
+    if (viewModel.downloadedStats == null) {
+      return [SliverErrorView(msg: 'Error while downloading stats')];
     } else {
-      return CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
+      return
+          [/*SliverAppBar(
             automaticallyImplyLeading: false,
             title: _buildStatBar(viewModel),
-            pinned: true,
-            floating: false,
             actions: <Widget>[
               IconButton(
                 icon: const Icon(Icons.sort),
                 tooltip: 'Set filters',
-                onPressed: () => setFilters(context, viewModel.selectedParams, viewModel.paramsChanged),
+                onPressed: () => setFilters(
+                    context, viewModel.selectedParams, viewModel.paramsChanged),
               )
             ],
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              CustomDataTable(dataTableSource: viewModel.downloadedStats),
-            ]),
-          ),
-        ],
-      );
+          ),*/
+            SliverToBoxAdapter(
+              child: _buildStatBar(context, viewModel),
+            ),
+            SliverFillRemaining(
+              hasScrollBody: true,
+              fillOverscroll: true,
+              child:
+                SingleChildScrollView(scrollDirection: Axis.vertical, child: CustomDataTable(dataTableSource: viewModel.downloadedStats)),
+            ),
+        ];
     }
   }
 
-  void setFilters(BuildContext context, StatParameters parameters, Function(StatParameters) paramsChanged) async {
-    StatParameters returnVal = await Navigator.push(context, MaterialPageRoute(builder: (context) => StatFilterPage(arguments: FilterArguments(parameters))));
-    if(returnVal !=  null){
+  void setFilters(BuildContext context, StatParameters parameters,
+      Function(StatParameters) paramsChanged) async {
+    StatParameters returnVal = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                StatFilterPage(arguments: FilterArguments(parameters))));
+    if (returnVal != null) {
       paramsChanged(returnVal);
     }
   }
 
-  Widget _buildStatBar(StatsViewModel viewModel){
+  Widget _buildStatBar(BuildContext context, StatsViewModel viewModel) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.navigate_before),
-            tooltip: 'Previous page',
-            onPressed: viewModel.selectedParams.start == null ? null : () => viewModel.previousPage(),
-          ),
-          CustomDropdownButton(
-            selectedValue: viewModel.selectedParams.paramType.stat,
-            values: viewModel.statTypes,
-            onValueChanged: viewModel.statChanged,
-          ),
-          IconButton(
-            icon: Icon(Icons.navigate_next),
-            tooltip: 'Next page',
-            onPressed: () => viewModel.nextPage(),
-          ),
-        ],
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          icon: Icon(Icons.navigate_before),
+          tooltip: 'Previous page',
+          onPressed: viewModel.selectedParams.start == null
+              ? null
+              : () => viewModel.previousPage(),
+        ),
+        CustomDropdownButton(
+          selectedValue: viewModel.selectedParams.paramType.stat,
+          values: viewModel.statTypes,
+          onValueChanged: viewModel.statChanged,
+        ),
+        IconButton(
+          icon: Icon(Icons.navigate_next),
+          tooltip: 'Next page',
+          onPressed: () => viewModel.nextPage(),
+        ),
+        IconButton(
+          icon: const Icon(Icons.sort),
+          tooltip: 'Set filters',
+          onPressed: () => setFilters(
+              context, viewModel.selectedParams, viewModel.paramsChanged),
+        )
+      ],
     );
   }
 }
