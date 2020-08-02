@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
@@ -9,47 +10,17 @@ import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/team/widgets/team_bio.dart';
 import 'package:FlutterNhl/views/team/widgets/team_game_log.dart';
 import 'package:FlutterNhl/views/team/widgets/team_player.dart';
+import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
 import 'package:FlutterNhl/widgets/custom_list_tile.dart';
+import 'package:FlutterNhl/widgets/custom_year_select.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/game_log_item.dart';
 import 'package:FlutterNhl/widgets/nested_template_view.dart';
+import 'package:FlutterNhl/widgets/nested_template_view2.dart';
+import 'package:FlutterNhl/widgets/scaffold_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-
-class TeamPageAppBarContent implements NestedTemplateViewAppBarContent {
-  final TeamPage team;
-
-  TeamPageAppBarContent(this.team);
-
-  @override
-  Widget getExpanded() {
-    if(team == null)
-      return null;
-    return FlexibleSpaceBar(
-      collapseMode: CollapseMode.parallax,
-      background: CustomListTile(
-        thumbnail: Styles.buildTeamBoxIcon(team),
-        title: team.name,
-        listItems: team.teamInfoMap,
-      ),
-    );
-  }
-
-  @override
-  Widget getTitle(bool isScrolled) {
-    return null;
-  }
-
-  @override
-  double expandedHeight() {
-    return 200.0;
-  }
-
-  @override
-  bool getLeading() {
-    return false;
-  }
-}
 
 class TeamHome extends StatelessWidget {
   static const String routeName = '/team';
@@ -59,15 +30,42 @@ class TeamHome extends StatelessWidget {
   const TeamHome({Key key, this.teamArguments}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(teamArguments.teamName),
-      ),
-      body: StoreConnector<AppState, TeamViewModel>(
+    return StoreConnector<AppState, TeamViewModel>(
         distinct: true,
         onInit: (store) => store.dispatch(TeamEntered(teamArguments.teamId)),
         converter: (store) => TeamViewModel.fromStore(store),
-        builder: (ctx, viewModel) => NestedTemplateView(
+        builder: (ctx, viewModel) => ScaffoldTemplate(
+          loadingStatus: viewModel.loadingStatus,
+          errorMsg: viewModel.error,
+          onTabChanged: (String tab) => _createTab(tab, viewModel),
+          appBarTitle: Row(
+            children: <Widget>[
+              Styles.buildTeamSvgImage(teamArguments.team),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(teamArguments.team.name),
+              ),
+            ],
+          ),
+          tabs: _createTabs.toList(),
+          loadingText: 'Loading Team data',
+          onTabPressed: (int index) {
+            if (_tabs.length > index) {
+              switch (_tabs[index]) {
+                case 'Stats':
+                  viewModel.getStats(viewModel.selectedStat);
+                  break;
+                case 'Game Logs':
+                  viewModel.getGameLogs(viewModel.selectedDate);
+                  break;
+                case 'Players':
+                  viewModel.getPlayers();
+                  break;
+              }
+            }
+          },
+        ),
+        /*NestedTemplateView(
           tabs: _createTabs(ctx, viewModel),
           loadingStatus: viewModel.loadingStatus,
           errorMsg: viewModel.error,
@@ -87,84 +85,86 @@ class TeamHome extends StatelessWidget {
             }
           },
           content: TeamPageAppBarContent(viewModel.team),
-        ),
-      ),
+        ),*/
     );
   }
 
-  Map<String, List<Widget>> _createTabs(
-      BuildContext context, TeamViewModel viewModel) {
-    return Map.fromIterable(
-      _tabs,
-      key: (name) => name.toString(),
-      value: (name) {
-        switch (name) {
-          case 'Bio':
-            return _createBioTab(viewModel.team);
-          case 'Players':
-            return _createPlayerTab(viewModel.team);
-          case 'Stats':
-            return _createStatTab(viewModel);
-          case 'Game Logs':
-            return _createGameLogTab(viewModel);
-          default:
-            return <Widget>[
-              SliverFillRemaining(child: ErrorView('Unknown tab'))
-            ];
-        }
-      },
-    );
+  Iterable<NestedTemplateTab> get _createTabs sync* {
+    for (String tab in _tabs) {
+      yield NestedTemplateTab(child: Text(tab), text: tab);
+    }
   }
 
-  List<Widget> _createBioTab(TeamPage team){
-    if(team == null)
-      return [SliverFillRemaining(child: ErrorView('No data downloaded'))];
+  Widget _createTab(String tab, TeamViewModel viewModel) {
+    switch (tab) {
+      case 'Bio':
+        return _createBioTab(viewModel.team);
+      case 'Players':
+        return _createPlayerTab(viewModel.team);
+      case 'Stats':
+        return _createStatTab(viewModel);
+      case 'Game Logs':
+        return _createGameLogTab(viewModel);
+      default:
+        return ErrorView('Unknown tab');
+    }
+  }
+
+  Widget _createBioTab(TeamPage team) {
+    if (team == null)
+      return ErrorView('No data downloaded');
     else
-      return <Widget>[TeamBioTab(team: team,)];
+      return TeamBioTab(
+        team: team,
+      );
   }
 
-  List<Widget> _createPlayerTab(TeamPage team){
-    ///TODO: add year change
-    List<Widget> widgets = [];
-    if(team != null && team.containsRosterStats()){
-      widgets.add(SliverFixedExtentList(
-        itemExtent: 100,
-        delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) =>
-              TeamPlayerCard(player: team.rosterStats[index],),
-          childCount: team.rosterStats.length,
-        ),
-      ));
+  Widget _createPlayerTab(TeamPage team) {
+    if (team != null && team.containsRosterStats()) {
+      return ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          if (index == 0)
+            return ListTile(title: Text('Players'));
+          else if (index == 1)
+            return CustomDataTable(
+              dataTableSource: team.playerTableSource,
+            );
+          else if (index == 2)
+            return ListTile(
+              title: Text('Goalies'),
+            );
+          else if (index == 3)
+            return CustomDataTable(dataTableSource: team.goalieTableSource);
+          else
+            return ErrorView('Unknown index');
+        },
+        itemCount: 4,
+      );
     } else {
-      widgets.add(SliverFillRemaining(child: ErrorView('Roster not downloaded')));
+      return ErrorView('Roster not downloaded');
     }
-    return widgets;
   }
 
-  List<Widget> _createStatTab(TeamViewModel viewModel) {
-    List<Widget> widgets = [
-      SliverToBoxAdapter(
-          child: CustomDropdownButton(
-            selectedValue: viewModel.selectedStat,
-            values: viewModel.displayItems,
-            onValueChanged: viewModel.getStats,
-          )),
-    ];
-    if (viewModel.team != null && viewModel.team.containsStat(viewModel.selectedStat)) {
-      PlayerSeasonTableSource stats = viewModel.team.getStat(viewModel.selectedStat);
-      widgets.add(SliverFillRemaining(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(columns: stats.columns, rows: stats.rows),
-          ),
-        ),
-      ),);
-    } else {
-      widgets.add(SliverFillRemaining(child: ErrorView('No data downloaded')));
+  Widget _createStatTab(TeamViewModel viewModel) {
+    Widget widget;
+    if (viewModel.team != null &&
+        viewModel.team.containsStat(viewModel.selectedStat)) {
+      PlayerSeasonTableSource stats =
+          viewModel.team.getStat(viewModel.selectedStat);
+      widget = Expanded(
+        child: SingleChildScrollView(scrollDirection: Axis.vertical, child: CustomDataTable(dataTableSource: stats)),
+      );
     }
-    return widgets;
+    return Column(
+      children: <Widget>[
+        CustomDropdownButton(
+          selectedValue: viewModel.selectedStat,
+          values: viewModel.displayItems,
+          onValueChanged: viewModel.getStats,
+        ),
+        widget ?? ErrorView('No data downloaded'),
+      ],
+    );
   }
 
   static const List<String> years = [
@@ -175,28 +175,26 @@ class TeamHome extends StatelessWidget {
     '20152016'
   ];
 
-  List<Widget> _createGameLogTab(TeamViewModel viewModel) {
-    List<Widget> widgets = [
-      SliverToBoxAdapter(
-          child: CustomDropdownButton(
-            selectedValue: years.first,
-            values: years,
-            onValueChanged: viewModel.getGameLogs,
-          )),
-    ];
-    if(viewModel.team != null && viewModel.team.containsGameLog(viewModel.selectedDate)){
+  Widget _createGameLogTab(TeamViewModel viewModel) {
+    Widget widget;
+    if (viewModel.team != null &&
+        viewModel.team.containsGameLog(viewModel.selectedDate)) {
       List<Game> logs = viewModel.team.getGames(viewModel.selectedDate);
-      widgets.add(SliverFixedExtentList(
-        itemExtent: 100,
-        delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) =>
-              TeamGameLogCard(team: viewModel.team, game: logs[index],),
-          childCount: logs.length,
-        ),
-      ),);
-    } else {
-      widgets.add(SliverFillRemaining(child: ErrorView('No data downloaded')));
+      widget = Expanded(
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return GameLogRow(date: logs[index].dateTime, opponent: logs[index].getOpponent(viewModel.team), result: logs[index].getResult(viewModel.team));
+          }, itemCount: logs.length),
+      );
     }
-    return widgets;
+
+    return Column(children: <Widget>[
+      CustomDropdownButton(
+        selectedValue: years.first,
+        values: years,
+        onValueChanged: viewModel.getGameLogs,
+      ),
+      widget ?? ErrorView('No data downloaded'),
+    ],);
   }
 }

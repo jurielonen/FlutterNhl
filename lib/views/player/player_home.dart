@@ -1,4 +1,6 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
@@ -44,7 +46,10 @@ class PlayerHome extends StatelessWidget {
         appBarTitle: Row(
           children: <Widget>[
             Styles.buildPlayerCircleIcon(playerArgs.player),
-            Text(playerArgs.player.fullname),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(playerArgs.player.fullname),
+            ),
           ],
         ),
         tabs: createTabs.toList(),
@@ -183,8 +188,8 @@ class PlayerHome extends StatelessWidget {
         CustomYearPicker(
           selected: int.parse(viewModel.selectedYear),
           onSelected: (int year) => viewModel.getGameLogs(year.toString()),
-          maxValue: int.parse(years.first),
-          minValue: int.parse(years.last),
+          maxValue: int.parse(StatParameters.getCurrentSeason()),
+          minValue: viewModel.player.firstSeason,
           reducer: 10001,
         ),
         widget ?? ErrorView('No data downloaded'),

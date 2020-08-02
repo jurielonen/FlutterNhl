@@ -237,7 +237,7 @@ final GamePreview gamePreview = GamePreview(
         "shootingPctg": 9.3,
         "savePctg": 0.913
       },
-      playerStats: [
+      playerTableSource: [
         PlayerGame(
             player: Player(id: 8470607, fullname: 'Brent Seabrook'),
             jerseyNumber: '7',
@@ -303,7 +303,7 @@ final GameFinal gameFinal = GameFinal(
       "giveaways": 11,
       "hits": 35
     },
-    playerStats: [
+    playerTableSource: [
       goalieFinal,
       playerFinal
     ]

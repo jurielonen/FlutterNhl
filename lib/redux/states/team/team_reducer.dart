@@ -45,7 +45,7 @@ TeamState teamReducer(TeamState state, dynamic action) {
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   } else if (action is TeamReceivedRosterAction) {
     final teams = state.teams.toMutableMap();
-    teams[state.teamId].rosterStats = action.players;
+    teams[state.teamId].setRosterStats(action.players);
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, teams: teams);
   } else if (action is TeamErrorAction) {
     return state.copyWith(

@@ -215,11 +215,12 @@ class TeamPage extends Team {
   final String firstYear;
   final String division;
   final String conference;
-  final Game previousGame;
-  final Game nextGame;
+  final List<Game> previousGame;
+  final List<Game> nextGame;
   final Map<String, dynamic> currentStats;
 
-  List<PlayerGame> rosterStats = [];
+  PlayerPreviewTableSource playerTableSource;
+  PlayerPreviewTableSource goalieTableSource;
   Map<String, List<Game>> gameLog = {};
   Map<String, PlayerSeasonTableSource> stats = {};
 
@@ -249,12 +250,10 @@ class TeamPage extends Team {
       team: Team.fromJson(team),
       venue: getJsonString2(['venue', 'name'], team),
       firstYear: getJsonString('firstYearOfPlay', team),
-      division: getJsonString2([''], team),
-      conference: getJsonString2([''], team),
-      previousGame: Game.fromJson(getJsonObject(
-          ['previousGameSchedule', 'dates', 0, 'games', 0], team)),
-      nextGame: Game.fromJson(
-          getJsonObject(['nextGameSchedule', 'dates', 0, 'games', 0], team)),
+      division: getJsonString2(['division', 'name'], team),
+      conference: getJsonString2(['conference', 'name'], team),
+      previousGame: List<Game>.from(getJsonList(['previousSchedule', 'dates'], team).map((date) => Game.fromJson(getJsonObject(['games', 0], date)))),
+      nextGame: List<Game>.from(getJsonList(['nextSchedule', 'dates'], team).map((date) => Game.fromJson(getJsonObject(['games', 0], date)))),
       currentStats: getJsonObject(['teamStats', 0, 'splits', 0, 'stat'], team),
     );
   }
@@ -268,8 +267,16 @@ class TeamPage extends Team {
     };
   }
 
+  void setRosterStats(List<PlayerGame> skaters){
+    List<PlayerGame> player = [];
+    List<PlayerGame> goalie = [];
+    Team.parsePlayerStats(skaters, player, goalie);
+    playerTableSource = PlayerPreviewTableSource(type: StatType.PLAYER, players: player);
+    goalieTableSource = PlayerPreviewTableSource(type: StatType.GOALIE, players: goalie);
+  }
+
   bool containsRosterStats() {
-    return rosterStats.isNotEmpty;
+    return playerTableSource != null && goalieTableSource != null;
   }
 
   bool containsGameLog(String date) {

@@ -101,7 +101,9 @@ class StatsApi {
 
   Future<TeamPage> fetchTeamInfo(int teamId) async {
     final searchUri = Uri.https(baseUrl, 'api/v1/teams/$teamId',
-        {'expand': 'team.stats,team.schedule.previous,team.schedule.next'});
+        {'hydrate':
+        'previousSchedule(limit=5,linescore,team),nextSchedule(limit=5,linescore,team),roster(person(stats(splits=statsSingleSeason))),stats',
+          'gameType': 'P,R'});
     print('$printMsg fetchTeamInfo: $searchUri');
 
     return await fetch(searchUri, client).then((value) {
@@ -119,7 +121,7 @@ class StatsApi {
     return await fetch(searchUri, client).then((value) {
       return List<PlayerGame>.from(
           getJsonList(['teams', 0, 'roster', 'roster'], value)
-              .map((player) => PlayerGame.fromJsonFinal(player)));
+              .map((player) => PlayerGame.fromJsonPreview(player)));
     }).catchError((error) => throw Exception(error.toString()));
   }
 

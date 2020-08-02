@@ -95,7 +95,7 @@ final Map<String, dynamic> scheduleJson = {
 };
 
 final TeamFinal teamFinalEmpty =
-    TeamFinal(team: empty, teamStats: {}, playerStats: []);
+    TeamFinal(team: empty, teamStats: {}, playerTableSource: []);
 
 final TeamFinal teamFinal = TeamFinal(
     team: Team(id: 28, name: 'San Jose Sharks', abb: 'SJS'),
@@ -112,7 +112,7 @@ final TeamFinal teamFinal = TeamFinal(
       "giveaways": 11,
       "hits": 35
     },
-    playerStats: [
+    playerTableSource: [
       PlayerGame(
           player: Player(id: 8466138, fullname: 'Joe Thornton'),
           jerseyNumber: '19',
@@ -273,7 +273,7 @@ final Map<String, dynamic> finalJson = {
 };
 
 final TeamPreview teamPreviewEmpty =
-    TeamPreview(team: empty, teamStats: {}, playerStats: []);
+    TeamPreview(team: empty, teamStats: {}, playerTableSource: []);
 
 final TeamPreview previewTeam = TeamPreview(
     team: Team(id: 28, name: 'San Jose Sharks', abb: 'SJS'),
@@ -307,7 +307,7 @@ final TeamPreview previewTeam = TeamPreview(
       "shootingPctg": 8.6,
       "savePctg": 0.895
     },
-    playerStats: [
+    playerTableSource: [
       PlayerGame(
           player: Player(id: 8474578, fullname: 'Erik Karlsson'),
           jerseyNumber: '65',

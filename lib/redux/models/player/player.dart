@@ -212,27 +212,35 @@ class PlayerPage extends Player {
   final int draftNum;
   final int draftRound;
   final int draftYear;
+  final int firstSeason;
+  final int firstSeasonPlayoffs;
   final Position position;
   final String handness;
   final String currentTeam;
+  final int weight;
+  final int height;
   final PlayerAllTimeStats allTimeStats;
   Map<String, PlayerSeasonTableSource> stats = {};
   Map<String, List<GameLogsPlayer>> gameLog = {};
 
-  PlayerPage(
-      {@required Player player,
-      this.nationality,
-      this.birthCity,
-      this.birthCountry,
-      this.birthDate,
-      this.draftNum,
-      this.draftRound,
-      this.draftYear,
-      this.position,
-      this.handness,
-      this.currentTeam,
-      this.allTimeStats})
-      : super.clone(player);
+  PlayerPage({
+    @required Player player,
+    this.nationality,
+    this.birthCity,
+    this.birthCountry,
+    this.birthDate,
+    this.draftNum,
+    this.draftRound,
+    this.draftYear,
+    this.firstSeason,
+    this.firstSeasonPlayoffs,
+    this.position,
+    this.handness,
+    this.currentTeam,
+    this.allTimeStats,
+    this.weight,
+    this.height,
+  }) : super.clone(player);
 
   PlayerPage.empty()
       : this(
@@ -245,12 +253,17 @@ class PlayerPage extends Player {
             draftNum: -1,
             draftRound: -1,
             draftYear: -1,
+            firstSeason: -1,
+            firstSeasonPlayoffs: -1,
             position: Position.N_A,
             currentTeam: '',
+            height: 0,
+            weight: 0,
             allTimeStats: PlayerPageAllTimeStats.fromJson({}));
 
   factory PlayerPage.fromJsonPlayer(Map<String, dynamic> json) {
     Map<String, dynamic> regular = getJsonObject(['data', 0], json);
+    Map<String, dynamic> playoffs = getJsonObject(['data', 1], json);
     return PlayerPage(
         player: Player.fromJson(regular),
         nationality: getJsonString('nationalityCode', regular),
@@ -261,13 +274,18 @@ class PlayerPage extends Player {
         draftNum: getJsonInt('draftOverall', regular),
         draftRound: getJsonInt('draftRound', regular),
         draftYear: getJsonInt('draftYear', regular),
+        firstSeason: getJsonInt('firstSeasonForGameType', regular),
+        firstSeasonPlayoffs: getJsonInt('firstSeasonForGameType', playoffs),
         position: positionFromString(getJsonString('positionCode', regular)),
+        height: getJsonInt('height', regular),
+        weight: getJsonInt('weight', regular),
         currentTeam: getJsonString('currentTeamName', regular),
         allTimeStats: PlayerPageAllTimeStats.fromJson(json));
   }
 
   factory PlayerPage.fromJsonGoalie(Map<String, dynamic> json) {
     Map<String, dynamic> regular = getJsonObject(['data', 0], json);
+    Map<String, dynamic> playoffs = getJsonObject(['data', 1], json);
     return PlayerPage(
         player: Player.fromJson(regular),
         nationality: getJsonString('nationalityCode', regular),
@@ -278,34 +296,11 @@ class PlayerPage extends Player {
         draftNum: getJsonInt('draftOverall', regular),
         draftRound: getJsonInt('draftRound', regular),
         draftYear: getJsonInt('draftYear', regular),
+        firstSeason: getJsonInt('firstSeasonForGameType', regular),
+        firstSeasonPlayoffs: getJsonInt('firstSeasonForGameType', playoffs),
         position: Position.G,
         currentTeam: getJsonString('currentTeamAbbrev', regular),
         allTimeStats: GoaliePageAllTimeStats.fromJson(json));
-  }
-
-  Table get playerInfoTable {
-    return Table(children: [
-      TableRow(children: [Text('Team'), Text(currentTeam)]),
-      TableRow(children: [Text('Position'), Text(playerPositionString)]),
-      TableRow(children: [Text('Handess'), Text(playerHandessString)]),
-      TableRow(children: [
-        Text('Birth date'),
-        Text(Styles.dateFormat.format(birthDate))
-      ]),
-      TableRow(
-          children: [Text('Birthplace'), Text('$birthCity, $birthCountry')]),
-      TableRow(children: [Text('Nationality'), Text(nationality)]),
-    ]);
-  }
-
-  Table get playerDraftTable {
-    return Table(
-      children: [
-        TableRow(children: [Text('Year'), Text(draftYear.toString())]),
-        TableRow(children: [Text('Round'), Text('$draftRound rd')]),
-        TableRow(children: [Text('Pick'), Text(draftNum.toString())]),
-      ],
-    );
   }
 
   String get playerPositionString {
@@ -426,27 +421,25 @@ class GoaliePageAllTimeStats implements PlayerAllTimeStats {
 
   @override
   Iterable<Widget> get getStatsWidget sync* {
-    yield Column(
-      children: <Widget>[
-        Text('Regular season all time stats'),
-        Table(
-          children: [
-            TableRow(children: [
-              Text('GP'),
-              Text('W'),
-              Text('L'),
-              Text('OTL'),
-              Text('SO')
-            ]),
-            TableRow(children: [
-              Text(regular.gamesPlayed.toString()),
-              Text(regular.wins.toString()),
-              Text(regular.losses.toString()),
-              Text(regular.otLosses.toString()),
-              Text(regular.shutouts.toString())
-            ]),
-          ],
-        ),
+    yield Table(
+      children: [
+        TableRow(children: [
+          Center(child: Text('GP', style: Styles.infoTableHeaderText)),
+          Center(child: Text('W', style: Styles.infoTableHeaderText)),
+          Center(child: Text('L', style: Styles.infoTableHeaderText)),
+          Center(child: Text('OTL', style: Styles.infoTableHeaderText)),
+          Center(child: Text('SO', style: Styles.infoTableHeaderText))
+        ]),
+        TableRow(children: [
+          Center(
+            child: Text(regular.gamesPlayed.toString(),
+                style: Styles.infoTableValueText),
+          ),
+          Center(child: Text(regular.wins.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.losses.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.otLosses.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.shutouts.toString(), style: Styles.infoTableValueText))
+        ]),
       ],
     );
   }
@@ -477,36 +470,40 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
 
   @override
   Iterable<Widget> get getStatsWidget sync* {
-    yield Column(
-      children: <Widget>[
-        Text('Regular season all time stats'),
-        Table(
-          children: [
-            TableRow(children: [Text('GP'), Text('G'), Text('A'), Text('P')]),
-            TableRow(children: [
-              Text(regular.gamesPlayed.toString()),
-              Text(regular.goals.toString()),
-              Text(regular.assists.toString()),
-              Text(regular.points.toString())
-            ]),
-          ],
-        ),
+    yield Table(
+      children: [
+        TableRow(children: [
+          Center(child: Text('GP', style: Styles.infoTableHeaderText)),
+          Center(child: Text('G', style: Styles.infoTableHeaderText)),
+          Center(child: Text('A', style: Styles.infoTableHeaderText)),
+          Center(child: Text('P', style: Styles.infoTableHeaderText))
+        ]),
+        TableRow(children: [
+          Center(
+            child: Text(regular.gamesPlayed.toString(),
+                style: Styles.infoTableValueText),
+          ),
+          Center(child: Text(regular.goals.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.assists.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.points.toString(), style: Styles.infoTableValueText))
+        ]),
       ],
     );
-    yield Column(
-      children: <Widget>[
-        Text('Playoffs all time stats'),
-        Table(
-          children: [
-            TableRow(children: [Text('GP'), Text('G'), Text('A'), Text('P')]),
-            TableRow(children: [
-              Text(playoff.gamesPlayed.toString()),
-              Text(playoff.goals.toString()),
-              Text(playoff.assists.toString()),
-              Text(playoff.points.toString())
-            ]),
-          ],
-        ),
+    yield Table(
+      children: [
+        TableRow(children: [
+          Text('GP', style: Styles.infoTableHeaderText),
+          Text('G', style: Styles.infoTableHeaderText),
+          Text('A', style: Styles.infoTableHeaderText),
+          Text('P', style: Styles.infoTableHeaderText)
+        ]),
+        TableRow(children: [
+          Text(playoff.gamesPlayed.toString(),
+              style: Styles.infoTableValueText),
+          Text(playoff.goals.toString(), style: Styles.infoTableValueText),
+          Text(playoff.assists.toString(), style: Styles.infoTableValueText),
+          Text(playoff.points.toString(), style: Styles.infoTableValueText)
+        ]),
       ],
     );
   }

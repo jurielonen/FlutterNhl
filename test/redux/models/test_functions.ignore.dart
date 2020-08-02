@@ -97,9 +97,9 @@ checkTeamFinal(TeamFinal actual, TeamFinal expected) {
   expect(actual.id, expected.id);
   expect(actual.abb, expected.abb);
   expect(actual.teamStats, expected.teamStats);
-  expect(actual.playerStats.length, expected.playerStats.length);
-  actual.playerStats.asMap().forEach((key, value) {
-    checkPlayerGame(value, expected.playerStats[key]);
+  expect(actual.playerTableSource.length, expected.playerTableSource.length);
+  actual.playerTableSource.asMap().forEach((key, value) {
+    checkPlayerGame(value, expected.playerTableSource[key]);
   });
 }
 
@@ -108,9 +108,9 @@ checkTeamPreview(TeamPreview actual, TeamPreview expected) {
   expect(actual.id, expected.id);
   expect(actual.abb, expected.abb);
   expect(actual.teamStats, expected.teamStats);
-  expect(actual.playerStats.length, expected.playerStats.length);
-  actual.playerStats.asMap().forEach((key, value) {
-    checkPlayerGame(value, expected.playerStats[key]);
+  expect(actual.playerTableSource.length, expected.playerTableSource.length);
+  actual.playerTableSource.asMap().forEach((key, value) {
+    checkPlayerGame(value, expected.playerTableSource[key]);
   });
 }
 

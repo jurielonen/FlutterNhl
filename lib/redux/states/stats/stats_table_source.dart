@@ -47,8 +47,7 @@ class StatTableSource extends CustomDataTableSource {
     _firstColumn = [];
     _rows = [];
     stats.forEach((stat) {
-      if(stat is Map<String, dynamic>)
-        _rows.add(_getRow(stat));
+      if (stat is Map<String, dynamic>) _rows.add(_getRow(stat));
     });
   }
 
@@ -62,7 +61,8 @@ class StatTableSource extends CustomDataTableSource {
           height: CustomDataTableSource.dataRowHeight,
           child: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: Align( alignment: Alignment.centerLeft ,child: _getNameCell(stat)),
+            child: Align(
+                alignment: Alignment.centerLeft, child: _getNameCell(stat)),
           ),
         ),
       ),
@@ -92,8 +92,19 @@ class StatTableSource extends CustomDataTableSource {
 
   Widget _getNameCell(Map<String, dynamic> stat) {
     if (_isTeam) {
-      return Text(getJsonString(statTypeNameKey(type), stat),
-          style: CustomDataTableSource.firstColumnStyle, textAlign: TextAlign.start,);
+      Team team = Team.fromJson(stat);
+      return Row(
+        children: <Widget>[
+          Styles.buildTeamSvgImage(team, size: 20),
+          Padding(
+            padding: EdgeInsets.only(left: 5.0),
+            child: Text(
+              team.abb,
+              style: CustomDataTableSource.firstColumnStyle,
+            ),
+          )
+        ],
+      );
     } else {
       return Text.rich(
         TextSpan(
@@ -126,21 +137,21 @@ class StatTableSource extends CustomDataTableSource {
     _column.addAll(displayItems
         .map(
           (key) => DataColumn(
-        label: Container(
-          decoration: BoxDecoration(
-              border:
-              Border(bottom: BorderSide(color: Colors.grey, width: 3))),
-          child: Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: Text(
-              getColumnAbb(key),
-              style: CustomDataTableSource.headerRowStyle,
+            label: Container(
+              decoration: BoxDecoration(
+                  border:
+                      Border(bottom: BorderSide(color: Colors.grey, width: 3))),
+              child: Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Text(
+                  getColumnAbb(key),
+                  style: CustomDataTableSource.headerRowStyle,
+                ),
+              ),
             ),
+            onSort: (c, a) => _dataColumnSortCallback(c, a),
           ),
-        ),
-        onSort: (c, a) => _dataColumnSortCallback(c, a),
-      ),
-    )
+        )
         .toList());
   }
 

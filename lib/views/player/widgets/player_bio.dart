@@ -8,58 +8,97 @@ class PlayerBioTab extends StatelessWidget {
   const PlayerBioTab({Key key, this.player}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    /*List<Widget> tiles = <Widget>[
-      _createTextCard('Birth date', Styles.dateFormat.format(player.birthDate)),
-      _createTextCard('Draft', '${player.draftYear}, ${player.draftRound} rd, ${player.draftNum} pick'),
-      _createTextCard('Birthplace', '${player.birthCity}, ${player.birthCountry}'),
-      _createTextCard('Nationality', '${player.nationality}'),
-    ];
-    tiles.addAll(player.allTimeStats.getStatsWidget);
-    return SliverFixedExtentList(
-      itemExtent: 100,
-      delegate: SliverChildListDelegate(
-        tiles,
-      ),
-    );*/
-    return ListView.separated(
-        itemBuilder: (BuildContext context, int index) {
-          return bioTiles.elementAt(index);
-        },
-        separatorBuilder: (BuildContext context, int index) => Divider(),
-        itemCount: bioTiles.length);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return bioTiles.elementAt(index);
+          },
+          itemCount: bioTiles.length),
+    );
   }
 
   Iterable<Widget> get bioTiles sync* {
-    yield _createTextCard('Info', player.playerInfoTable,);
-    yield _createTextCard('Draft', player.playerDraftTable);
-    for(Widget table in player.allTimeStats.getStatsWidget)
-      yield table;
+    yield createTextCard(
+      'Info',
+      playerInfoTable,
+    );
+    yield createTextCard('Draft', playerDraftTable);
+    int index = 0;
+    for (Widget table in player.allTimeStats.getStatsWidget){
+      String header = index == 0 ? 'Regular season stats' : 'Playoffs stats';
+      yield createTextCard(header, table);
+      index++;
+    }
   }
 
-  Widget _createTextCard(String title, Widget value) {
+  static Widget createTextCard(String title, Widget value) {
     return Column(
       children: <Widget>[
-        Text(title),
+        createHeaderDivider(title),
         value
       ],
     );
+  }
 
-      /*Card(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: RichText(
-            text: TextSpan(
-              text: '$title: ',
-              style: Styles.scaffoldGameWinnerText,
-              children: <TextSpan>[
-                TextSpan(text: value, style: Styles.cardOtherText),
-              ],
-            ),
+  static createHeaderDivider(String title){
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Divider(
+            thickness: 4,
+            endIndent: 8,
           ),
         ),
+        Text(title.toUpperCase(), style: Styles.infoTableHeaderText),
+        Expanded(
+          child: Divider(
+            thickness: 4,
+            indent: 8,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Table get playerInfoTable {
+    return Table(children: [
+      getRow('Team', player.currentTeam),
+      getRow('Position', player.playerPositionString),
+      getRow('Handess', player.playerHandessString),
+      getRow('First year in NHL', player.firstSeason.toString()),
+      getRow('First year in playoffs', player.firstSeason.toString()),
+      getRow('Birth date', Styles.dateFormat.format(player.birthDate)),
+      getRow('Birthplace', '${player.birthCity}, ${player.birthCountry}'),
+      getRow('Nationality', player.nationality),
+      getRow('Height', player.height.toString()),
+      getRow('Weight', player.weight.toString()),
+    ]);
+  }
+
+  Table get playerDraftTable {
+    return Table(
+      children: [
+        getRow('Year', player.draftYear.toString()),
+        getRow('Round', '${player.draftRound} rd'),
+        getRow('Pick', player.draftNum.toString()),
+      ],
+    );
+  }
+
+  static TableRow getRow(String header, String value) {
+    return TableRow(children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+            child:
+                Text(header.toUpperCase(), style: Styles.infoTableHeaderText)),
       ),
-    );*/
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+            child: Text(value.toUpperCase(), style: Styles.infoTableValueText)),
+      )
+    ]);
   }
 }

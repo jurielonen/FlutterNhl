@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/game_log_item.dart';
 import 'package:flutter/material.dart';
 
 class GameMatchUpView extends StatelessWidget {
@@ -202,28 +203,17 @@ class GameMatchUpView extends StatelessWidget {
 
   Iterable<Widget> get lastFiveGamesHomeWidgets sync*{
     for(Game game in home.previousGames){
-      yield _lastFiveGame(game, home);
+      yield lastFiveGame(game, home);
     }
   }
 
   Iterable<Widget> get lastFiveGamesAwayWidgets sync*{
     for(Game game in away.previousGames){
-      yield _lastFiveGame(game, away);
+      yield lastFiveGame(game, away);
     }
   }
 
-  Widget _lastFiveGame(Game teamGame, Team team){
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(teamGame.getAppBarInfo),
-          Text(teamGame.opponentAbbWith(team)),
-          Text(teamGame.getResult(team))
-        ],
-      ),
-    );
+  static Widget lastFiveGame(Game teamGame, Team team){
+    return GameLogRow(date: teamGame.dateTime, opponent: teamGame.getOpponent(team), result: teamGame.getResult(team));
   }
 }

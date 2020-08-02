@@ -17,23 +17,22 @@ class PlayerGameLogView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(bottom: 5.0),
-          child: Container(
+      children: <Widget>[Container(
             color: Colors.black,
             child: Padding(
-              padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Row(children: statColumn.toList()),
             ),
           ),
-        ),
         Expanded(
-          child: ListView.separated(
+          child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return listTiles.elementAt(index);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 1.0),
+                  child: listTiles.elementAt(index),
+                );
               },
-              separatorBuilder: (BuildContext context, int index) => Divider(),
+              //separatorBuilder: (BuildContext context, int index) => Divider(),
               itemCount: listTiles.length),
         ),
       ],
@@ -52,10 +51,13 @@ class PlayerGameLogView extends StatelessWidget {
           style: CustomDataTableSource.headerRowStyle,
         ));
     yield Expanded(
-        child: Text(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 5.0),
+          child: Text(
       'Date',
       style: CustomDataTableSource.headerRowStyle,
-    ));
+    ),
+        ));
     if (isSkater) {
       for (String column in skaterColumns) {
         yield Expanded(
@@ -77,20 +79,33 @@ class PlayerGameLogView extends StatelessWidget {
       children: <Widget>[
         Expanded(
           flex: 2,
-          child: Row(
-              children: <Widget>[
-                Styles.buildTeamSvgImage(log.opponent, size: 20),
-                Text(log.opponent.abb,
-                    style: CustomDataTableSource.firstColumnStyle),
-              ],
+          child: Container(
+            color: Colors.grey,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Styles.buildTeamSvgImage(log.opponent, size: 20),
+                  Text('${log.isHome} ${log.opponent.abb}',
+                      style: CustomDataTableSource.firstColumnStyle),
+                  Text(log.result, style: CustomDataTableSource.firstColumnStyle,)
+                ],
+              ),
             ),
           ),
+        ),
         Expanded(
-            child: Text(Styles.gameLogFormat.format(log.date),
-                style: CustomDataTableSource.firstColumnStyle)),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Text(Styles.gameLogFormat.format(log.date),
+                    style: CustomDataTableSource.firstColumnStyle),
+            ),
+            ),
         ...stats.map((item) => Expanded(
             child: Text(getStatFromMap(item, log.stats),
-                style: CustomDataTableSource.cellRowStyle))),
+                  style: CustomDataTableSource.cellRowStyle),
+            )),
       ],
     );
   }
@@ -107,6 +122,6 @@ class PlayerGameLogView extends StatelessWidget {
     'shotsAgainst',
     'goalsAgainst',
     'saves',
-    'powerPlaySavePercentage'
+    'savePercentage'
   ];
 }

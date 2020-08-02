@@ -7,6 +7,7 @@ class GameLogsPlayer {
   final DateTime date;
   final bool home;
   final bool won;
+  final bool overtime;
   final Map<String, dynamic> stats;
 
   GameLogsPlayer(
@@ -15,6 +16,7 @@ class GameLogsPlayer {
       this.date,
       this.home,
       this.won,
+      this.overtime,
       this.stats});
 
   factory GameLogsPlayer.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,11 @@ class GameLogsPlayer {
         date: getJsonDateTime('date', json),
         home: getJsonBoolean('isHome', json),
         won: getJsonBoolean('isWin', json),
+        overtime: getJsonBoolean('isOT', json),
         stats: getJsonObject(['stat'], json));
   }
+
+  String get result => won ? 'W' : overtime ? 'OTL' : 'L';
+
+  String get isHome => home ? 'vs' : '@';
 }

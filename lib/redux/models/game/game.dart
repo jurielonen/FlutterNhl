@@ -124,19 +124,32 @@ class Game {
   }
 
   String getResult(Team team){
-    if(isHomeTeam(team)){
-      if(homeTeam.score > awayTeam.score){
-        return 'W ${homeTeam.score}-${awayTeam.score}';
-      } else if(homeTeam.score < awayTeam.score){
-        return 'L ${homeTeam.score}-${awayTeam.score}';
+    if(isFinal) {
+      if (isHomeTeam(team)) {
+        if (homeTeam.score > awayTeam.score) {
+          return 'W ${homeTeam.score}-${awayTeam.score}';
+        } else {
+          return 'L ${homeTeam.score}-${awayTeam.score}';
+        }
+      } else {
+        if (homeTeam.score > awayTeam.score) {
+          return 'L ${homeTeam.score}-${awayTeam.score}';
+        } else {
+          return 'W ${homeTeam.score}-${awayTeam.score}';
+        }
       }
+    } else if(isLive){
+      return 'Live ${homeTeam.score}-${awayTeam.score}';
     } else {
-      if(homeTeam.score > awayTeam.score){
-        return 'L ${homeTeam.score}-${awayTeam.score}';
-      } else if(homeTeam.score < awayTeam.score){
-        return 'W ${homeTeam.score}-${awayTeam.score}';
-      }
+      return 'Scheduled';
     }
+  }
+
+  Team getOpponent(Team team){
+    if(team.id == homeTeam.id)
+      return awayTeam;
+    else
+      return homeTeam;
   }
 }
 
