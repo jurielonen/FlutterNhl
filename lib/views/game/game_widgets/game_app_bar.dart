@@ -16,7 +16,7 @@ class GameAppBar {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Styles.buildTeamSvgImage(game.homeTeam),
+        Styles.buildTeamSvgImage(game.homeTeam, size: 20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,7 +41,7 @@ class GameAppBar {
             ),
           ],
         ),
-        Styles.buildTeamSvgImage(game.awayTeam),
+        Styles.buildTeamSvgImage(game.awayTeam, size: 20),
       ],
     );
   }

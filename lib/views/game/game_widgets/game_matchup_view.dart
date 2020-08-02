@@ -1,7 +1,9 @@
+import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
+import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/game_log_item.dart';
 import 'package:flutter/material.dart';
@@ -23,28 +25,7 @@ class GameMatchUpView extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Styles.buildTeamSvgImage(home),
-                Expanded(
-                  child: Divider(
-                    thickness: 5.0,
-                    endIndent: 10.0,
-                    indent: 3.0,
-                  ),
-                ),
-                Text('Players to watch'),
-                Expanded(
-                  child: Divider(
-                    thickness: 5.0,
-                    indent: 10.0,
-                    endIndent: 3.0,
-                  ),
-                ),
-                Styles.buildTeamSvgImage(away),
-              ],
-            ),
+            child: PlayerBioTab.createHeaderDivider('Players to watch')
           ),
         ),
         SliverFixedExtentList(
@@ -58,34 +39,15 @@ class GameMatchUpView extends StatelessWidget {
           }, childCount: lastFivePlayersWidgets.length),
         ),
         SliverToBoxAdapter(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: PlayerBioTab.createHeaderDividerWidget(Column(
             children: <Widget>[
-              Expanded(
-                child: Divider(
-                  thickness: 5.0,
-                  endIndent: 10.0,
-                  indent: 3.0,
-                ),
-              ),
-              Column(
-                children: <Widget>[
-                  Styles.buildTeamSvgImage(home),
-                  Text('Last 5 record'),
-                ],
-              ),
-              Expanded(
-                child: Divider(
-                  thickness: 5.0,
-                  indent: 10.0,
-                  endIndent: 3.0,
-                ),
-              ),
+              Styles.buildTeamSvgImage(home),
+              Text('Last 5 record', style: Styles.infoTableHeaderText),
             ],
-          ),
+          ),),
         ),
         SliverFixedExtentList(
-          itemExtent: 100,
+          itemExtent: 50,
           delegate:
               SliverChildBuilderDelegate((BuildContext context, int index) {
             if (lastFiveGamesHomeWidgets.length > index)
@@ -95,34 +57,16 @@ class GameMatchUpView extends StatelessWidget {
           }, childCount: lastFiveGamesHomeWidgets.length),
         ),
         SliverToBoxAdapter(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: PlayerBioTab.createHeaderDividerWidget(Column(
             children: <Widget>[
-              Expanded(
-                child: Divider(
-                  thickness: 5.0,
-                  endIndent: 10.0,
-                  indent: 3.0,
-                ),
-              ),
-              Column(
-                children: <Widget>[
-                  Styles.buildTeamSvgImage(away),
-                  Text('Last 5 record'),
-                ],
-              ),
-              Expanded(
-                child: Divider(
-                  thickness: 5.0,
-                  indent: 10.0,
-                  endIndent: 3.0,
-                ),
-              ),
+              Styles.buildTeamSvgImage(away),
+              Text('Last 5 record', style: Styles.infoTableHeaderText),
             ],
-          ),
+          ),),
+
         ),
         SliverFixedExtentList(
-          itemExtent: 100,
+          itemExtent: 50,
           delegate:
           SliverChildBuilderDelegate((BuildContext context, int index) {
             if (lastFiveGamesAwayWidgets.length > index)
@@ -150,18 +94,20 @@ class GameMatchUpView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-          child: Styles.buildPlayerCircleIcon(home),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(home.shortName),
-              Text('#${home.number} - ${home.position.positionString}')
-            ],
+            padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+            child: Styles.buildPlayerCircleIcon(home),
+          ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(home.shortName),
+                Text('#${home.number} - ${home.position.positionString}')
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -173,7 +119,7 @@ class GameMatchUpView extends StatelessWidget {
                   TextSpan(
                       text: '${home.value}',
                       style: Styles.scaffoldGameWinnerText),
-                  TextSpan(text: ' $stat ', style: Styles.scaffoldGameVsText),
+                  TextSpan(text: ' ${getColumnAbb(stat)} ', style: Styles.scaffoldGameVsText),
                   TextSpan(
                       text: '${away.value}',
                       style: Styles.scaffoldGameWinnerText),
@@ -182,21 +128,23 @@ class GameMatchUpView extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Text(away.shortName),
-              Text('#${away.number} - ${away.position.positionString}')
-            ],
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text(away.shortName),
+                Text('#${away.number} - ${away.position.positionString}')
+              ],
+            ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 8.0, 0),
-          child: Styles.buildPlayerCircleIcon(away),
-        ),
+    Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 8.0, 0),
+            child: Styles.buildPlayerCircleIcon(away),
+          ),
       ],
     );
   }

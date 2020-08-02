@@ -42,7 +42,7 @@ class _GamePlayViewState extends State<GamePlayView> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollTemplateView(
+    return CustomScrollView(
       slivers: <Widget>[
         SliverToBoxAdapter(
           child: Container(

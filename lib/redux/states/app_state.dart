@@ -43,7 +43,7 @@ class AppState {
     return AppState(
       loadingStatus: LoadingStatus.IDLE,
       errorMsg: '',
-      currentPage: DrawerPages.STATS,
+      currentPage: DrawerPages.SCHEDULE,
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),
       playerState: PlayerState.initial(),

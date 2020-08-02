@@ -313,6 +313,7 @@ const Map<String, String> constantTooltips = {
   'otLosses': 'Overtime Losses',
   'otPoints': 'Overtime Points',
   'penaltyKillPct': 'Penalty Kill %',
+  'pim': 'Penalty minutes',
   'penaltyMinutes': 'Penalty Minutes',
   'pkPctg': 'Penalty Kill Percentage',
   'playerTeamsPlayedFor': 'Player Teams Played For',

@@ -12,6 +12,7 @@ class ScaffoldTemplate extends StatefulWidget {
   final Widget Function(String tab) onTabChanged;
   final Function(int) onTabPressed;
   final String loadingText;
+  final bool automaticLeading;
 
   const ScaffoldTemplate(
       {Key key,
@@ -19,7 +20,7 @@ class ScaffoldTemplate extends StatefulWidget {
       @required this.errorMsg,
       @required this.onTabChanged,
       @required this.appBarTitle,
-      @required this.tabs, @required this.loadingText, @required this.onTabPressed,})
+      @required this.tabs, @required this.loadingText, @required this.onTabPressed, this.automaticLeading = false})
       : super(key: key);
 
   @override
@@ -40,9 +41,9 @@ class _ScaffoldTemplateState extends State<ScaffoldTemplate> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    print('asd');
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: widget.automaticLeading,
         title: widget.appBarTitle,
         bottom: TabBar(
           isScrollable: widget.tabs.length > 4 ? true : false,
@@ -62,7 +63,6 @@ class _ScaffoldTemplateState extends State<ScaffoldTemplate> with SingleTickerPr
         controller: _tabController,
         physics: NeverScrollableScrollPhysics(),
         children: widget.tabs.map((tab) {
-          print('TabBarView: $tab');
           String text = tab.text;
           return SafeArea(
             top: false,
@@ -71,7 +71,6 @@ class _ScaffoldTemplateState extends State<ScaffoldTemplate> with SingleTickerPr
               physics: NeverScrollableScrollPhysics(),
               controller: _pageController,
               itemBuilder: (context, position) {
-                print('PageView.builder: $position');
                 return _getPageContent(text);
               },
               itemCount: widget.tabs.length,

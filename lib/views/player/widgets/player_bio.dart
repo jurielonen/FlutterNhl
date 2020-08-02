@@ -41,6 +41,26 @@ class PlayerBioTab extends StatelessWidget {
     );
   }
 
+  static createHeaderDividerWidget(Widget title){
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Divider(
+            thickness: 4,
+            endIndent: 8,
+          ),
+        ),
+        title,
+        Expanded(
+          child: Divider(
+            thickness: 4,
+            indent: 8,
+          ),
+        ),
+      ],
+    );
+  }
+
   static createHeaderDivider(String title){
     return Row(
       children: <Widget>[

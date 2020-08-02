@@ -83,9 +83,12 @@ class Team {
   static parsePlayerStats(List<PlayerGame> players, List<PlayerGame> skaters,
       List<PlayerGame> goalies) {
     players.forEach((player) {
-      if (player.position.isGoalie())
-        goalies.add(player);
-      else if (player.position.isPlayer()) skaters.add(player);
+
+      if(player.stats.isNotEmpty) {
+        if (player.position.isGoalie())
+          goalies.add(player);
+        else if (player.position.isPlayer()) skaters.add(player);
+      }
     });
 
     skaters.sort((a, b) {
@@ -195,11 +198,8 @@ class TeamFinal extends Team {
     getJsonObject(['players'], json)
         .forEach((key, value) => tPlayers.add(PlayerGame.fromJsonFinal(value)));
 
-    List<PlayerGame> players = List<PlayerGame>.from(
-        getJsonList(['players'], json)
-            .map((e) => PlayerGame.fromJsonPreview(e)));
     List<PlayerGame> skaters = [], goalies = [];
-    Team.parsePlayerStats(players, skaters, goalies);
+    Team.parsePlayerStats(tPlayers, skaters, goalies);
 
     return TeamFinal(
       team: Team.fromJson(getJsonObject(['team'], json)),
