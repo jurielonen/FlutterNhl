@@ -185,14 +185,21 @@ class PersonPosition {
   }
 
   String get positionString {
-    switch(code){
-      case Position.C: return 'C';
-      case Position.L: return 'LW';
-      case Position.R: return 'RW';
-      case Position.D: return 'D';
-      case Position.G: return 'G';
-      case Position.HC: return 'HC';
-      default: return 'NA';
+    switch (code) {
+      case Position.C:
+        return 'C';
+      case Position.L:
+        return 'LW';
+      case Position.R:
+        return 'RW';
+      case Position.D:
+        return 'D';
+      case Position.G:
+        return 'G';
+      case Position.HC:
+        return 'HC';
+      default:
+        return 'NA';
     }
   }
 }
@@ -209,7 +216,7 @@ class PlayerPage extends Player {
   final String handness;
   final String currentTeam;
   final PlayerAllTimeStats allTimeStats;
-  Map<String, PlayerTableSource> stats = {};
+  Map<String, PlayerSeasonTableSource> stats = {};
   Map<String, List<GameLogsPlayer>> gameLog = {};
 
   PlayerPage(
@@ -276,12 +283,29 @@ class PlayerPage extends Player {
         allTimeStats: GoaliePageAllTimeStats.fromJson(json));
   }
 
-  Map<String, String> get playerInfoMap {
-    return {
-      'Team': currentTeam,
-      'Position': playerPositionString,
-      'Handess': playerHandessString
-    };
+  Table get playerInfoTable {
+    return Table(children: [
+      TableRow(children: [Text('Team'), Text(currentTeam)]),
+      TableRow(children: [Text('Position'), Text(playerPositionString)]),
+      TableRow(children: [Text('Handess'), Text(playerHandessString)]),
+      TableRow(children: [
+        Text('Birth date'),
+        Text(Styles.dateFormat.format(birthDate))
+      ]),
+      TableRow(
+          children: [Text('Birthplace'), Text('$birthCity, $birthCountry')]),
+      TableRow(children: [Text('Nationality'), Text(nationality)]),
+    ]);
+  }
+
+  Table get playerDraftTable {
+    return Table(
+      children: [
+        TableRow(children: [Text('Year'), Text(draftYear.toString())]),
+        TableRow(children: [Text('Round'), Text('$draftRound rd')]),
+        TableRow(children: [Text('Pick'), Text(draftNum.toString())]),
+      ],
+    );
   }
 
   String get playerPositionString {
@@ -329,14 +353,14 @@ class PlayerPage extends Player {
     return stats.containsKey(stat);
   }
 
-  PlayerTableSource getStat(String stat) {
+  PlayerSeasonTableSource getStat(String stat) {
     if (stats.containsKey(stat)) {
       return stats[stat];
     }
-    return PlayerTableSource.initial();
+    return null;
   }
 
-  void addStat(String stat, PlayerTableSource statStats) {
+  void addStat(String stat, PlayerSeasonTableSource statStats) {
     if (!stats.containsKey(stat)) {
       stats[stat] = statStats;
     }
@@ -402,35 +426,28 @@ class GoaliePageAllTimeStats implements PlayerAllTimeStats {
 
   @override
   Iterable<Widget> get getStatsWidget sync* {
-    yield Card(
-      child: ListTile(
-        title: Text('Regular season all time stats'),
-        subtitle: RichText(
-          text: TextSpan(
-            text: 'GP: ',
-            style: Styles.scaffoldGameWinnerText,
-            children: <TextSpan>[
-              TextSpan(
-                  text: regular.gamesPlayed.toString(),
-                  style: Styles.cardOtherText),
-              TextSpan(text: ', W: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: regular.wins.toString(), style: Styles.cardOtherText),
-              TextSpan(text: ', L: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: regular.losses.toString(), style: Styles.cardOtherText),
-              TextSpan(text: ', OTL: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: regular.otLosses.toString(),
-                  style: Styles.cardOtherText),
-              TextSpan(text: ', SO: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: regular.shutouts.toString(),
-                  style: Styles.cardOtherText),
-            ],
-          ),
+    yield Column(
+      children: <Widget>[
+        Text('Regular season all time stats'),
+        Table(
+          children: [
+            TableRow(children: [
+              Text('GP'),
+              Text('W'),
+              Text('L'),
+              Text('OTL'),
+              Text('SO')
+            ]),
+            TableRow(children: [
+              Text(regular.gamesPlayed.toString()),
+              Text(regular.wins.toString()),
+              Text(regular.losses.toString()),
+              Text(regular.otLosses.toString()),
+              Text(regular.shutouts.toString())
+            ]),
+          ],
         ),
-      ),
+      ],
     );
   }
 }
@@ -460,57 +477,37 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
 
   @override
   Iterable<Widget> get getStatsWidget sync* {
-    yield Card(
-      child: ListTile(
-        title: Text('Regular season all time stats'),
-        subtitle: RichText(
-          text: TextSpan(
-            text: 'GP: ',
-            style: Styles.scaffoldGameWinnerText,
-            children: <TextSpan>[
-              TextSpan(
-                  text: regular.gamesPlayed.toString(),
-                  style: Styles.cardOtherText),
-              TextSpan(text: ', G: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: regular.goals.toString(), style: Styles.cardOtherText),
-              TextSpan(text: ', A: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: regular.assists.toString(),
-                  style: Styles.cardOtherText),
-              TextSpan(text: ', P: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: regular.points.toString(), style: Styles.cardOtherText),
-            ],
-          ),
+    yield Column(
+      children: <Widget>[
+        Text('Regular season all time stats'),
+        Table(
+          children: [
+            TableRow(children: [Text('GP'), Text('G'), Text('A'), Text('P')]),
+            TableRow(children: [
+              Text(regular.gamesPlayed.toString()),
+              Text(regular.goals.toString()),
+              Text(regular.assists.toString()),
+              Text(regular.points.toString())
+            ]),
+          ],
         ),
-      ),
+      ],
     );
-    yield Card(
-      child: ListTile(
-        title: Text('Playoffs all time stats'),
-        subtitle: RichText(
-          text: TextSpan(
-            text: 'GP: ',
-            style: Styles.scaffoldGameWinnerText,
-            children: <TextSpan>[
-              TextSpan(
-                  text: playoff.gamesPlayed.toString(),
-                  style: Styles.cardOtherText),
-              TextSpan(text: ', G: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: playoff.goals.toString(), style: Styles.cardOtherText),
-              TextSpan(text: ', A: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: playoff.assists.toString(),
-                  style: Styles.cardOtherText),
-              TextSpan(text: ', P: ', style: Styles.scaffoldGameWinnerText),
-              TextSpan(
-                  text: playoff.points.toString(), style: Styles.cardOtherText),
-            ],
-          ),
+    yield Column(
+      children: <Widget>[
+        Text('Playoffs all time stats'),
+        Table(
+          children: [
+            TableRow(children: [Text('GP'), Text('G'), Text('A'), Text('P')]),
+            TableRow(children: [
+              Text(playoff.gamesPlayed.toString()),
+              Text(playoff.goals.toString()),
+              Text(playoff.assists.toString()),
+              Text(playoff.points.toString())
+            ]),
+          ],
         ),
-      ),
+      ],
     );
   }
 }

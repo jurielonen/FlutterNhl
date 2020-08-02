@@ -221,7 +221,7 @@ class TeamPage extends Team {
 
   List<PlayerGame> rosterStats = [];
   Map<String, List<Game>> gameLog = {};
-  Map<String, PlayerTableSource> stats = {};
+  Map<String, PlayerSeasonTableSource> stats = {};
 
   TeamPage(
       {@required Team team,
@@ -285,16 +285,16 @@ class TeamPage extends Team {
     return [];
   }
 
-  PlayerTableSource getStat(String stat) {
+  PlayerSeasonTableSource getStat(String stat) {
     if (stats.containsKey(stat)) return stats[stat];
-    return PlayerTableSource.initial();
+    return null;
   }
 
   void addGameLog(String date, List<Game> games) {
     gameLog[date] = games;
   }
 
-  void addStat(String stat, PlayerTableSource table) {
+  void addStat(String stat, PlayerSeasonTableSource table) {
     stats[stat] = table;
   }
 }

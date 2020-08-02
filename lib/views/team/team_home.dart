@@ -151,7 +151,7 @@ class TeamHome extends StatelessWidget {
           )),
     ];
     if (viewModel.team != null && viewModel.team.containsStat(viewModel.selectedStat)) {
-      PlayerTableSource stats = viewModel.team.getStat(viewModel.selectedStat);
+      PlayerSeasonTableSource stats = viewModel.team.getStat(viewModel.selectedStat);
       widgets.add(SliverFillRemaining(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,

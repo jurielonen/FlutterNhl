@@ -54,19 +54,6 @@ class StatsHome extends StatelessWidget {
                 : index == 1 ? StatType.GOALIE : StatType.TEAM);
           },
       ),*/
-      /*NestedTemplateView(
-        tabs: Map.fromIterable(_tabs,
-        key: (name) => name.toString(),
-        value: (name) => _getStatsView(ctx, viewModel)),
-          loadingStatus: viewModel.loadingStatus,
-          errorMsg: viewModel.errorMsg,
-          onTabPressed: (int index){
-            viewModel.typeChanged(index == 0
-                ? StatType.PLAYER
-                : index == 1 ? StatType.GOALIE : StatType.TEAM);
-          },
-        content: StatsAppBarContent(),
-      ),*/
     );
   }
 
@@ -144,7 +131,7 @@ class StatsHome extends StatelessWidget {
           tooltip: 'Set filters',
           onPressed: () => setFilters(
               context, viewModel.selectedParams, viewModel.paramsChanged),
-        )
+        ),
       ],
     );
   }

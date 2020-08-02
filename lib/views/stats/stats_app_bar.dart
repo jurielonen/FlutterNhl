@@ -2,8 +2,8 @@ import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/viewmodel/stats_view_model.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
 import 'package:flutter/material.dart';
-
-class StatAppBar extends StatelessWidget {
+///TODO Delete
+/*class StatAppBar extends StatelessWidget {
 
   static const List<String> _tabs = ['Player', 'Goalie', 'Team'];
   final Function(StatType) onTabSelected;
@@ -26,7 +26,7 @@ class StatAppBar extends StatelessWidget {
       )
     );
   }
-}
+}*/
 /*
 class StatAppBar extends StatefulWidget {
   final StatsViewModel viewModel;

@@ -21,6 +21,66 @@ abstract class CustomDataTableSource {
   set setColumnSortCallBack(DataColumnSortCallback dataColumnSortCallback);
   void callback(int columnIndex, bool ascending);
   set setRowCallBack(DataRowTapCallBack dataRowTapCallBack);
+
+  static Widget createTableCorner(String title) {
+    return SizedBox(
+      width: CustomDataTableSource.firstColumnWidth,
+      height: CustomDataTableSource.headerRowHeight,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 3.0, 8.0, 3.0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(color: Colors.grey, width: 3))),
+                child:
+                    Text(title, style: CustomDataTableSource.firstColumnStyle)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static DataColumn createTableColumn(String title, String tooltip,
+      {DataColumnSortCallback onSortCallBack}) {
+    return DataColumn(
+      label: Container(
+        decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey, width: 3))),
+        child: Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Text(
+            title,
+            style: CustomDataTableSource.headerRowStyle,
+          ),
+        ),
+      ),
+      tooltip: tooltip,
+      onSort: (c, a) => onSortCallBack(c, a),
+    );
+  }
+
+  static Widget createTableFirstColumn(Widget title) {
+    return SizedBox(
+      width: CustomDataTableSource.firstColumnWidth,
+      height: CustomDataTableSource.dataRowHeight,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Align(alignment: Alignment.centerLeft, child: title),
+      ),
+    );
+  }
+
+  static DataCell createTableCell(String value) {
+    return DataCell(
+      Text(
+        value,
+        style: CustomDataTableSource.cellRowStyle,
+      ),
+    );
+  }
 }
 
 class CustomDataTable extends StatefulWidget {
@@ -56,7 +116,8 @@ class _CustomDataTableState extends State<CustomDataTable> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Theme(
-              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              data:
+                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: DataTable(
                 headingRowHeight: CustomDataTableSource.headerRowHeight,
                 horizontalMargin: 5.0,

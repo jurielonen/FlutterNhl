@@ -69,7 +69,7 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
       try {
         final List<dynamic> stats = await nhlApi.fetchTeamStat(
             store.state.teamState.selectedStat, store.state.teamState.teamId);
-        next(TeamReceivedStatAction(PlayerTableSource.fromData(
+        next(TeamReceivedStatAction(PlayerSeasonTableSource.fromData(
             stats, teamFilterTypeSelector(store.state))));
       } catch (error) {
         next(TeamErrorAction(error.toString()));

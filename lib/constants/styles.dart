@@ -9,6 +9,7 @@ import 'colors.dart';
 
 abstract class Styles {
   static DateFormat apiDateFormat = DateFormat('yyyy-MM-dd');
+  static DateFormat gameLogFormat = DateFormat('MMM dd');
   static DateFormat dateFormat = DateFormat('dd.MM.yyyy');
   static DateFormat dateWithoutYearFormat = DateFormat('dd.MM');
   static DateFormat timeFormat = DateFormat('HH:mm');

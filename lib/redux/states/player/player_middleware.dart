@@ -66,7 +66,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
             store.state.playerState.selectedStat,
             store.state.playerState.playerId,
             store.state.playerState.playerType);
-        next(PlayerReceivedStatAction(PlayerTableSource.fromData(
+        next(PlayerReceivedStatAction(PlayerSeasonTableSource.fromData(
             stats, playerFilterTypeSelector(store.state))));
       } catch (error) {
         next(PlayerErrorAction(error.toString()));

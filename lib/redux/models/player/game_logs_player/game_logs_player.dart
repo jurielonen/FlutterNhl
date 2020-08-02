@@ -1,8 +1,8 @@
 import 'package:FlutterNhl/redux/models/helpers.dart';
+import 'package:FlutterNhl/redux/models/team/team.dart';
 
 class GameLogsPlayer {
-  final String opponentName;
-  final String opponentAbb;
+  final Team opponent;
   final int gamePk;
   final DateTime date;
   final bool home;
@@ -10,8 +10,7 @@ class GameLogsPlayer {
   final Map<String, dynamic> stats;
 
   GameLogsPlayer(
-      {this.opponentName,
-      this.opponentAbb,
+      {this.opponent,
       this.gamePk,
       this.date,
       this.home,
@@ -20,8 +19,7 @@ class GameLogsPlayer {
 
   factory GameLogsPlayer.fromJson(Map<String, dynamic> json) {
     return GameLogsPlayer(
-        opponentName: getJsonString2(['opponent', 'name'], json),
-        opponentAbb: getJsonString2(['opponent', 'abbreviation'], json),
+        opponent: Team.fromJson(getJsonObject(['opponent'], json)),
         gamePk: getJsonInt2(['game', 'gamePk'], json),
         date: getJsonDateTime('date', json),
         home: getJsonBoolean('isHome', json),

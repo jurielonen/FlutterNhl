@@ -18,7 +18,7 @@ class PlayerStatsChangedAction extends PlayerAction {
 class PlayerStatsAlreadyDownloaded extends PlayerAction {}
 
 class PlayerReceivedStatAction extends PlayerAction {
-  final PlayerTableSource stats;
+  final PlayerSeasonTableSource stats;
   PlayerReceivedStatAction(this.stats);
 }
 
