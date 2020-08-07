@@ -1,4 +1,6 @@
+import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
+import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/content_card.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:flutter/material.dart';
@@ -16,31 +18,27 @@ class GameVideoView extends StatelessWidget {
                   (BuildContext context, int index) {
                   return videoCard(index);
               }, childCount: content.videos.length),
-          /*SliverChildListDelegate(
-            videoCards.toList(),
-          ),*/
         );
   }
-
-  /*Iterable<Widget> get videoCards sync* {
-    for (Video video in content.videos) {
-      yield ImageCard(
-          onPressed: () => print('pressed $video'),
-          imageUrl: video.videoPic.src,
-          title: video.title,
-          description: video.blurb);
-    }
-  }*/
 
   Widget videoCard(int index) {
     if(content.videos.length > index) {
       final video = content.videos[index];
-      return ImageCard(onPressed: () => print('pressed $video'),
-          imageUrl: video.videoPic.src,
-          title: video.title,
-          description: video.blurb);
+      return VideoCard(video: video,);
     } else {
       return ErrorView('Unknown index');
     }
+  }
+}
+
+class VideoCard extends StatelessWidget {
+  final Video video;
+  const VideoCard({Key key, this.video}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return ImageCard(onPressed: () => Navigator.pushNamed(context, Routes.video, arguments: VideoArguments(video.videoUrl)),
+        imageUrl: video.videoPic.src,
+        title: video.title,
+        description: video.blurb);
   }
 }

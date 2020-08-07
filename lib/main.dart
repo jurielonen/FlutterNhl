@@ -7,6 +7,7 @@ import 'package:FlutterNhl/views/home_page.dart';
 import 'package:FlutterNhl/views/player/player_home.dart';
 import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/views/team/team_home.dart';
+import 'package:FlutterNhl/views/video/video_view.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterNhl/constants/theme.dart';
 import 'package:FlutterNhl/constants/route.dart';
@@ -56,7 +57,10 @@ class _NHLAppState extends State<NHLApp> {
                 selectedAward: ModalRoute.of(context).settings.arguments,
               ),
           Routes.statFilter: (context) => StatFilterPage(
-              arguments: ModalRoute.of(context).settings.arguments)
+              arguments: ModalRoute.of(context).settings.arguments),
+          Routes.video: (context) => VideoView(
+                arguments: ModalRoute.of(context).settings.arguments,
+              )
         },
         home: HomePage(),
         debugShowCheckedModeBanner: false,

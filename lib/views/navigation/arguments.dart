@@ -34,3 +34,8 @@ class FilterArguments extends Argument {
   final StatParameters currentParams;
   FilterArguments(this.currentParams);
 }
+
+class VideoArguments extends Argument {
+  final String url;
+  VideoArguments(this.url);
+}

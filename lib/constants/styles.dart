@@ -14,6 +14,15 @@ abstract class Styles {
   static DateFormat dateWithoutYearFormat = DateFormat('dd.MM');
   static DateFormat timeFormat = DateFormat('HH:mm');
   static DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
+  static DateFormat videoFormat = DateFormat('mm:ss');
+
+  static const gameStateText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 13,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
 
   static const infoTableHeaderText = TextStyle(
     color: kPrimaryTextColor,

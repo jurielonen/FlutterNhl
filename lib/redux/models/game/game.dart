@@ -5,6 +5,7 @@ import 'package:FlutterNhl/redux/models/game/play/play.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 final List<String> homeTeamPath = ['teams', 'home'];
 final List<String> awayTeamPath = ['teams', 'away'];
@@ -60,20 +61,12 @@ class Game {
 
   @override
   String toString() {
-    return '${homeTeam.name} - ${awayTeam.name}';
+    return '${homeTeam.abb} ${homeTeam.score} - ${awayTeam.score} ${awayTeam.abb}';
   }
 
   String opponentAbb(Team team) {
     return isHomeTeam(team) ? awayTeam.abb : homeTeam.abb;
   }
-
-  /*String teamWon(Team team){
-    switch(state){
-      case GameState.FINAL:
-      case GameState.FINAL_2:
-
-    }
-  }*/
 
   bool isHomeTeam(Team team) {
     return team.id == homeTeam.id
@@ -117,14 +110,23 @@ class Game {
     return awayTeam.abb;
   }
 
-  String get getAppBarInfo => Styles.dateTimeFormat.format(dateTime);
+  String get getScheduleTime {
+    if (isLive)
+      return '${lineScore.periodString} ${lineScore.timeRemaining}';
+    else
+      return Styles.timeFormat.format(dateTime.toLocal());
+  }
 
-  String opponentAbbWith(Team team){
+  String get getLiveScheduleInfo =>
+      '${lineScore.periodString} ${lineScore.timeRemaining}';
+  String get getAppBarInfo => Styles.dateTimeFormat.format(dateTime.toLocal());
+
+  String opponentAbbWith(Team team) {
     return isHomeTeam(team) ? awayTeam.abb : '@${homeTeam.abb}';
   }
 
-  String getResult(Team team){
-    if(isFinal) {
+  String getResult(Team team) {
+    if (isFinal) {
       if (isHomeTeam(team)) {
         if (homeTeam.score > awayTeam.score) {
           return 'W ${homeTeam.score}-${awayTeam.score}';
@@ -138,18 +140,53 @@ class Game {
           return 'W ${homeTeam.score}-${awayTeam.score}';
         }
       }
-    } else if(isLive){
+    } else if (isLive) {
       return 'Live ${homeTeam.score}-${awayTeam.score}';
     } else {
       return 'Scheduled';
     }
   }
 
-  Team getOpponent(Team team){
-    if(team.id == homeTeam.id)
+  Team getOpponent(Team team) {
+    if (team.id == homeTeam.id)
       return awayTeam;
     else
       return homeTeam;
+  }
+
+  double get homeOpacity {
+    if (isPreview || isLive || homeTeam.score >= awayTeam.score)
+      return 1.0;
+    else
+      return 0.5;
+  }
+
+  double get awayOpacity {
+    if (isPreview || isLive || awayTeam.score >= homeTeam.score)
+      return 1.0;
+    else {
+      return 0.5;
+    }
+  }
+
+  Widget get homeScheduleInfo {
+    if (isFinal)
+      return Text('${lineScore.homeStats.shots} SOG',
+          style: Styles.cardTeamWinnerMinorText);
+    else if (isLive)
+      return lineScore.homeLiveInfo;
+    else
+      return Text(homeTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
+  }
+
+  Widget get awayScheduleInfo {
+    if (isFinal)
+      return Text('${lineScore.awayStats.shots} SOG',
+          style: Styles.cardTeamWinnerMinorText);
+    else if (isLive)
+      return lineScore.awayLiveInfo;
+    else
+      return Text(awayTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
   }
 }
 
@@ -165,8 +202,11 @@ class GamePreview extends Game {
       ///TODO: better error msg
       throw Exception('Error: GamePreview.fromJson');
     }
-    TeamPreview home = TeamPreview.fromJson(getJsonObject(['teams', 0], json), lastFive: homeLastFive);
-    TeamPreview away = TeamPreview.fromJson(getJsonObject(['teams', 1], json), lastFive: awayLastFive);
+
+    TeamPreview home = TeamPreview.fromJson(getJsonObject(['teams', 0], json),
+        lastFive: homeLastFive);
+    TeamPreview away = TeamPreview.fromJson(getJsonObject(['teams', 1], json),
+        lastFive: awayLastFive);
 
     return GamePreview(
       game: game,
@@ -221,16 +261,76 @@ class LineScore {
   String periodString;
   String timeRemaining;
   List<Period> periods;
+  LineScoreStats homeStats;
+  LineScoreStats awayStats;
 
-  LineScore({this.period, this.periodString, this.timeRemaining, this.periods});
+  LineScore(
+      {this.period,
+      this.periodString,
+      this.timeRemaining,
+      this.periods,
+      this.homeStats,
+      this.awayStats});
 
   factory LineScore.fromJson(Map<String, dynamic> json) {
     return LineScore(
-        period: getJsonInt('currentPeriod', json),
-        periodString: getJsonString('currentPeriodOrdinal', json),
-        timeRemaining: getJsonString('currentPeriodTimeRemaining', json),
-        periods: List<Period>.from(getJsonList(['periods'], json)
-            .map((period) => Period.fromJson(period))));
+      period: getJsonInt('currentPeriod', json),
+      periodString: getJsonString('currentPeriodOrdinal', json),
+      timeRemaining: getJsonString('currentPeriodTimeRemaining', json),
+      periods: List<Period>.from(getJsonList(['periods'], json)
+          .map((period) => Period.fromJson(period))),
+      homeStats:
+          LineScoreStats.fromJson(getJsonObject(['teams', 'home'], json)),
+      awayStats:
+          LineScoreStats.fromJson(getJsonObject(['teams', 'away'], json)),
+    );
+  }
+
+  Widget get homeLiveInfo => homeStats.liveInfo;
+  Widget get awayLiveInfo => awayStats.liveInfo;
+}
+
+class LineScoreStats {
+  int goals;
+  int shots;
+  bool goaliePulled;
+  bool powerPlay;
+
+  LineScoreStats(
+      {@required this.goals,
+      @required this.shots,
+      @required this.goaliePulled,
+      @required this.powerPlay});
+
+  factory LineScoreStats.fromJson(Map<String, dynamic> json) {
+    return LineScoreStats(
+        goals: getJsonInt('goals', json),
+        shots: getJsonInt('shotsOnGoal', json),
+        goaliePulled: getJsonBoolean('goaliePulled', json),
+        powerPlay: getJsonBoolean('powerPlay', json));
+  }
+
+  Widget get liveInfo {
+    if (goaliePulled || powerPlay) {
+      List<TextSpan> texts = [];
+      if (powerPlay)
+        texts.add(TextSpan(
+            text: ' PP',
+            style: Styles.cardTeamWinnerMinorText
+                .copyWith(color: Colors.redAccent)));
+      if (goaliePulled)
+        texts.add(TextSpan(
+            text: ' Goalie pulled',
+            style: Styles.cardTeamWinnerMinorText
+                .copyWith(color: Colors.redAccent)));
+      return Text.rich(
+        TextSpan(
+            text: '$shots SOG',
+            style: Styles.cardTeamWinnerMinorText,
+            children: texts),
+      );
+    }
+    return Text('$shots SOG', style: Styles.cardTeamWinnerMinorText,);
   }
 }
 

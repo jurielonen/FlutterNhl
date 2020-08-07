@@ -4,6 +4,7 @@ import 'package:FlutterNhl/views/home_page.dart';
 import 'package:FlutterNhl/views/player/player_home.dart';
 import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/views/team/team_home.dart';
+import 'package:FlutterNhl/views/video/video_view.dart';
 
 
 class Routes {
@@ -14,6 +15,7 @@ class Routes {
   static const String game = GameHome.routeName;
   static const String recipient = RecipientHome.routeName;
   static const String statFilter = StatFilterPage.routeName;
+  static const String video = VideoView.routeName;
 }
 
 enum DrawerPages {

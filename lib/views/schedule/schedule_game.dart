@@ -1,12 +1,16 @@
 import 'package:FlutterNhl/constants/colors.dart';
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/game/game_enums.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
+import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/content_card.dart';
+import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ScheduleGameCard extends StatelessWidget {
   final Game _game;
@@ -15,76 +19,188 @@ class ScheduleGameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double tWidth = MediaQuery.of(context).size.width / 4;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: PressableCard(
-        onPressed: (){
+        onPressed: () {
           print('Pressed');
-          Navigator.pushNamed(context, Routes.game, arguments: GameArgument(_game));
+          Navigator.pushNamed(context, Routes.game,
+              arguments: GameArgument(_game));
         },
         color: kNHLBackground,
-        child: Row(
-          children: <Widget>[
-            ///Team column
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _buildTeamRow(_game.homeTeam),
-                  _buildTeamRow(_game.awayTeam)
-                ],
+        child: Container(
+          decoration: BoxDecoration(color: Colors.black),
+          child: Row(
+            children: <Widget>[
+              Expanded(child: _buildGameTable()),
+              VerticalDivider(
+                thickness: 1,
+                indent: 5,
+                endIndent: 5,
+                color: Colors.white,
               ),
-            ),
-            Expanded(
-              child: Padding(
+              Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _buildScoreRow(_game.homeTeam.score),
-                    _buildScoreRow(_game.awayTeam.score),
-                  ],
+                child: SizedBox(
+                  width: tWidth,
+                  child: _getStateRow(context),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(gameStateToString(_game.state))
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Row _buildTeamRow(TeamSchedule team){
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Text(team.abb, style: Styles.cardTeamWinnerText),
-        Text(team.teamRecord, style: Styles.cardTeamWinnerMinorText)
+  Table _buildGameTable() {
+    return Table(
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      columnWidths: {
+        0: FractionColumnWidth(0.20),
+        1: FractionColumnWidth(0.30),
+        2: FractionColumnWidth(0.5),
+      },
+      children: [
+        _buildTeamTableRow(
+            _game.homeTeam, _game.homeScheduleInfo, _game.homeOpacity),
+        _buildTeamTableRow(
+            _game.awayTeam, _game.awayScheduleInfo, _game.awayOpacity),
       ],
     );
   }
 
-  Row _buildScoreRow(int score){
-    return Row(
+  TableRow _buildTeamTableRow(TeamSchedule team, Widget info, double opacity) {
+    return TableRow(children: [
+      TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 5.0, top: 5.0),
+            child: Opacity(
+                opacity: opacity,
+                child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Styles.buildTeamSvgImage(team, size: 25))),
+          )),
+      TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Opacity(
+            opacity: opacity,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(team.abb, style: Styles.scaffoldGameWinnerText),
+                  info,
+                ],
+              ),
+            ),
+          )),
+      TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Opacity(
+            opacity: opacity,
+            child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(team.score.toString(),
+                    style: Styles.scaffoldGameWinnerText)),
+          )),
+    ]);
+  }
+
+  Widget _getStateRow(BuildContext context) {
+    List<Widget> widgets = [];
+    if (_game.isPreview) {
+      widgets.addAll([
+        Text(
+          gameStateToString(_game.state).toUpperCase(),
+          style: Styles.gameStateText,
+        ),
+        Text(
+          _game.getScheduleTime,
+          style: Styles.gameStateText,
+        ),
+      ]);
+    } else if (_game.isLive) {
+      widgets.addAll(
+        [
+          Text(
+            gameStateToString(_game.state).toUpperCase(),
+            style: Styles.gameStateText.copyWith(color: Colors.green),
+          ),
+          Text(
+            _game.getLiveScheduleInfo,
+            style: Styles.gameStateText,
+          ),
+        ],
+      );
+    } else if (_game.isFinal) {
+      widgets.addAll(
+        [
+          Text(
+            gameStateToString(_game.state).toUpperCase(),
+            style: Styles.gameStateText,
+          ),
+          IconButton(
+            icon: Icon(Icons.videocam),
+            onPressed: () {
+              _showDialog(context);
+            },
+            tooltip: 'Game recaps',
+          ),
+        ],
+      );
+    } else {
+      widgets.addAll(
+        [
+          Text(
+            gameStateToString(_game.state).toUpperCase(),
+            style: Styles.gameStateText,
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Text(score.toString(), style: Styles.cardTeamWinnerText)
-      ],
+      children: widgets,
     );
   }
 
+  Future<void> _showDialog(BuildContext context) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            titleTextStyle: Styles.cardTeamWinnerText,
+            title: Text('${_game.toString()}\nRECAPS', textAlign: TextAlign.center,),
+            contentPadding: const EdgeInsets.only(),
+            titlePadding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+            actionsPadding: const EdgeInsets.only(),
+            content: Container(
+              decoration: BoxDecoration(color: Colors.grey),
+              child: SingleChildScrollView(
+                child: ListBody(
+                  children: videoTiles.toList()
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Close'),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            ],
+          );
+        });
+  }
 
+  Iterable<Widget> get videoTiles sync* {
+    for(Video video in _game.content.videos)
+      yield VideoCard(video: video,);
+  }
 }

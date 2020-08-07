@@ -1,10 +1,7 @@
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
 import 'package:kt_dart/collection.dart';
-
-import '../app_state_actions.dart';
 
 ScheduleState scheduleReducer(ScheduleState state, dynamic action) {
   print('SCHEDULESTATE: ${action.runtimeType}');

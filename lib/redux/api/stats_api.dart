@@ -24,7 +24,7 @@ class StatsApi {
     print('$printMsg fetchTeams: $searchUri');
     return await fetch(searchUri, client).then((value) {
       getJsonList(['teams'], value).forEach((team) {
-        print(Team.fromJson(team));
+        Team.fromJson(team);
       });
     }).catchError((error) => throw Exception(error.toString()));
 

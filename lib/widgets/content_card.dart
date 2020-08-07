@@ -35,7 +35,7 @@ class ImageCard extends StatelessWidget {
             Semantics(
               label: 'A card background featuring $title',
               child: Container(
-                height: 200,
+                height: 300,
                 decoration: BoxDecoration(
                   color: Colors.black,
                   image: DecorationImage(

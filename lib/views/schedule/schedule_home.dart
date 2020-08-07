@@ -1,12 +1,13 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
+import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/viewmodel/schedule_view_model.dart';
 import 'package:FlutterNhl/views/schedule/schedule_game.dart';
 import 'package:FlutterNhl/widgets/custom_date_picker.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'file:///C:/Users/juri/Documents/GitHub/FlutterNhl/lib/widgets/template_view.dart';
+import 'package:FlutterNhl/widgets/template_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -18,17 +19,32 @@ class ScheduleHome extends StatelessWidget {
     return StoreConnector<AppState, ScheduleViewModel>(
       distinct: true,
       onInit: (store) =>
-          store.dispatch(GetCurrentDateScheduleIfNotLoadedAction()),
+          store.dispatch(ScheduleEntered()),
+      onDispose: (store) {
+        print('Schedule exited');
+        store.dispatch(ScheduleExited());
+      },
       converter: (store) => ScheduleViewModel.fromStore(store),
-      builder: (_, viewModel) => TemplateView(
+      builder: (_, viewModel) =>  RefreshTemplateView(loadingStatus: viewModel.loadingStatus, successContent:
+      viewModel.selectedSchedule is ScheduleGames
+          ? _getGamesView(viewModel.selectedSchedule)
+          : _getEmptyView(viewModel.selectedSchedule), appBar: _buildSliverAppBar(
+          viewModel.selectedDate, viewModel.changeSelectedDate), errorMsg: viewModel.errorMsg, callback: () => _callBack(viewModel)),
+      /*TemplateView(
           viewModel.loadingStatus,
           viewModel.selectedSchedule is ScheduleGames
               ? _getGamesView(viewModel.selectedSchedule)
               : _getEmptyView(viewModel.selectedSchedule),
           _buildSliverAppBar(
               viewModel.selectedDate, viewModel.changeSelectedDate),
-          viewModel.errorMsg),
+          viewModel.errorMsg),*/
     );
+  }
+
+  Future<Null> _callBack(ScheduleViewModel viewModel){
+    print('CallBack');
+    viewModel.refreshSchedule();
+    return null;
   }
 
   Widget _buildSliverAppBar(DateTime date, Function onChangeDate) {
@@ -79,7 +95,7 @@ class ScheduleHome extends StatelessWidget {
       );
     }
     return SliverFixedExtentList(
-      itemExtent: 100.0,
+      itemExtent: 130.0,
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return ScheduleGameCard(selectedSchedule.games[index]);

@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/game/game_action.dart';
+import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/viewmodel/game_view_model.dart';
 import 'package:FlutterNhl/views/game/game_final_view.dart';
 import 'package:FlutterNhl/views/game/game_preview_view.dart';
@@ -27,9 +28,16 @@ class GameHome extends StatelessWidget {
         Material(
       child: StoreConnector<AppState, GameViewModel>(
           distinct: true,
-          onInit: (store) => store.dispatch(GameEntered(argument.game)),
+          onInit: (store)  {
+            store.dispatch(ScheduleExited());
+            store.dispatch(GameEntered(argument.game));
+          },
           converter: (store) => GameViewModel.fromStore(store),
-          onDispose: (store) => store.dispatch(GameExited()),
+          onDispose: (store) {
+            print('Game exited');
+            store.dispatch(GameExited());
+            store.dispatch(ScheduleEntered());
+          },
           builder: (ctx, viewModel) {
             if (viewModel.game is GameFinal) {
               return GameFinalView(

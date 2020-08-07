@@ -43,10 +43,23 @@ class Schedule {
   String toString() {
     return '$gameCount, $date';
   }
+
+  bool get isGameLive {
+    return false;
+  }
 }
 
 class ScheduleGames extends Schedule {
   List<Game> games;
 
   ScheduleGames({int gameCount, DateTime date, this.games}): super(gameCount: gameCount, date: date);
+
+  @override
+  bool get isGameLive {
+    for (Game game in games) {
+      if(game.isLive)
+        return true;
+    }
+    return false;
+  }
 }

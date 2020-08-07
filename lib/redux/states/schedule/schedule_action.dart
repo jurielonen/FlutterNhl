@@ -24,3 +24,5 @@ class ErrorScheduleAction extends ScheduleAction {
 }
 
 class RefreshScheduleAction extends ScheduleAction {}
+
+class ScheduleExited extends ScheduleAction {}
