@@ -80,3 +80,58 @@ PlayEnum playEnumFromString(String value) {
       return PlayEnum.UNKNOWN;
   }
 }
+
+String playEnumToString(PlayEnum value) {
+  switch (value) {
+    case PlayEnum.FACEOFF:
+      return 'FACEOFF';
+    case PlayEnum.HIT:
+      return 'HIT';
+    case PlayEnum.GIVEAWAY:
+      return 'GIVEAWAY';
+    case PlayEnum.GOAL:
+      return 'GOAL';
+    case PlayEnum.SHOT:
+      return 'SHOT';
+    case PlayEnum.MISSED_SHOT:
+      return 'MISSED SHOT';
+    case PlayEnum.PENALTY:
+      return 'PENALTY';
+    case PlayEnum.STOP:
+      return 'STOP';
+    case PlayEnum.SUB:
+      return 'SUB';
+    case PlayEnum.FIGHT:
+      return 'FIGHT';
+    case PlayEnum.TAKEAWAY:
+      return 'TAKEAWAY';
+    case PlayEnum.BLOCKED_SHOT:
+      return 'BLOCKED SHOT';
+    case PlayEnum.PERIOD_START:
+      return 'PERIOD START';
+    case PlayEnum.PERIOD_END:
+      return 'PERIOD END';
+    case PlayEnum.GAME_END:
+      return 'GAME END';
+    case PlayEnum.GAME_SCHEDULED:
+      return 'GAME SCHEDULED';
+    case PlayEnum.PERIOD_READY:
+      return 'PERIOD READY';
+    case PlayEnum.PERIOD_OFFICIAL:
+      return 'PERIOD OFFICIAL';
+    case PlayEnum.SHOOTOUT_COMPLETE:
+      return 'SHOOTOUT COMPLETE';
+    case PlayEnum.EARLY_INT_START:
+      return 'EARLY INT START';
+    case PlayEnum.EARLY_INT_END:
+      return 'EARLY INT END';
+    case PlayEnum.GAME_OFFICIAL:
+      return 'GAME OFFICIAL';
+    case PlayEnum.CHALLENGE:
+      return 'CHALLENGE';
+    case PlayEnum.EMERGENCY_GOALTENDER:
+      return 'EMERGENCY GOALTENDER';
+    default:
+      return 'UNKNOWN';
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/route.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/award/award_state.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_state.dart';
@@ -9,10 +10,10 @@ import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 import 'package:FlutterNhl/redux/states/team/team_state.dart';
 import 'package:meta/meta.dart';
 
-import '../enums.dart';
 
 @immutable
 class AppState {
+  final SnackBarNotification showSnackBar;
   final LoadingStatus loadingStatus;
   final String errorMsg;
   final DrawerPages currentPage;
@@ -26,6 +27,7 @@ class AppState {
   final Config config;
 
   AppState({
+    @required this.showSnackBar,
     @required this.loadingStatus,
     @required this.errorMsg,
     @required this.currentPage,
@@ -41,6 +43,7 @@ class AppState {
 
   factory AppState.initial() {
     return AppState(
+      showSnackBar: null,
       loadingStatus: LoadingStatus.IDLE,
       errorMsg: '',
       currentPage: DrawerPages.SCHEDULE,
@@ -56,6 +59,7 @@ class AppState {
   }
 
   AppState copyWith({
+    SnackBarNotification showSnackBar,
     LoadingStatus loadingStatus,
     String errorMsg,
     DrawerPages currentPage,
@@ -69,6 +73,7 @@ class AppState {
     Config config,
   }) {
     return AppState(
+      showSnackBar: showSnackBar ?? this.showSnackBar,
       loadingStatus: loadingStatus ?? this.loadingStatus,
       errorMsg: errorMsg ?? this.errorMsg,
       currentPage: currentPage ?? this.currentPage,
@@ -82,4 +87,13 @@ class AppState {
       config: config ?? this.config,
     );
   }
+}
+
+
+class SnackBarNotification {
+  final String msg;
+  final Duration duration = Duration(seconds: 4);
+  bool show = true;
+
+  SnackBarNotification(this.msg);
 }

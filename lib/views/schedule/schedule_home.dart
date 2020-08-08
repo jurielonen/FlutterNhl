@@ -18,30 +18,25 @@ class ScheduleHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, ScheduleViewModel>(
       distinct: true,
-      onInit: (store) =>
-          store.dispatch(ScheduleEntered()),
+      onInit: (store) => store.dispatch(ScheduleEntered()),
       onDispose: (store) {
         print('Schedule exited');
         store.dispatch(ScheduleExited());
       },
       converter: (store) => ScheduleViewModel.fromStore(store),
-      builder: (_, viewModel) =>  RefreshTemplateView(loadingStatus: viewModel.loadingStatus, successContent:
-      viewModel.selectedSchedule is ScheduleGames
-          ? _getGamesView(viewModel.selectedSchedule)
-          : _getEmptyView(viewModel.selectedSchedule), appBar: _buildSliverAppBar(
-          viewModel.selectedDate, viewModel.changeSelectedDate), errorMsg: viewModel.errorMsg, callback: () => _callBack(viewModel)),
-      /*TemplateView(
-          viewModel.loadingStatus,
-          viewModel.selectedSchedule is ScheduleGames
+      builder: (_, viewModel) => RefreshTemplateView(
+          loadingStatus: viewModel.loadingStatus,
+          successContent: viewModel.selectedSchedule is ScheduleGames
               ? _getGamesView(viewModel.selectedSchedule)
               : _getEmptyView(viewModel.selectedSchedule),
-          _buildSliverAppBar(
+          appBar: _buildSliverAppBar(
               viewModel.selectedDate, viewModel.changeSelectedDate),
-          viewModel.errorMsg),*/
+          errorMsg: viewModel.errorMsg,
+          callback: () => _callBack(viewModel)),
     );
   }
 
-  Future<Null> _callBack(ScheduleViewModel viewModel){
+  Future<Null> _callBack(ScheduleViewModel viewModel) {
     print('CallBack');
     viewModel.refreshSchedule();
     return null;

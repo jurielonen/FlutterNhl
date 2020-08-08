@@ -49,6 +49,12 @@ AppState appReducer(AppState state, dynamic action) {
     return state.copyWith(awardState: awardReducer(state.awardState, action));
   } else if(action is GameAction){
     return state.copyWith(gameState: gameReducer(state.gameState, action));
+  } else if(action is ShowSnackBar){
+    return state.copyWith(showSnackBar: action.snackBarNotification);
+  } else if(action is CloseSnackBar){
+    SnackBarNotification s = state.showSnackBar;
+    s.show = false;
+    return state.copyWith(showSnackBar: s);
   }
   return state;
 }

@@ -11,7 +11,8 @@ class Content {
     recaps.forEach((recap) {
       String title = getJsonString('title', recap);
       if (title == 'Extended Highlights' || title == 'Recap') {
-        tVideos.add(Video.fromJson(getJsonObject(['items', 0], recap)));
+        Video temp = Video.fromJson(getJsonObject(['items', 0], recap));
+        if (temp.videoUrl != '') tVideos.add(temp);
       }
     });
 
@@ -24,13 +25,20 @@ class Content {
       highlights.forEach((highlight) {
         String type = getJsonString('type', highlight);
         if (type == 'video') {
-          tVideos.add(Video.fromJson(highlight));
+          Video temp = Video.fromJson(highlight);
+          if (temp.videoUrl != '') tVideos.add(temp);
         }
       });
     }
     return Content(
       videos: tVideos,
     );
+  }
+
+  bool get containsAllVideos {
+    if(videos.length > 3)
+      return true;
+    return false;
   }
 }
 
@@ -60,9 +68,9 @@ class Video {
         String name = getJsonString('name', playback);
         if (name.startsWith('FLASH_')) {
           int tQuality = 0;
-          if(name.contains('X'))
+          if (name.contains('X'))
             tQuality = int.parse(name.split('X').last);
-          else if(name.contains('x'))
+          else if (name.contains('x'))
             tQuality = int.parse(name.split('x').last);
           if (quality < tQuality) {
             quality = tQuality;

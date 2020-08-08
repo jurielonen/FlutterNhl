@@ -20,6 +20,12 @@ GameState gameReducer(GameState state, dynamic action){
     return state.copyWith(loadingStatus: LoadingStatus.ERROR, errorMsg: action.msg);
   } else if(action is GameExited){
     return state.copyWith(errorMsg: '', selectedGame: null);
+  } else if(action is GameDownloadedContentAction){
+    final gamesMap = state.games.toMutableMap();
+    gamesMap[state.selectedGame.id].content = action.content;
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, games: gamesMap);;
+  } else if(action is GameAlreadyDownloadedContentAction){
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   }
   return state;
 }

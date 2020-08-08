@@ -25,7 +25,9 @@ class Play {
               getJsonList(['players'], json).map<Player>(
                   (player) => PlayerPlay.fromJson(player))),
           team: Team.fromJson(getJsonObject(['team'], json)),
-          desc: getJsonString2(['result', 'description'], json));
+          desc: getJsonString2(['result', 'description'], json),
+          strength: getJsonString2(['result', 'strength', 'code'], json)
+      );
     } else {
       return tPlay;
     }
@@ -36,9 +38,18 @@ class PlayWithPlayers extends Play {
   final List<PlayerPlay> players;
   final Team team;
   final String desc;
+  final String strength;
 
-  PlayWithPlayers({@required Play play,@required  this.players,@required  this.team,@required  this.desc})
+  PlayWithPlayers({@required Play play,@required  this.players,@required  this.team,@required  this.desc, @required this.strength})
       : super(type: play.type, event: play.event, about: play.about);
+  
+  String get playHeader {
+    return '${about.periodTime}-${playEnumToString(type)} $strength';
+  }
+
+  String get playDesc {
+    return desc;
+  }
 }
 
 class About {

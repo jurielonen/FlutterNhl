@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stats_api.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
@@ -37,6 +36,8 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
         await _getSchedule(store, next);
       } else if (action is RefreshScheduleAction) {
         await _downloadSchedule(store, next);
+        if(store.state.scheduleState.loadingStatus == LoadingStatus.SUCCESS)
+          store.dispatch(ShowSnackBar(SnackBarNotification('Schedule refreshed', )));
       }
     }
   }

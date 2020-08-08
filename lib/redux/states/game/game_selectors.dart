@@ -9,8 +9,9 @@ final gamesSelector = (AppState state) => state.gameState.games;
 final selectedGameSelector = createSelector2(selectedGameIdSelector, gamesSelector, _getGame);
 
 Game _getGame(int id, KtMap<int, Game> games){
-  if(games.containsKey(id))
-    return games[id];
-
+  if(games.containsKey(id)) {
+    final game = games[id];
+    return game;
+  }
   return null;
 }

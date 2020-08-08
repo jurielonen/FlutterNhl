@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
+import 'package:FlutterNhl/redux/states/app_state.dart';
 
 abstract class ScheduleAction {}
 
@@ -28,6 +29,13 @@ class PageChangedAction {
   final DrawerPages page;
   PageChangedAction(this.page);
 }
+
+class ShowSnackBar {
+  final SnackBarNotification snackBarNotification;
+  ShowSnackBar(this.snackBarNotification);
+}
+
+class CloseSnackBar {}
 
 class ScheduleEntered extends ScheduleAction {}
 

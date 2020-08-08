@@ -1,6 +1,8 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
+import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 Widget getPlayCard(Play play, int home){
   if(play is PlayWithPlayers)
@@ -16,7 +18,8 @@ class PlayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      return Container(
+      return PlayerBioTab.createHeaderDivider('${play.about.ordinalNum} ${play.event}');
+        /*Container(
         width: MediaQuery.of(context).size.width,
         child: Card(
           elevation: 5,
@@ -24,7 +27,7 @@ class PlayCard extends StatelessWidget {
             title: Center(child: Text('${play.about.ordinalNum} ${play.event}')),
           ),
         ),
-      );
+      );*/
   }
 }
 
@@ -37,7 +40,46 @@ class PlayPlayersCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      return Align(
+      return Column(
+        children: <Widget>[
+          /*Expanded(
+            child: Divider(
+            thickness: 2,
+            indent: 8,
+            endIndent: 8,
+            color: Colors.grey,
+          ),),*/
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+            child: Row(
+              children: <Widget>[
+                Styles.buildTeamSvgImage(play.team, size: 20),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(play.playHeader, style: Styles.playHeaderText,),
+                        Text(play.playDesc, style: Styles.playDescText, overflow: TextOverflow.clip,),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          /*Expanded(
+            child: Divider(
+              thickness: 2,
+              indent: 8,
+              endIndent: 8,
+              color: Colors.grey,
+            ),),*/
+        ],
+      );
+        /*Align(
         alignment: home ? Alignment.centerLeft : Alignment.centerRight,
         child:  Container(
           width: MediaQuery.of(context).size.width * 0.8,
@@ -51,7 +93,7 @@ class PlayPlayersCard extends StatelessWidget {
             ),
           ),
         ),
-      );
+      );*/
 
   }
 }

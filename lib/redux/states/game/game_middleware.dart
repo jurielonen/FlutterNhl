@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/game/game_action.dart';
+import 'package:FlutterNhl/redux/states/game/game_selectors.dart';
 import 'package:redux/redux.dart';
 
 class GameMiddleware extends MiddlewareClass<AppState> {
@@ -29,8 +30,21 @@ class GameMiddleware extends MiddlewareClass<AppState> {
       }
     } else if (action is GameRefreshAction) {
       await _fetchGame(store.state.gameState.selectedGame, store, next);
-    } else if(action is GameExited){
+      if (store.state.gameState.loadingStatus == LoadingStatus.SUCCESS)
+        store.dispatch(ShowSnackBar(SnackBarNotification(
+          'Game refreshed ${store.state.gameState.selectedGame.lineScore.timeRemaining}',
+        )));
+    } else if (action is GameExited) {
       inGame = false;
+    } else if (action is GameDownloadContentAction) {
+      if (!selectedGameSelector(store.state).content.containsAllVideos) {
+        next(GameRequestingAction());
+        final content =
+            await api.fetchGameContent(store.state.gameState.selectedGame.id);
+        next(GameDownloadedContentAction(content));
+      } else {
+        next(GameAlreadyDownloadedContentAction());
+      }
     }
   }
 
@@ -51,10 +65,9 @@ class GameMiddleware extends MiddlewareClass<AppState> {
   }
 
   void checkIfGameLive(Game game, Store<AppState> store) {
-    //gameLive = game.isLive;
     if (game.isLive && inGame)
       Future.delayed(Duration(seconds: 15), () {
-        if(inGame) {
+        if (inGame) {
           print('game refresh called ${DateTime.now()}');
           store.dispatch(GameRefreshAction());
         }

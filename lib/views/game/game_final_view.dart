@@ -15,11 +15,16 @@ class GameFinalView extends StatelessWidget {
   final GameFinal game;
   final LoadingStatus loadingStatus;
   final String errorMsg;
+  final VoidCallback contentCallBack;
+  final VoidCallback refreshCallBack;
+
   const GameFinalView(
       {Key key,
       @required this.game,
       @required this.loadingStatus,
-      @required this.errorMsg})
+      @required this.errorMsg,
+      @required this.contentCallBack,
+      @required this.refreshCallBack})
       : super(key: key);
   static const List<String> _tabs = [
     'Stats',
@@ -31,23 +36,24 @@ class GameFinalView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldTemplate(
-        loadingStatus: loadingStatus,
-        errorMsg: errorMsg,
-        onTabChanged: (String tab) => _buildTabContent(tab),
-        appBarTitle: GameAppBar.getTitle(game),
-        tabs: _createTabs.toList(),
-        loadingText: 'Loading game',
-        //onTabPressed: null
-    );
-    /*NestedTemplateView2(
-      tabs: _createTabs.toList(),
+    return RefreshScaffoldTemplate(
       loadingStatus: loadingStatus,
       errorMsg: errorMsg,
-      onTabPressed: (tab) => print('pressed tab $tab'),
-      content: GameFinalAppBarContent(game),
-      successContent: _buildTabContent(game),
-    );*/
+      onTabChanged: (String tab) => _buildTabContent(tab),
+      appBarTitle: GameAppBar.getTitle(game),
+      tabs: _createTabs.toList(),
+      loadingText: 'Loading game content',
+      onTabPressed: (int tab) {
+        if (_tabs.length > tab && _tabs[tab] == 'Videos') contentCallBack();
+      },
+      refreshCallBack: () => _refreshCallBack(),
+    );
+  }
+
+  Future<Null> _refreshCallBack() {
+    print('Game callback');
+    refreshCallBack();
+    return null;
   }
 
   Iterable<NestedTemplateTab> get _createTabs sync* {
@@ -80,51 +86,50 @@ class GameFinalView extends StatelessWidget {
   }
 
   Widget _buildTabContent(String tab) {
-
-          switch (tab) {
-            case 'Stats':
-              return CustomScrollView(
-                slivers: <Widget>[
-                  GameStats(
-                      homeStats: game.home.teamStats,
-                      awayStats: game.away.teamStats,
-                      homeColor: game.home.teamColor),
-                ],
-              );
-            case 'Plays':
-              return GamePlayView(plays: game.plays, homeId: game.home.id);
-            case 'Home':
-              return CustomScrollView(
-                slivers: <Widget>[
-                  GamePlayerView(
-                    players: game.home.playerTableSource,
-                    goalies: game.home.goalieTableSource,
-                  ),
-                ],
-              );
-            case 'Away':
-              return CustomScrollView(
-                slivers: <Widget>[
-                  GamePlayerView(
-                    players: game.away.playerTableSource,
-                    goalies: game.away.goalieTableSource,
-                  ),
-                ],
-              );
-            case 'Videos':
-              return CustomScrollView(
-                slivers: <Widget>[
-                  GameVideoView(
-                    content: game.content,
-                  ),
-                ],
-              );
-            default:
-              return CustomScrollView(
-                slivers: <Widget>[
-                  SliverErrorView(msg: errorMsg),
-                ],
-              );
-          }
+    switch (tab) {
+      case 'Stats':
+        return CustomScrollView(
+          slivers: <Widget>[
+            GameStats(
+                homeStats: game.home.teamStats,
+                awayStats: game.away.teamStats,
+                homeColor: game.home.teamColor),
+          ],
+        );
+      case 'Plays':
+        return GamePlayView(plays: game.plays, homeId: game.home.id);
+      case 'Home':
+        return CustomScrollView(
+          slivers: <Widget>[
+            GamePlayerView(
+              players: game.home.playerTableSource,
+              goalies: game.home.goalieTableSource,
+            ),
+          ],
+        );
+      case 'Away':
+        return CustomScrollView(
+          slivers: <Widget>[
+            GamePlayerView(
+              players: game.away.playerTableSource,
+              goalies: game.away.goalieTableSource,
+            ),
+          ],
+        );
+      case 'Videos':
+        return CustomScrollView(
+          slivers: <Widget>[
+            GameVideoView(
+              content: game.content,
+            ),
+          ],
+        );
+      default:
+        return CustomScrollView(
+          slivers: <Widget>[
+            SliverErrorView(msg: errorMsg),
+          ],
+        );
+    }
   }
 }

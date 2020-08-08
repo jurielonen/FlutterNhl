@@ -44,6 +44,8 @@ class GameHome extends StatelessWidget {
                 game: viewModel.game,
                 loadingStatus: viewModel.loadingStatus,
                 errorMsg: viewModel.errorMsg,
+                contentCallBack: viewModel.contentCallBack,
+                refreshCallBack: viewModel.refreshCallBack,
               );
             } else if (viewModel.game is GamePreview) {
               return GamePreviewView(

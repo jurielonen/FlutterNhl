@@ -10,12 +10,16 @@ class AppViewModel {
   final String errorMsg;
   final DrawerPages currentPage;
   final Function(DrawerPages) pageChanged;
+  final SnackBarNotification showSnackBar;
+  final VoidCallback onSnackBarShowed;
 
   AppViewModel(
       {@required this.loadingStatus,
       @required this.errorMsg,
       @required this.currentPage,
-      @required this.pageChanged});
+      @required this.pageChanged,
+      @required this.showSnackBar,
+      @required this.onSnackBarShowed});
 
   static AppViewModel fromStore(Store<AppState> store) {
     return AppViewModel(
@@ -24,6 +28,8 @@ class AppViewModel {
       currentPage: store.state.currentPage,
       pageChanged: (DrawerPages page) =>
           store.dispatch(PageChangedAction(page)),
+      showSnackBar: store.state.showSnackBar,
+      onSnackBarShowed: () => store.dispatch(CloseSnackBar()),
     );
   }
 }

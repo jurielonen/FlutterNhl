@@ -2,14 +2,15 @@ import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
 import 'package:FlutterNhl/redux/models/game/play/play_enum.dart';
 import 'package:FlutterNhl/views/game/game_widgets/play_card.dart';
-import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PlayFilterEntry {
-  const PlayFilterEntry(this.name, this.enumValue);
-  final String name;
+  PlayFilterEntry( this.enumValue){
+    name = playEnumToString(enumValue);
+  }
+  String name;
   final PlayEnum enumValue;
 }
 
@@ -24,18 +25,18 @@ class GamePlayView extends StatefulWidget {
 }
 
 class _GamePlayViewState extends State<GamePlayView> {
-  static const List<PlayFilterEntry> _plays = [
-    PlayFilterEntry("GOAL", PlayEnum.GOAL),
-    PlayFilterEntry("SHOT", PlayEnum.SHOT),
-    PlayFilterEntry("MISSED_SHOT", PlayEnum.MISSED_SHOT),
-    PlayFilterEntry("PENALTY", PlayEnum.PENALTY),
-    PlayFilterEntry("FACEOFF", PlayEnum.FACEOFF),
-    PlayFilterEntry("HIT", PlayEnum.HIT),
-    PlayFilterEntry("BLOCKED_SHOT", PlayEnum.BLOCKED_SHOT),
-    PlayFilterEntry("TAKEAWAY", PlayEnum.TAKEAWAY),
-    PlayFilterEntry("GIVEAWAY", PlayEnum.GIVEAWAY),
-    PlayFilterEntry("FIGHT", PlayEnum.FIGHT),
-    PlayFilterEntry("CHALLENGE", PlayEnum.CHALLENGE),
+  List<PlayFilterEntry> _plays = [
+    PlayFilterEntry(PlayEnum.GOAL),
+    PlayFilterEntry(PlayEnum.SHOT),
+    PlayFilterEntry(PlayEnum.MISSED_SHOT),
+    PlayFilterEntry(PlayEnum.PENALTY),
+    PlayFilterEntry(PlayEnum.FACEOFF),
+    PlayFilterEntry(PlayEnum.HIT),
+    PlayFilterEntry(PlayEnum.BLOCKED_SHOT),
+    PlayFilterEntry(PlayEnum.TAKEAWAY),
+    PlayFilterEntry(PlayEnum.GIVEAWAY),
+    PlayFilterEntry(PlayEnum.FIGHT),
+    PlayFilterEntry(PlayEnum.CHALLENGE),
   ];
 
   List<PlayEnum> _selectedPlays = [PlayEnum.GOAL, PlayEnum.PERIOD_START];
@@ -61,7 +62,7 @@ class _GamePlayViewState extends State<GamePlayView> {
           ),
         ),
         SliverFixedExtentList(
-          itemExtent: 100.0,
+          itemExtent: 50.0,
           delegate:
               SliverChildBuilderDelegate((BuildContext context, int index) {
             if (filteredPlayList.length > index)
@@ -92,7 +93,7 @@ class _GamePlayViewState extends State<GamePlayView> {
       child: FilterChip(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         labelStyle: Styles.playTitleText,
-        label: Text(entry.name),
+        label: Text(playEnumToString(entry.enumValue)),
         selected: _selectedPlays.contains(entry.enumValue),
         onSelected: (bool value) {
           setState(() {

@@ -16,6 +16,23 @@ abstract class Styles {
   static DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
   static DateFormat videoFormat = DateFormat('mm:ss');
 
+  static const playHeaderText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 10,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
+
+
+  static const playDescText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 10,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
   static const gameStateText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
@@ -187,7 +204,7 @@ abstract class Styles {
   static const playTitleText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
-    fontSize: 14,
+    fontSize: 11,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.bold,
   );
