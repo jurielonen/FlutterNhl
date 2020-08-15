@@ -30,10 +30,10 @@ class GameMiddleware extends MiddlewareClass<AppState> {
       }
     } else if (action is GameRefreshAction) {
       await _fetchGame(store.state.gameState.selectedGame, store, next);
-      if (store.state.gameState.loadingStatus == LoadingStatus.SUCCESS)
+      /*if (store.state.gameState.loadingStatus == LoadingStatus.SUCCESS)
         store.dispatch(ShowSnackBar(SnackBarNotification(
           'Game refreshed ${store.state.gameState.selectedGame.lineScore.timeRemaining}',
-        )));
+        )));*/
     } else if (action is GameExited) {
       inGame = false;
     } else if (action is GameDownloadContentAction) {

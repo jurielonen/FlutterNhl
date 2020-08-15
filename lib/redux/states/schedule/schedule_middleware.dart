@@ -37,7 +37,7 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
       } else if (action is RefreshScheduleAction) {
         await _downloadSchedule(store, next);
         if(store.state.scheduleState.loadingStatus == LoadingStatus.SUCCESS)
-          store.dispatch(ShowSnackBar(SnackBarNotification('Schedule refreshed', )));
+          store.dispatch(ShowSnackBar(SnackBarNotification('Schedule refreshed ${DateTime.now()}', )));
       }
     }
   }
@@ -71,7 +71,7 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
   void checkIfScheduleLive(Schedule schedule, Store<AppState> store) {
     //gamesLive = schedule.isGameLive;
     if (schedule.isGameLive && inSchedule) {
-      Future.delayed(Duration(seconds: 15), () {
+      Future.delayed(Duration(seconds: 30), () {
         if(inSchedule) {
           print('schedule refresh called ${DateTime.now()}');
           store.dispatch(RefreshScheduleAction());
