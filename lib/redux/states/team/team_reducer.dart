@@ -12,7 +12,7 @@ TeamState teamReducer(TeamState state, dynamic action) {
         loadingStatus: LoadingStatus.IDLE,
         teamId: action.teamId,
         selectedStat: 'summary',
-        selectedDate: Config().currentSeason);
+        selectedDate: Config().currentSeason.season);
   } else if (action is TeamRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is TeamReceivedBioAction) {

@@ -20,6 +20,7 @@ class StatsViewModel {
   final Function(StatParameters) paramsChanged;
   final Function() nextPage;
   final Function() previousPage;
+  final StatType selectedStatType;
 
   StatsViewModel(
       {@required this.loadingStatus,
@@ -32,7 +33,8 @@ class StatsViewModel {
       @required this.statChanged,
       @required this.paramsChanged,
       @required this.nextPage,
-      @required this.previousPage});
+      @required this.previousPage,
+      @required this.selectedStatType});
 
   static StatsViewModel fromStore(Store<AppState> store) {
     return StatsViewModel(
@@ -52,6 +54,7 @@ class StatsViewModel {
           store.dispatch(StatsParametersChangedAction(statParameters)),
       nextPage: () => store.dispatch(StatsNextAction()),
       previousPage: () => store.dispatch(StatsPreviousAction()),
+      selectedStatType: selectedStatTypeSelector(store.state),
     );
   }
 }

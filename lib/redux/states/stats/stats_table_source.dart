@@ -16,14 +16,23 @@ class StatTableSource extends CustomDataTableSource {
   final StatType type;
   final List<String> displayItems;
   final List<dynamic> stats;
+  final int startIndex;
   DataColumnSortCallback _dataColumnSortCallback =
       (int columnIndex, bool ascending) =>
           print('Pressed $columnIndex $ascending');
   DataRowTapCallBack _dataRowTapCallBack =
       (args, route) => print('pressed row: $args, $route');
+  final String _sortColumn;
+  final bool _ascending;
+  Function(String stat, bool ascending) columnCallBack;
 
   StatTableSource(
-      {@required this.type, @required this.displayItems, @required this.stats});
+      {@required this.type,
+      @required this.displayItems,
+      @required this.stats,
+        String sortColumn,
+        bool ascending = false,
+      this.startIndex = 0,}) : _sortColumn = sortColumn, _ascending = ascending;
 
   @override
   List<DataRow> get rows {
@@ -46,23 +55,31 @@ class StatTableSource extends CustomDataTableSource {
   void _setRows() {
     _firstColumn = [];
     _rows = [];
-    stats.forEach((stat) {
-      if (stat is Map<String, dynamic>) _rows.add(_getRow(stat));
+    stats.asMap().forEach((index, stat) {
+      if (stat is Map<String, dynamic>) _rows.add(_getRow(stat, index));
     });
+    /*stats.forEach((stat) {
+      if (stat is Map<String, dynamic>) _rows.add(_getRow(stat));
+    });*/
   }
 
-  DataRow _getRow(Map<String, dynamic> stat) {
+  DataRow _getRow(Map<String, dynamic> stat, int index) {
+    Color rowColor = index % 2 == 0 ? Colors.grey.withOpacity(0.3) : null;
     _firstColumn.add(
       GestureDetector(
         onTap: () => _dataRowTapCallBack(
             _getArgument(stat), _isTeam ? Routes.team : Routes.player),
-        child: SizedBox(
-          width: CustomDataTableSource.firstColumnWidth,
-          height: CustomDataTableSource.dataRowHeight,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Align(
-                alignment: Alignment.centerLeft, child: _getNameCell(stat)),
+        child: Container(
+          decoration: BoxDecoration(color: rowColor),
+          child: SizedBox(
+            width: CustomDataTableSource.firstColumnWidth,
+            height: CustomDataTableSource.dataRowHeight,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: _getNameCell(stat, index)),
+            ),
           ),
         ),
       ),
@@ -79,7 +96,9 @@ class StatTableSource extends CustomDataTableSource {
         )
         .toList();
 
-    return DataRow(cells: cells);
+    return DataRow( cells: cells, color: MaterialStateProperty.resolveWith<Color>((_) {
+      return rowColor;
+    }),);
   }
 
   Argument _getArgument(Map<String, dynamic> json) {
@@ -90,33 +109,55 @@ class StatTableSource extends CustomDataTableSource {
     }
   }
 
-  Widget _getNameCell(Map<String, dynamic> stat) {
+  Widget _getNameCell(Map<String, dynamic> stat, int index) {
     if (_isTeam) {
       Team team = Team.fromJson(stat);
       return Row(
         children: <Widget>[
+          SizedBox(
+              width: 20,
+              child: Text('${index + startIndex + 1}',
+                  style: CustomDataTableSource.firstColumnStyle)),
           Styles.buildTeamSvgImage(team, size: 20),
-          Padding(
-            padding: EdgeInsets.only(left: 5.0),
-            child: Text(
-              team.abb,
-              style: CustomDataTableSource.firstColumnStyle,
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.0),
+              child: Text(
+                team.abb,
+                style: CustomDataTableSource.firstColumnStyle,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           )
         ],
       );
     } else {
-      return Text.rich(
-        TextSpan(
-          text: Player.tableName(getJsonString(statTypeNameKey(type), stat)),
-          style: CustomDataTableSource.firstColumnStyle,
-          children: <TextSpan>[
-            TextSpan(
-                text: '\n' + getJsonString('teamAbbrevs', stat),
-                style: Styles.playerTableTeamText)
-          ],
-        ),
-        textAlign: TextAlign.start,
+      return Row(
+        children: <Widget>[
+          SizedBox(
+              width: 20,
+              child: Text('${index + startIndex + 1}',
+                  style: CustomDataTableSource.firstColumnStyle)),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  Player.tableName(getJsonString(statTypeNameKey(type), stat)),
+                  style: CustomDataTableSource.firstColumnStyle,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.start,
+                ),
+                Text(
+                  getJsonString('teamAbbrevs', stat),
+                  style: Styles.playerTableTeamText,
+                  textAlign: TextAlign.start,
+                ),
+              ],
+            ),
+          ),
+        ],
       );
     }
   }
@@ -149,19 +190,28 @@ class StatTableSource extends CustomDataTableSource {
                 ),
               ),
             ),
-            onSort: (c, a) => _dataColumnSortCallback(c, a),
+            tooltip: getColumnTooltip(key),
+            onSort: (c, a) => callback(c, a),
           ),
         )
         .toList());
   }
 
   @override
-  // TODO: implement sortAscending
-  bool get sortAscending => false;
+  bool get sortAscending {
+    print('ascending: $_ascending');
+    return _ascending;
+  }
 
   @override
-  // TODO: implement sortColumn
-  int get sortColumn => 0;
+  int get sortColumn {
+    if(_sortColumn != null){
+      int index = displayItems.indexOf(_sortColumn);
+      if(index > -1)
+        return index;
+    }
+    return null;
+  }
 
   @override
   Widget get tableCorner {
@@ -184,7 +234,9 @@ class StatTableSource extends CustomDataTableSource {
 
   @override
   void callback(int columnIndex, bool ascending) {
-    // TODO: implement callback
+    if(columnCallBack != null){
+      columnCallBack(displayItems[columnIndex], ascending);
+    }
   }
 
   @override
@@ -197,78 +249,3 @@ class StatTableSource extends CustomDataTableSource {
     _dataRowTapCallBack = dataRowTapCallBack;
   }
 }
-
-/*class StatsTableSource {
-  final List<DataColumn> columns;
-  //final List<DataRow> rows;
-  final StatType type;
-  final List<dynamic> stats;
-  final List<String> displayItems;
-  StatsTableSource({this.columns, this.type, this.stats, this.displayItems});
-
-  factory StatsTableSource.initial() {
-    return StatsTableSource(
-        columns: [], type: StatType.PLAYER, stats: [], displayItems: []);
-  }
-
-  factory StatsTableSource.fromData(
-      StatType type, List<dynamic> stats, List<String> displayItems) {
-    List<DataColumn> tColumns = [];
-    tColumns.add(DataColumn(
-        label: Text(statTypeToString(type),
-            style: TextStyle(fontStyle: FontStyle.italic))));
-    displayItems.forEach((element) {
-      //if(element != 'playerId' && element != 'skaterFullName' && element != 'seasonId' && element != 'teamAbbrevs' && element != 'shootsCatches' && element != 'positionCode')
-      tColumns.add(
-        DataColumn(
-          label: Text(getColumnAbb(element),
-              style: TextStyle(fontStyle: FontStyle.italic)),
-          tooltip: getColumnTooltip(element),
-          //onSort: (int index, bool ascending){
-          //print('onsort');
-          //}
-        ),
-      );
-    });
-
-    return StatsTableSource(
-        columns: tColumns,
-        type: type,
-        stats: stats,
-        displayItems: displayItems);
-  }
-
-  List<DataRow> setTapListenerToRow(BuildContext context, StatType type) {
-    List<DataRow> tRows = [];
-    String route = Routes.player;
-    if (type == StatType.TEAM) {
-      route = Routes.team;
-    }
-    stats.forEach((statRow) {
-      if (statRow is Map<String, dynamic>) {
-        List<DataCell> tCells = [];
-        tCells.add(DataCell(
-            Text.rich(
-                TextSpan(text: getJsonString(statTypeNameKey(type), statRow),
-                    //style: Styles.playerTableText,
-                    children: <TextSpan>[
-                  TextSpan(
-                      text: ' ' + getJsonString('teamAbbrevs', statRow),
-                      style: Styles.playerTableTeamText)
-                ])),
-            onTap: () => Navigator.pushNamed(context, route,
-                arguments: type == StatType.TEAM
-                    ? TeamArguments(Team.fromJson(statRow))
-                    : PlayerArguments(Player.fromJson(statRow), type))));
-        displayItems.forEach((element) {
-          if (statRow.containsKey(element)) {
-            tCells.add(DataCell(Text(statRow[element].toString())));
-          }
-        });
-        assert(tCells.length == columns.length);
-        tRows.add(DataRow(cells: tCells));
-      }
-    });
-    return tRows;
-  }
-}*/

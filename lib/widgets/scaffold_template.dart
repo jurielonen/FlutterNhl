@@ -177,9 +177,7 @@ class _RefreshScaffoldTemplate extends State<RefreshScaffoldTemplate>
               itemBuilder: (context, position) {
                 return RefreshIndicator(
                   child: _getPageContent(text),
-                  onRefresh: () async {
-                    widget.refreshCallBack();
-                  },
+                  onRefresh: () async { widget.refreshCallBack();},
                 );
               },
               itemCount: widget.tabs.length,

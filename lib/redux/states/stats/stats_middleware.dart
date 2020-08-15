@@ -35,8 +35,18 @@ class StatsMiddleware extends MiddlewareClass<AppState> {
       next(StatsRequestingAction());
       try {
         StatParameters statParameters = store.state.statsState.selectedParams;
-        List<dynamic> tStats = await api.fetchStats(statParameters);
-        next(StatsReceived(StatTableSource(type: statParameters.paramType.type, displayItems: filterTypeSelector(store.state), stats: tStats),),);
+        StatResponse tStats = await api.fetchStats(statParameters);
+        next(
+          StatsReceived(
+              StatTableSource(
+                  type: statParameters.paramType.type,
+                  displayItems: filterTypeSelector(store.state),
+                  stats: tStats.stats,
+                  startIndex: store.state.statsState.selectedParams.start,
+                sortColumn: store.state.statsState.selectedParams.getSortColumn,
+                ascending: store.state.statsState.selectedParams.getAscending,),
+              tStats.total),
+        );
       } catch (e) {
         next(StatsErrorAction(e.toString()));
       }
@@ -52,8 +62,19 @@ Future<Null> getConfig(
       await api.fetchConfig();
       next(ConfigReceived());
       StatParameters statParameters = store.state.statsState.selectedParams;
-      List<dynamic> tStats = await api.fetchStats(statParameters);
-      next(StatsReceived(StatTableSource(type: statParameters.paramType.type, displayItems: filterTypeSelector(store.state), stats: tStats),),);
+      StatResponse tStats = await api.fetchStats(statParameters);
+      next(
+        StatsReceived(
+            StatTableSource(
+                type: statParameters.paramType.type,
+                displayItems: filterTypeSelector(store.state),
+                stats: tStats.stats,
+                startIndex: store.state.statsState.selectedParams.start,
+              sortColumn: store.state.statsState.selectedParams.getSortColumn,
+              ascending: store.state.statsState.selectedParams.getAscending,
+            ),
+            tStats.total),
+      );
     } catch (e) {
       next(StatsErrorAction(e.toString()));
     }

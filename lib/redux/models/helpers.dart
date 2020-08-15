@@ -1,3 +1,6 @@
+import 'package:FlutterNhl/constants/styles.dart';
+import 'package:intl/intl.dart';
+
 ///TODO Testing for functions
 dynamic getJsonDynamic(String key, Map<String, dynamic> json){
   if (json != null) {
@@ -141,6 +144,46 @@ dynamic _getJsonItem(List<dynamic> keys, dynamic json) {
   }
 
   return obj;
+}
+
+int compareDynamicFromMap(String key, Map<String, dynamic> aJson, Map<String, dynamic>bJson){
+  dynamic aValue = _getJsonItem([key], aJson);
+  dynamic bValue = _getJsonItem([key], bJson);
+  if(aValue != null && bValue != null){
+    if(aValue.runtimeType == bValue.runtimeType){
+      if(aValue is num && bValue is num){
+        return bValue.compareTo(aValue);
+      } else if(aValue is String && bValue is String){
+        compareStrings(aValue, bValue);
+      }
+    }
+    if(aValue is num){
+      return 1;
+    } else {
+      return -1;
+    }
+  } else {
+    if(aValue == null && bValue == null)
+      return 0;
+    else if(aValue != null)
+      return 1;
+    else
+      return -1;
+  }
+}
+
+int compareStrings(String a, String b){
+  if(a.contains(':') || b.contains(':')){
+    if(a.contains(':') && b.contains(':')){
+      return DateFormat.Hm().parse(b).compareTo(DateFormat.Hm().parse(a));
+    } else if(a.contains(':')){
+      return 1;
+    } else {
+      return -1;
+    }
+  } else {
+    return b.compareTo(a);
+  }
 }
 
 String getStatFromMap(String key, Map<String, dynamic> json, {defaultString = '0'}){

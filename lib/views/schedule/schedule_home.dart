@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
@@ -63,19 +64,21 @@ class ScheduleHome extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.navigate_before),
               tooltip: 'Previous days games',
-              onPressed: () => onChangeDate(date.subtract(Duration(days: 1))),
+              onPressed:
+                  Config.selectedMinDate().isAfter(date.subtract(Duration(days: 1)))
+                      ? null
+                      : () => onChangeDate(date.subtract(Duration(days: 1))),
             ),
             CustomDateTimePicker(
-                config: CustomDatePickerConfig(
-                    DateTime(2010),
-                    DateTime.now().add(Duration(days: 365)),
-                    (DateTime date) => onChangeDate(date),
-                    DatePickerMode.day),
+                config: CustomDatePickerConfig(Config.minDate, Config.maxDate(),
+                    (DateTime date) => onChangeDate(date), DatePickerMode.day),
                 selectedDate: date),
             IconButton(
               icon: Icon(Icons.navigate_next),
               tooltip: 'Next days games',
-              onPressed: () => onChangeDate(date.add(Duration(days: 1))),
+              onPressed: Config.selectedMaxDate().isBefore(date.add(Duration(days: 1)))
+                  ? null
+                  : () => onChangeDate(date.add(Duration(days: 1))),
             ),
           ],
         ),

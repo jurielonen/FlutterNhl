@@ -29,11 +29,19 @@ class _StatFilterPageState extends State<StatFilterPage> {
   String _selectedStartSeason = StatParameters.getCurrentSeason();
   String _selectedEndSeason = StatParameters.getCurrentSeason();
   bool _seasonConfig = false;
+  bool showPosition = true;
 
   @override
   void initState() {
     super.initState();
-    _selectedPosition = widget.arguments.currentParams.position;
+    showPosition = widget.arguments.currentParams.paramType.type == StatType.PLAYER;
+    if(showPosition) {
+      _selectedPosition = widget.arguments.currentParams.position;
+    } else {
+      filters.removeWhere((item) {
+        return item.header == 'Player type';
+      });
+    }
     _selectedGameType = widget.arguments.currentParams.gameType;
     _selectedTeam = widget.arguments.currentParams.franchiseId;
     String _selectedStartSeason = widget.arguments.currentParams.startSeason;

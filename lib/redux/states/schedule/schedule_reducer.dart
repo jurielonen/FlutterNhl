@@ -14,6 +14,7 @@ ScheduleState scheduleReducer(ScheduleState state, dynamic action) {
     tSchedule[action.date] = action.schedule;
     return state.copyWith(
         loadingStatus: LoadingStatus.SUCCESS,
+        selectedDate: action.schedule.date,
         schedules: tSchedule,
         errorMsg: '');
   } else if (action is ScheduleAlreadyDownloadedAction) {

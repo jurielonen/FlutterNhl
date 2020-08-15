@@ -22,8 +22,10 @@ StatsState statsReducer(StatsState state, dynamic action) {
   } else if (action is StatsPreviousAction) {
     return state.copyWith(selectedStat: state.selectedParams.previousStats());
   } else if (action is StatsReceived) {
+    StatParameters params = state.selectedParams;
+    params.total = action.total;
     return state.copyWith(
-        loadingStatus: LoadingStatus.SUCCESS, downloadedStats: action.stats);
+        loadingStatus: LoadingStatus.SUCCESS, downloadedStats: action.stats, selectedStat: params);
   } else if (action is StatsErrorAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.ERROR, errorMsg: action.errorMsg);

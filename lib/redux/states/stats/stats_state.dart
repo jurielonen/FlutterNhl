@@ -7,35 +7,31 @@ import 'package:meta/meta.dart';
 class StatsState {
   StatsState(
       {@required this.loadingStatus,
-      //@required this.parameters,
       @required this.selectedParams,
       @required this.errorMsg,
       @required this.downloadedStats});
 
   final LoadingStatus loadingStatus;
-  //final KtMap<ParamType, StatParameters> parameters;
   final StatParameters selectedParams;
   final StatTableSource downloadedStats;
   final String errorMsg;
 
   factory StatsState.initial() {
     return StatsState(
-        loadingStatus: LoadingStatus.IDLE,
-        //parameters: emptyMap(),
-        selectedParams: StatParameters.initial(),
-        downloadedStats: null,
-        errorMsg: '');
+      loadingStatus: LoadingStatus.IDLE,
+      selectedParams: StatParameters.initial(),
+      downloadedStats: null,
+      errorMsg: '',
+    );
   }
 
   StatsState copyWith(
       {LoadingStatus loadingStatus,
-      //KtMap<ParamType, StatParameters> parameters,
       StatParameters selectedStat,
       StatTableSource downloadedStats,
       String errorMsg}) {
     return StatsState(
       loadingStatus: loadingStatus ?? this.loadingStatus,
-      //parameters: parameters ?? this.parameters,
       selectedParams: selectedStat ?? this.selectedParams,
       downloadedStats: downloadedStats ?? this.downloadedStats,
       errorMsg: errorMsg ?? this.errorMsg,
@@ -48,7 +44,6 @@ class StatsState {
       other is StatsState &&
           runtimeType == other.runtimeType &&
           loadingStatus == other.loadingStatus &&
-          //parameters == other.parameters &&
           selectedParams == other.selectedParams &&
           downloadedStats == other.downloadedStats &&
           errorMsg == other.errorMsg;
@@ -56,7 +51,6 @@ class StatsState {
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
-      //parameters.hashCode ^
       selectedParams.hashCode ^
       downloadedStats.hashCode ^
       errorMsg.hashCode;

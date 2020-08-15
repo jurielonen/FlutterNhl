@@ -24,20 +24,12 @@ class NHLApi {
     }).catchError((error) => onFetchError(error));
   }
 
-  Future<List<dynamic>> fetchStats(StatParameters params) async {
+  Future<StatResponse> fetchStats(StatParameters params) async {
     final searchUri = Uri.https(baseUrl, params.getPath(), params.getParams());
     print('$printMsg fetchStats: $searchUri');
 
     return await fetch(searchUri, client).then((value) {
-      if (value is Map<String, dynamic>) {
-        if (value.containsKey('data')) {
-          final data = value['data'];
-          if (data is List) {
-            return data;
-          }
-        }
-      }
-      throw Exception('Error while formatting data in $printMsg::fetchPlayer');
+      return StatResponse.fromJson(value);
     }).catchError((error) => onFetchError(error));
   }
 
@@ -104,4 +96,14 @@ class NHLApi {
   }
 }
 
+class StatResponse {
+  final int total;
+  final List<dynamic> stats;
+
+  StatResponse(this.total, this.stats);
+
+  factory StatResponse.fromJson(Map<String, dynamic> json){
+    return StatResponse(getJsonInt('total', json), getJsonList(['data'], json));
+  }
+}
 ///TODO: add fetch https://api.nhle.com/stats/rest/en/glossary?sort=fullName

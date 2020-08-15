@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 
-enum StatType { GOALIE, PLAYER, TEAM }
+enum StatType { PLAYER, GOALIE, TEAM }
 
 String statTypeToString(StatType type) {
   switch (type) {
@@ -44,7 +46,7 @@ String statTypeToParam(StatType type) {
 class ParamType {
   final StatType type;
   final String stat;
-  final String sort;
+  Map<String, bool> sort;
 
   ParamType(this.type, this.stat, this.sort);
 
@@ -62,16 +64,25 @@ class ParamType {
   ParamType copyWith({StatType type, String stat}) {
     return ParamType(type ?? this.type, stat ?? this.stat, this.sort);
   }
+
+  String get sortParam {
+    var params = [];
+    sort.forEach((key, value) {
+      params.add({'property': key.toString(), 'direction': value ? 'DESC' : 'ASC'});
+    });
+    return json.encode(params);
+  }
 }
 
 class StatParameters {
   final ParamType paramType;
   final bool isAggregated = false;
   final bool isGame = false;
-  final int limit = 20;
+  final int limit = 32;
   int start = 0;
   int gamesPlayed = 1;
   int gameType = 2;
+  int total = -1;
   String startSeason = getCurrentSeason();
   String endSeason = getCurrentSeason();
   Position position = Position.N_A;
@@ -90,7 +101,8 @@ class StatParameters {
       this.startSeason,
       this.endSeason,
       this.position,
-      this.franchiseId});
+      this.franchiseId,
+      this.total});
 
   factory StatParameters.clone(StatParameters params) {
     return StatParameters.copy(
@@ -102,6 +114,7 @@ class StatParameters {
       endSeason: params.endSeason,
       position: params.position,
       franchiseId: params.franchiseId,
+      total: params.total,
     );
   }
 
@@ -116,7 +129,7 @@ class StatParameters {
   }
 
   factory StatParameters.initial() {
-    return StatParameters(ParamType(StatType.PLAYER, '', ''));
+    return StatParameters(ParamType(StatType.PLAYER, '', null));
   }
 
   StatParameters copyWith(
@@ -188,7 +201,7 @@ class StatParameters {
     Map<String, String> temp = {
       'isAggregate': isAggregated.toString(),
       'isGame': isGame.toString(),
-      'sort': paramType.sort,
+      'sort': paramType.sortParam,
       'start': start.toString(),
       'limit': limit.toString(),
       'factCayenneExp': 'gamesPlayed>=${gamesPlayed.toString()}',
@@ -204,27 +217,39 @@ class StatParameters {
         break;
     }
 
+    if(franchiseId > 0){
+      temp['cayenneExp'] += ' and franchiseId=$franchiseId';
+    }
+
     return temp;
   }
-}
 
-/*Map<String, String> getParams(sort,
-    {isAggregated = false,
-    isGame = false,
-    start = 0,
-    limit = 20,
-    gamesPlayed = 1,
-    gameType = 2,
-    startSeason = '20192020',
-    endSeason = '20192020'}) {
-  return {
-    'isAggregate': isAggregated.toString(),
-    'isGame': isGame.toString(),
-    'sort': sort,
-    'start': start.toString(),
-    'limit': limit.toString(),
-    'factCayenneExp': 'gamesPlayed>=${gamesPlayed.toString()}',
-    'cayenneExp':
-        'gameTypeId=${gameType.toString()} and seasonId>=${startSeason.toString()} and seasonId<=${endSeason.toString()}'
-  };
-}*/
+  bool get isThereLastPage {
+    return start > 0;
+  }
+
+  bool get isThereNextPage {
+    if(total > 0){
+      return total > (start + limit);
+    }
+    return true;
+  }
+
+  void setSort(String stat, bool ascending){
+    paramType.sort = {stat: ascending};
+  }
+
+  String get getSortColumn {
+    if(paramType.sort != null && paramType.sort.isNotEmpty){
+      return paramType.sort.keys.first;
+    }
+    return null;
+  }
+
+  bool get getAscending {
+    if(paramType.sort != null && paramType.sort.isNotEmpty){
+      return paramType.sort.values.first;
+    }
+    return null;
+  }
+}

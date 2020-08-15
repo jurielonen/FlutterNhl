@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/fetch.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
@@ -30,19 +31,45 @@ class StatsApi {
 
   }
 
-  Future<Null> fetchSeason() async {
-    final searchUri = Uri.https(baseUrl, 'api/v1/seasons/current');
+  Future<Null> fetchSeason({String season}) async {
+    Uri searchUri;
+    String path = 'api/v1/seasons';
+    if(season == null){
+      path += '/current';
+      searchUri = Uri.https(baseUrl, path);
+    }
+    else{
+      searchUri = Uri.https(baseUrl, path, {
+        'season': season,
+      });
+    }
+
     print('$printMsg fetchSeason: $searchUri');
     await fetch(searchUri, client).then((value) {
-      return Config().fromJsonSeason(value);
+      if(season == null)
+        return Config().fromJsonSeasonCurrent(value);
+      else{
+       for(dynamic obj in getJsonList(['seasons'], value)){
+         if(obj is Map<String, dynamic> )
+           Config().fromJsonSeason(obj);
+       }
+      }
     }).catchError((error) => throw Exception(error.toString()));
   }
 
   Future<Schedule> fetchSchedule(String date) async {
+    if(!Config().isSeasonDownloaded(date)){
+      DateTime dateTime = Styles.apiDateFormat.parse(date);
+      int year = dateTime.year;
+      await fetchSeason(season: Season.getSeasonString(year));
+      Config().setSelectedSeason(dateTime);
+      date = Config().validDate(dateTime);
+    }
+
     final searchUri = Uri.https(baseUrl, '/api/v1/schedule', {
       'date': date,
       'hydrate':
-          'team,linescore,game(content(media(epg))),decisions,scoringplays,boxscore'
+          'team,linescore,game(content(media(epg)),seriesSummary),decisions,scoringplays,boxscore'
     });
     print('$printMsg fetchSchedule: $searchUri');
     return Schedule.fromJson(await fetch(searchUri, client), date);
@@ -136,14 +163,19 @@ class StatsApi {
       List<Game> games = [];
       getJsonList(['dates'], value).forEach((date) {
         if (date is Map<String, dynamic>) {
-          if (getJsonInt('totalGames', date) == 1) {
+          for(dynamic game in getJsonList(['games'], date)){
+            if(game is Map<String, dynamic>){
+              games.add(Game.fromJson(game));
+            }
+          }
+          /*if (getJsonInt('totalGames', date) == 1) {
             games.add(Game.fromJson(getJsonObject(['games', 0], date)));
           } else {
             throw Exception('Too many or no games in: $date');
-          }
+          }*/
         }
       });
-      return games;
+      return games.reversed.toList();
     }).catchError((error) => throw Exception(error.toString()));
   }
 

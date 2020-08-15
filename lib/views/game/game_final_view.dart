@@ -93,7 +93,9 @@ class GameFinalView extends StatelessWidget {
             GameStats(
                 homeStats: game.home.teamStats,
                 awayStats: game.away.teamStats,
-                homeColor: game.home.teamColor),
+                homeColor: game.home.teamColor,
+                awayColor: game.away.teamColor,
+            ),
           ],
         );
       case 'Plays':

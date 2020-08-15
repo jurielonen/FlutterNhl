@@ -1,6 +1,4 @@
-import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
-import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/stats_view_model.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
@@ -8,13 +6,7 @@ import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
-import 'package:FlutterNhl/widgets/custom_scroll_template_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view2.dart';
-import 'package:FlutterNhl/widgets/progress_view.dart';
-import 'package:FlutterNhl/widgets/scaffold_template.dart';
-import 'package:FlutterNhl/widgets/template_view.dart';
 import 'package:FlutterNhl/widgets/template_view2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,56 +32,32 @@ class StatsHome extends StatelessWidget {
               : index == 1 ? StatType.GOALIE : StatType.TEAM);
         },
         pageContent: (int index) => _buildStatsView(context, viewModel),
+        initialIndex: viewModel.selectedStatType.index,
       ),
-      /*ScaffoldTemplate(
-          loadingStatus: viewModel.loadingStatus,
-          errorMsg: viewModel.errorMsg,
-          onTabChanged: (String tab) => _buildStatsView(context, tab, viewModel),
-          appBarTitle: Text('Stats'),
-          tabs: _createTabs.toList(),
-          loadingText: 'Loading stats',
-          onTabPressed: (int index){
-            viewModel.typeChanged(index == 0
-                ? StatType.PLAYER
-                : index == 1 ? StatType.GOALIE : StatType.TEAM);
-          },
-      ),*/
     );
   }
-
-  /*Iterable<NestedTemplateTab> get _createTabs sync* {
-    for(String tab in _tabs){
-      yield NestedTemplateTab(child: Center(child: Text(tab)), text: tab);
-    }
-  }*/
 
   List<Widget> _buildStatsView(BuildContext context, StatsViewModel viewModel) {
     if (viewModel.downloadedStats == null) {
       return [SliverErrorView(msg: 'Error while downloading stats')];
     } else {
-      return
-          [/*SliverAppBar(
-            automaticallyImplyLeading: false,
-            title: _buildStatBar(viewModel),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.sort),
-                tooltip: 'Set filters',
-                onPressed: () => setFilters(
-                    context, viewModel.selectedParams, viewModel.paramsChanged),
-              )
-            ],
-          ),*/
-            SliverToBoxAdapter(
-              child: _buildStatBar(context, viewModel),
-            ),
-            SliverFillRemaining(
-              hasScrollBody: true,
-              fillOverscroll: true,
+      viewModel.downloadedStats.columnCallBack = (String stat, bool ascending){
+        viewModel.selectedParams.setSort(stat, ascending);
+        viewModel.paramsChanged(viewModel.selectedParams);
+      };
+      return [
+        SliverToBoxAdapter(
+          child: _buildStatBar(context, viewModel),
+        ),
+        SliverFillRemaining(
+          hasScrollBody: true,
+          fillOverscroll: true,
+          child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child:
-                SingleChildScrollView(scrollDirection: Axis.vertical, child: CustomDataTable(dataTableSource: viewModel.downloadedStats)),
-            ),
-        ];
+                  CustomDataTable(dataTableSource: viewModel.downloadedStats)),
+        ),
+      ];
     }
   }
 
@@ -106,33 +74,39 @@ class StatsHome extends StatelessWidget {
   }
 
   Widget _buildStatBar(BuildContext context, StatsViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          icon: Icon(Icons.navigate_before),
-          tooltip: 'Previous page',
-          onPressed: viewModel.selectedParams.start == null
-              ? null
-              : () => viewModel.previousPage(),
-        ),
-        CustomDropdownButton(
-          selectedValue: viewModel.selectedParams.paramType.stat,
-          values: viewModel.statTypes,
-          onValueChanged: viewModel.statChanged,
-        ),
-        IconButton(
-          icon: Icon(Icons.navigate_next),
-          tooltip: 'Next page',
-          onPressed: () => viewModel.nextPage(),
-        ),
-        IconButton(
-          icon: const Icon(Icons.sort),
-          tooltip: 'Set filters',
-          onPressed: () => setFilters(
-              context, viewModel.selectedParams, viewModel.paramsChanged),
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(color: Colors.black),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.navigate_before),
+            tooltip: 'Previous page',
+            onPressed: viewModel.selectedParams.isThereLastPage
+                ? () => viewModel.previousPage()
+                : null,
+          ),
+          CustomDropdownButton(
+            selectedValue: viewModel.selectedParams.paramType.stat,
+            values: viewModel.statTypes,
+            onValueChanged: viewModel.statChanged,
+          ),
+          IconButton(
+            icon: Icon(Icons.navigate_next),
+            tooltip: 'Next page',
+            onPressed: viewModel.selectedParams.isThereNextPage
+                ? () => viewModel.nextPage()
+                : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.sort),
+            tooltip: 'Set filters',
+            onPressed: () => setFilters(
+                context, viewModel.selectedParams, viewModel.paramsChanged),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -26,5 +26,6 @@ class StatsErrorAction extends StatsAction {
 
 class StatsReceived extends StatsAction {
   final StatTableSource stats;
-  StatsReceived(this.stats);
+  final int total;
+  StatsReceived(this.stats, this.total);
 }

@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/redux/models/game/game_enums.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
@@ -19,9 +20,11 @@ class Game {
   final DateTime dateTime;
   final TeamSchedule homeTeam;
   final TeamSchedule awayTeam;
+  final PlayoffSeriesSummary seriesSummary;
   GameStateEnum state;
   Content content;
   LineScore lineScore;
+  
 
   Game({
     @required this.id,
@@ -29,6 +32,7 @@ class Game {
     @required this.dateTime,
     @required this.homeTeam,
     @required this.awayTeam,
+    @required this.seriesSummary,
     @required this.state,
     @required this.content,
     @required this.lineScore,
@@ -41,17 +45,24 @@ class Game {
             dateTime: game.dateTime,
             homeTeam: game.homeTeam,
             awayTeam: game.awayTeam,
+            seriesSummary: game.seriesSummary,
             state: game.state,
             content: game.content,
             lineScore: game.lineScore);
 
   factory Game.fromJson(Map<String, dynamic> json) {
+    PlayoffSeriesSummary seriesSummary;
+    final dateTime = getJsonDateTime('gameDate', json);
+    if(Config().selectedSeason != null && Config().selectedSeason.isPlayoffs(dateTime)){
+      seriesSummary = PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
+    }
     return Game(
       id: getJsonInt('gamePk', json),
       type: gameTypeFromString(getJsonString('gameType', json)),
-      dateTime: getJsonDateTime('gameDate', json),
+      dateTime: dateTime,
       homeTeam: TeamSchedule.fromJson(getJsonObject(homeTeamPath, json)),
       awayTeam: TeamSchedule.fromJson(getJsonObject(awayTeamPath, json)),
+      seriesSummary: seriesSummary,
       state:
           gameStateFromString(getJsonString2(['status', 'statusCode'], json)),
       content: Content.fromJson(getJsonObject(['content'], json)),
@@ -187,6 +198,20 @@ class Game {
       return lineScore.awayLiveInfo;
     else
       return Text(awayTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
+  }
+}
+
+class PlayoffSeriesSummary {
+  final int gameNumber;
+  final String gameLabel;
+  final String seriesStatus;
+  
+  PlayoffSeriesSummary({@required this.gameNumber, @required this.gameLabel, @required this.seriesStatus});
+  
+  factory PlayoffSeriesSummary.fromJson(Map<String, dynamic> json){
+    if(json == null || json.isEmpty)
+      return null;
+    return PlayoffSeriesSummary(gameNumber: getJsonInt('gameNumber', json), gameLabel: getJsonString('gameLabel', json), seriesStatus: getJsonString('seriesStatusShort', json));
   }
 }
 

@@ -79,21 +79,5 @@ class PlayPlayersCard extends StatelessWidget {
             ),),*/
         ],
       );
-        /*Align(
-        alignment: home ? Alignment.centerLeft : Alignment.centerRight,
-        child:  Container(
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: Card(
-            elevation: 5,
-            color: play.team.teamColor,
-            child: ListTile(
-              leading: Styles.buildNetworkImage(play.players.first.headShotUrl),
-              title: Text('${play.about.periodTime} ${play.team.abb}: ${play.event}', style: Styles.playTitleText,),
-              subtitle: Text(play.desc, style: Styles.playSubtitleText),
-            ),
-          ),
-        ),
-      );*/
-
   }
 }

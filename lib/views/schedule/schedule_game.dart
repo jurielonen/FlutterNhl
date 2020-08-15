@@ -8,7 +8,6 @@ import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/content_card.dart';
-import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

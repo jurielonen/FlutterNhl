@@ -79,6 +79,7 @@ class GamePreviewView extends StatelessWidget {
               homeStats: game.home.teamStats,
               awayStats: game.away.teamStats,
               homeColor: game.home.teamColor,
+              awayColor: game.away.teamColor,
             ),
           ],
         );

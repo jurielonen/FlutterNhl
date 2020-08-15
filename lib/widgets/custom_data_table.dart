@@ -17,7 +17,7 @@ abstract class CustomDataTableSource {
   List<DataColumn> get columns;
   List<DataRow> get rows;
   bool get sortAscending;
-  int get sortColumn;
+  int get sortColumn => null;
   set setColumnSortCallBack(DataColumnSortCallback dataColumnSortCallback);
   void callback(int columnIndex, bool ascending);
   set setRowCallBack(DataRowTapCallBack dataRowTapCallBack);
@@ -94,6 +94,18 @@ class CustomDataTable extends StatefulWidget {
 }
 
 class _CustomDataTableState extends State<CustomDataTable> {
+  int _sortColumn = 0;
+  bool _ascending = true;
+
+
+  @override
+  void initState() {
+    super.initState();
+    print('initstate');
+    _sortColumn = widget.dataTableSource.sortColumn;
+    _ascending = widget.dataTableSource.sortAscending;
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.dataTableSource.setRowCallBack = (Argument args, String route) {
@@ -101,7 +113,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
     };
     widget.dataTableSource.setColumnSortCallBack = (columnIndex, ascending) {
       setState(() {
-        widget.dataTableSource.callback(columnIndex, ascending);
+        widget.dataTableSource.callback(_sortColumn, _ascending);
       });
     };
     return Row(
@@ -125,8 +137,8 @@ class _CustomDataTableState extends State<CustomDataTable> {
                 dataRowHeight: CustomDataTableSource.dataRowHeight,
                 columns: widget.dataTableSource.columns,
                 rows: widget.dataTableSource.rows,
-                sortAscending: widget.dataTableSource.sortAscending,
-                sortColumnIndex: widget.dataTableSource.sortColumn,
+                sortAscending: _ascending,
+                sortColumnIndex: _sortColumn,
               ),
             ),
           ),

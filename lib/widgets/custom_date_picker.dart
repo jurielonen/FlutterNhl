@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:flutter/material.dart';
 
 class CustomDatePickerConfig {
@@ -44,6 +45,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
       firstDate: widget.config.firstDate,
       lastDate: widget.config.lastDate,
       initialDatePickerMode: widget.config.pickerMode,
+      selectableDayPredicate: (DateTime date) => Season.selectableDate(date),
     );
   }
 }

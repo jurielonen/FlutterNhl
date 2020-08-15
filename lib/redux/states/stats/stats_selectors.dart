@@ -20,3 +20,9 @@ final statTypesSelector =
 List<String> _getStatTypes(Config config, ParamType paramType) {
   return config.getStatTypes(paramType.type);
 }
+
+final selectedStatTypeSelector = createSelector1(selectedParamType, _getStatType);
+
+StatType _getStatType(ParamType paramType){
+  return paramType.type;
+}

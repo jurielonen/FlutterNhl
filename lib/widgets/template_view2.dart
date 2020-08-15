@@ -10,6 +10,7 @@ class TemplateView2 extends StatefulWidget {
   final List<String> tabs;
   final Function(int) onTabPressed;
   final List<Widget> Function(int) pageContent;
+  final int initialIndex;
 
   const TemplateView2(
       {Key key,
@@ -17,7 +18,8 @@ class TemplateView2 extends StatefulWidget {
       @required this.errorMsg,
       @required this.tabs,
       @required this.onTabPressed,
-      @required this.pageContent})
+      @required this.pageContent,
+      this.initialIndex = 0})
       : super(key: key);
   @override
   _TemplateView2State createState() => _TemplateView2State();
@@ -30,8 +32,12 @@ class _TemplateView2State extends State<TemplateView2>
   @override
   void initState() {
     super.initState();
+    int initialIndex = 0;
+    if(widget.initialIndex != 0 && widget.tabs.length > widget.initialIndex)
+      initialIndex = widget.initialIndex;
+
     _tabController =
-        TabController(vsync: this, length: widget.tabs.length, initialIndex: 0);
+        TabController(vsync: this, length: widget.tabs.length, initialIndex: initialIndex);
   }
 
   @override

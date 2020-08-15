@@ -16,7 +16,7 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
           print('Pressed $columnIndex $ascending');
   DataRowTapCallBack _dataRowTapCallBack =
       (args, route) => print('pressed row: $args, $route');
-  int _sortColumn = 0;
+  //int _sortColumn = 0;
   bool _sortAscending = true;
   List<DataColumn> _column = [];
   List<DataRow> _rows = [];
@@ -118,8 +118,8 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   @override
   bool get sortAscending => _sortAscending;
 
-  @override
-  int get sortColumn => _sortColumn;
+  //@override
+  //int get sortColumn => _sortColumn;
 
   @override
   Widget get tableCorner {
