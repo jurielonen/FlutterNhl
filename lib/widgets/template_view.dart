@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class TemplateView extends StatelessWidget {
   final LoadingStatus loadingStatus;
-  final Widget successContent;
+  final Widget Function() successContent;
   final Widget appBar;
   final String errorMsg;
 
@@ -36,7 +36,7 @@ class TemplateView extends StatelessWidget {
           child: ErrorView(errorMsg),
         );
       case LoadingStatus.SUCCESS:
-        return successContent;
+        return successContent();
       default:
         return SliverFillRemaining(
           child: ErrorView('Unknown state'),

@@ -8,6 +8,7 @@ import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
+import 'package:FlutterNhl/redux/models/standings/standings.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:http/http.dart';
 import 'dart:async';
@@ -168,11 +169,6 @@ class StatsApi {
               games.add(Game.fromJson(game));
             }
           }
-          /*if (getJsonInt('totalGames', date) == 1) {
-            games.add(Game.fromJson(getJsonObject(['games', 0], date)));
-          } else {
-            throw Exception('Too many or no games in: $date');
-          }*/
         }
       });
       return games.reversed.toList();
@@ -187,6 +183,19 @@ class StatsApi {
         .then((value) => Draft.fromJson(value))
         .catchError((error) =>
             throw Exception('Error, fetchDraft: ${error.toString()}'));
+  }
+
+  Future<Standing> fetchStandings({String season}) async {
+    Map<String,String> query = {'hydrate': 'record(overall),division,conference,team'};
+    if(season != null)
+      query['season'] = season;
+    final searchUri =
+    Uri.https(baseUrl, 'api/v1/standings', query);
+    print('$printMsg fetchStandings: $searchUri');
+    return await fetch(searchUri, client)
+        .then((value) => Standing.fromJson(value))
+        .catchError((error) =>
+    throw Exception('Error, fetchDraft: ${error.toString()}'));
   }
 }
 

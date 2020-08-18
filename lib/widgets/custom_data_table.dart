@@ -101,7 +101,6 @@ class _CustomDataTableState extends State<CustomDataTable> {
   @override
   void initState() {
     super.initState();
-    print('initstate');
     _sortColumn = widget.dataTableSource.sortColumn;
     _ascending = widget.dataTableSource.sortAscending;
   }

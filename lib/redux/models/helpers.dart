@@ -64,7 +64,18 @@ int getJsonInt2(List<dynamic> keys, dynamic json) {
   return -1;
 }
 
-String getJsonString(String key, Map<String, dynamic> json) {
+double getJsonDouble(String key, Map<String, dynamic> json) {
+  if (json != null) {
+    if (json.containsKey(key)) {
+      if (json[key] is double) {
+        return json[key];
+      }
+    }
+  }
+  return 0.0;
+}
+
+String getJsonString(String key, Map<String, dynamic> json, {String defaultString = ''}) {
   if (json != null) {
     if (json.containsKey(key)) {
       if (json[key] is String) {
@@ -72,7 +83,7 @@ String getJsonString(String key, Map<String, dynamic> json) {
       }
     }
   }
-  return '';
+  return defaultString;
 }
 
 String getJsonString2(List<dynamic> keys, dynamic json) {

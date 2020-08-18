@@ -259,6 +259,12 @@ const Map<String, String> constantColumns = {
   'winsEvenShots':'Wins Even Shots',
   'winsOutshootOpponent':'Wins Outshoot Opp',
   'winsOutshotByOpponent':'Wins Outshot by Opp',
+  'homeRecord': 'HOME',
+  'awayRecord': 'AWAY',
+  'soRecord': 'S/O',
+  'l10Record': 'L10',
+  'streak': 'STRK',
+
 };
 
 const Map<String, String> constantTooltips = {
@@ -533,6 +539,11 @@ const Map<String, String> constantTooltips = {
   'winOutshotByOpp': 'Wins Outshot by Opponent',
   'winsOutshotByOpponent':'Wins Outshot by Opponent',
   'faceOffsTaken': 'Faceoffs taken',
+  'homeRecord': 'Home record',
+  'awayRecord': 'Away record',
+  'soRecord': 'Record in games decided by shootout',
+  'l10Record': 'Record in last 10 games',
+  'streak': 'Streak',
 };
 
 String changeNameToAbb(String teamName) {

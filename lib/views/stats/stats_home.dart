@@ -38,6 +38,7 @@ class StatsHome extends StatelessWidget {
   }
 
   List<Widget> _buildStatsView(BuildContext context, StatsViewModel viewModel) {
+    print('_buildStatsView: ${DateTime.now()}');
     if (viewModel.downloadedStats == null) {
       return [SliverErrorView(msg: 'Error while downloading stats')];
     } else {

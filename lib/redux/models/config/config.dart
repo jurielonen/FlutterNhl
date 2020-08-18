@@ -154,6 +154,13 @@ class Config {
     return false;
   }
 
+  static bool isPlayoffsCurrent(){
+    if(_config.currentSeason != null){
+      return _config.currentSeason.isPlayoffs(DateTime.now());
+    }
+    return false;
+  }
+
   static DateTime maxDate(){
     if(_config.currentSeason != null)
       return _config.currentSeason.checkEndDate;
@@ -210,6 +217,12 @@ class Config {
       else
         return Styles.apiDateFormat.format(selectedSeason.regularSeasonStartDate);
     }
+  }
+
+  static String get getCurrentSeason {
+    if(Config().currentSeason != null)
+      return Config().currentSeason.season;
+    return '20192020';
   }
 }
 

@@ -46,6 +46,7 @@ class ScheduleHome extends StatelessWidget {
   Widget _buildSliverAppBar(DateTime date, Function onChangeDate) {
     return SliverAppBar(
       title: Text('NHL'),
+      pinned: true,
       bottom: PreferredSize(
         child: _buildDatePicker(date, onChangeDate),
         preferredSize: Size.fromHeight(50),
@@ -55,6 +56,7 @@ class ScheduleHome extends StatelessWidget {
 
   Widget _buildDatePicker(DateTime date, Function onChangeDate) {
     return Container(
+      height: 50,
       color: Color(0x95000000),
       child: Center(
         child: Row(
@@ -92,11 +94,12 @@ class ScheduleHome extends StatelessWidget {
         child: ErrorView('No data downloaded yet'),
       );
     }
+    bool isPlayoffs = Config.isPlayoffsDate(selectedSchedule.date);
     return SliverFixedExtentList(
-      itemExtent: 130.0,
+      itemExtent: isPlayoffs ? 140.0 : 130.0,
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          return ScheduleGameCard(selectedSchedule.games[index]);
+          return ScheduleGameCard(selectedSchedule.games[index], isPlayoffs);
         },
         childCount: selectedSchedule.games.length,
       ),

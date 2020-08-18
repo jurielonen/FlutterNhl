@@ -181,19 +181,16 @@ const List<String> playerKeys = [
 
 const List<String> goalieKeys = [
   'timeOnIce',
-  'assists',
-  'goals',
-  'pim',
   'shots',
   'saves',
-  'powerPlaySaves',
-  'shortHandedSaves',
-  'evenSaves',
-  'shortHandedShotsAgainst',
-  'evenShotsAgainst',
-  'powerPlayShotsAgainst',
-  'decision',
   'savePercentage',
+  'shortHandedSaves',
+  'shortHandedShotsAgainst',
+  'powerPlaySaves',
+  'powerPlayShotsAgainst',
   'powerPlaySavePercentage',
-  'evenStrengthSavePercentage'
+  'evenSaves',
+  'evenShotsAgainst',
+  'evenStrengthSavePercentage',
+  'decision',
 ];

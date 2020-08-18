@@ -21,7 +21,7 @@ class AwardsHome extends StatelessWidget {
       converter: (store) => AwardViewModel.fromStore(store),
       builder: (ctx, viewModel) => TemplateView(
         viewModel.loadingStatus,
-        _buildBody(ctx, viewModel.awards),
+          () => _buildBody(ctx, viewModel.awards),
         _buildAppBar(),
         viewModel.errorMsg,
       ),

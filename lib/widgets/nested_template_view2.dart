@@ -90,6 +90,7 @@ class _NestedTemplateView2State extends State<NestedTemplateView2>
                 physics: NeverScrollableScrollPhysics(),
                 controller: _pageController,
                 itemBuilder: (context, position) {
+                  print('pagebuilder: $position');
                   return _getStateWidget(context, widget.tabs[_tabController.index].text);
                 },
                 itemCount: widget.tabs.length,

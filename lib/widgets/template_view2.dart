@@ -28,6 +28,7 @@ class TemplateView2 extends StatefulWidget {
 class _TemplateView2State extends State<TemplateView2>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  PageController _pageController;
 
   @override
   void initState() {
@@ -38,11 +39,15 @@ class _TemplateView2State extends State<TemplateView2>
 
     _tabController =
         TabController(vsync: this, length: widget.tabs.length, initialIndex: initialIndex);
+    _pageController = new PageController(initialPage: _tabController.index);
   }
+
+
 
   @override
   void dispose() {
     _tabController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -75,7 +80,16 @@ class _TemplateView2State extends State<TemplateView2>
           return SafeArea(
             top: false,
             bottom: false,
-            child: CustomScrollTemplateView(slivers: _getStateWidget()),
+            child: PageView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              itemBuilder: (context, position) {
+                print('pagebuilder: $position');
+                return CustomScrollTemplateView(slivers: _getStateWidget());
+              },
+              itemCount: _tabController.length,
+            ),
+            //CustomScrollTemplateView(slivers: _getStateWidget()),
           );
         }).toList(),
       ),

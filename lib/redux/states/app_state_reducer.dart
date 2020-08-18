@@ -7,6 +7,7 @@ import 'package:FlutterNhl/redux/states/draft/draft_reducer.dart';
 import 'package:FlutterNhl/redux/states/game/game_reducer.dart';
 import 'package:FlutterNhl/redux/states/player/player_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
+import 'package:FlutterNhl/redux/states/standings/standings_reducer.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_reducer.dart';
 import 'package:FlutterNhl/redux/states/team/team_reducer.dart';
 
@@ -55,6 +56,8 @@ AppState appReducer(AppState state, dynamic action) {
     SnackBarNotification s = state.showSnackBar;
     s.show = false;
     return state.copyWith(showSnackBar: s);
+  } else if(action is StandingsAction){
+    return state.copyWith(standingsState: standingsReducer(state.standingsState, action));
   }
   return state;
 }

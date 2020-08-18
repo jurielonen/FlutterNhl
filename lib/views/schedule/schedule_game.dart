@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/constants/colors.dart';
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/game/game_enums.dart';
@@ -13,8 +14,9 @@ import 'package:flutter/widgets.dart';
 
 class ScheduleGameCard extends StatelessWidget {
   final Game _game;
+  final bool _isPlayoffs;
 
-  const ScheduleGameCard(this._game);
+  const ScheduleGameCard(this._game, this._isPlayoffs);
 
   @override
   Widget build(BuildContext context) {
@@ -30,23 +32,26 @@ class ScheduleGameCard extends StatelessWidget {
         color: kNHLBackground,
         child: Container(
           decoration: BoxDecoration(color: Colors.black),
-          child: Row(
-            children: <Widget>[
-              Expanded(child: _buildGameTable()),
-              VerticalDivider(
-                thickness: 1,
-                indent: 5,
-                endIndent: 5,
-                color: Colors.white,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: tWidth,
-                  child: _getStateRow(context),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(child: _buildGameTable()),
+                VerticalDivider(
+                  thickness: 1,
+                  indent: 5,
+                  endIndent: 5,
+                  color: Colors.white,
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: tWidth,
+                    child: _getStateRow(context),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -54,19 +59,41 @@ class ScheduleGameCard extends StatelessWidget {
   }
 
   Table _buildGameTable() {
+    List<TableRow> rows = [];
+    if(_isPlayoffs && _game.seriesSummary != null){
+      rows.add(TableRow(children: [
+        TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 15.0, top: 1.0),
+              child: Align(alignment: Alignment.center, child: Text('GM ${_game.seriesSummary.gameNumber}', style: Styles.gameCardPlayoffs,)),
+            )),
+        TableCell(
+          child: Text(''),
+        ),
+        TableCell(
+          verticalAlignment: TableCellVerticalAlignment.top,
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Text(_game.seriesSummary.seriesStatus.toUpperCase(), style: Styles.gameCardPlayoffs),
+          ),
+        )
+      ]),);
+    }
+    rows.addAll([
+      _buildTeamTableRow(
+          _game.homeTeam, _game.homeScheduleInfo, _game.homeOpacity),
+      _buildTeamTableRow(
+          _game.awayTeam, _game.awayScheduleInfo, _game.awayOpacity),]);
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       columnWidths: {
-        0: FractionColumnWidth(0.20),
+        0: FixedColumnWidth(25),
         1: FractionColumnWidth(0.30),
-        2: FractionColumnWidth(0.5),
+        2: FractionColumnWidth(0.40),
       },
-      children: [
-        _buildTeamTableRow(
-            _game.homeTeam, _game.homeScheduleInfo, _game.homeOpacity),
-        _buildTeamTableRow(
-            _game.awayTeam, _game.awayScheduleInfo, _game.awayOpacity),
-      ],
+      //border: TableBorder.all(color: Colors.white),
+      children: rows
     );
   }
 
@@ -79,7 +106,7 @@ class ScheduleGameCard extends StatelessWidget {
             child: Opacity(
                 opacity: opacity,
                 child: Align(
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.centerLeft,
                     child: Styles.buildTeamSvgImage(team, size: 25))),
           )),
       TableCell(
@@ -176,16 +203,17 @@ class ScheduleGameCard extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             titleTextStyle: Styles.cardTeamWinnerText,
-            title: Text('${_game.toString()}\nRECAPS', textAlign: TextAlign.center,),
+            title: Text(
+              '${_game.toString()}\nRECAPS',
+              textAlign: TextAlign.center,
+            ),
             contentPadding: const EdgeInsets.only(),
             titlePadding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
             actionsPadding: const EdgeInsets.only(),
             content: Container(
               decoration: BoxDecoration(color: Colors.grey),
               child: SingleChildScrollView(
-                child: ListBody(
-                  children: videoTiles.toList()
-                ),
+                child: ListBody(children: videoTiles.toList()),
               ),
             ),
             actions: <Widget>[
@@ -199,7 +227,9 @@ class ScheduleGameCard extends StatelessWidget {
   }
 
   Iterable<Widget> get videoTiles sync* {
-    for(Video video in _game.content.videos)
-      yield VideoCard(video: video,);
+    for (Video video in _game.content.videos)
+      yield VideoCard(
+        video: video,
+      );
   }
 }

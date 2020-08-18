@@ -17,6 +17,8 @@ abstract class AwardAction {}
 
 abstract class GameAction {}
 
+abstract class StandingsAction {}
+
 class InitAction {}
 
 class DownloadAction {}

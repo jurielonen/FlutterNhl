@@ -24,7 +24,7 @@ class RecipientHome extends StatelessWidget {
         },
         builder: (ctx, viewModel) => TemplateView(
           viewModel.loadingStatus,
-          _buildBody(viewModel.award),
+            () => _buildBody(viewModel.award),
           _buildAppBar(viewModel.award),
           viewModel.errorMsg,
         ),

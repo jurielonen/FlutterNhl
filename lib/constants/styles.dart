@@ -16,6 +16,14 @@ abstract class Styles {
   static DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
   static DateFormat videoFormat = DateFormat('mm:ss');
 
+  static const gameCardPlayoffs = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 11,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
+
   static const playHeaderText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
