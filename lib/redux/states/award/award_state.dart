@@ -6,7 +6,7 @@ import 'package:kt_dart/collection.dart';
 @immutable
 class AwardState {
   final LoadingStatus loadingStatus;
-  final KtMap<int, Award> awards;
+  final KtMap<int, AwardTableSource> awards;
   final int selectedAward;
   final String errorMsg;
 
@@ -26,7 +26,7 @@ class AwardState {
 
   AwardState copyWith(
       {LoadingStatus loadingStatus,
-      KtMap<int, Award> awards,
+      KtMap<int, AwardTableSource> awards,
       int selectedAward,
       String errorMsg}) {
     return AwardState(

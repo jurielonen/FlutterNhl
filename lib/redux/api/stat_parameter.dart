@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 
 enum StatType { PLAYER, GOALIE, TEAM }
@@ -81,7 +82,7 @@ class StatParameters {
   final int limit = 32;
   int start = 0;
   int gamesPlayed = 1;
-  int gameType = 2;
+  int gameType = Config.isPlayoffsCurrent() ? 3 : 2;
   int total = -1;
   String startSeason = getCurrentSeason();
   String endSeason = getCurrentSeason();

@@ -56,7 +56,7 @@ class TeamHome extends StatelessWidget {
                   viewModel.getStats(viewModel.selectedStat);
                   break;
                 case 'Game Logs':
-                  viewModel.getGameLogs(viewModel.selectedDate);
+                  viewModel.getGameLogs(viewModel.selectedParams);
                   break;
                 case 'Players':
                   viewModel.getPlayers();
@@ -178,8 +178,8 @@ class TeamHome extends StatelessWidget {
   Widget _createGameLogTab(TeamViewModel viewModel) {
     Widget widget;
     if (viewModel.team != null &&
-        viewModel.team.containsGameLog(viewModel.selectedDate)) {
-      List<Game> logs = viewModel.team.getGames(viewModel.selectedDate);
+        viewModel.team.containsGameLog(viewModel.selectedParams)) {
+      List<Game> logs = viewModel.team.getGames(viewModel.selectedParams);
       widget = Expanded(
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
@@ -189,11 +189,18 @@ class TeamHome extends StatelessWidget {
     }
 
     return Column(children: <Widget>[
-      CustomDropdownButton(
+      /*CustomDropdownButton(
         selectedValue: years.first,
         values: years,
-        onValueChanged: viewModel.getGameLogs,
-      ),
+        onValueChanged: (String year) => viewModel.getGameLogs(viewModel.selectedParams.copyWith(year: year)),
+      ),*/
+      CustomYearPicker(
+          selected: int.parse(viewModel.selectedParams.year),
+          onSelected: (int year) => viewModel.getGameLogs(viewModel.selectedParams.copyWith(year: year.toString())),
+          maxValue: int.parse(StatParameters.getCurrentSeason()),
+          minValue: int.parse(viewModel.team.firstYear),
+          reducer: 10001,
+        ),
       widget ?? ErrorView('No data downloaded'),
     ],);
   }

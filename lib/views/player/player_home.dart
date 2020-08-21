@@ -61,7 +61,7 @@ class PlayerHome extends StatelessWidget {
                 viewModel.getStats(viewModel.selectedStat);
                 break;
               case 'Game Logs':
-                viewModel.getGameLogs(viewModel.selectedYear);
+                viewModel.getGameLogs(viewModel.selectedParams);
                 break;
             }
           }
@@ -131,9 +131,9 @@ class PlayerHome extends StatelessWidget {
   Widget _createGameLogTab(PlayerViewModel viewModel) {
     Widget widget;
     if (viewModel.player != null &&
-        viewModel.player.containsGameLogs(viewModel.selectedYear)) {
+        viewModel.player.containsGameLogs(viewModel.selectedParams)) {
       List<GameLogsPlayer> logs =
-          viewModel.player.getGameLog(viewModel.selectedYear);
+          viewModel.player.getGameLog(viewModel.selectedParams);
 
       widget = Expanded(child: PlayerGameLogView(logs, viewModel.player.position != Position.G));
       /*.add(
@@ -149,8 +149,8 @@ class PlayerHome extends StatelessWidget {
     return Column(
       children: <Widget>[
         CustomYearPicker(
-          selected: int.parse(viewModel.selectedYear),
-          onSelected: (int year) => viewModel.getGameLogs(year.toString()),
+          selected: int.parse(viewModel.selectedParams.year),
+          onSelected: (int year) => viewModel.getGameLogs(viewModel.selectedParams.copyWith(year: year.toString())),
           maxValue: int.parse(StatParameters.getCurrentSeason()),
           minValue: viewModel.player.firstSeason,
           reducer: 10001,

@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
+import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 
@@ -26,8 +27,8 @@ class TeamReceivedStatAction extends TeamAction {
 }
 
 class TeamDateChangedAction extends TeamAction {
-  final String date;
-  TeamDateChangedAction(this.date);
+  final GameLogParams params;
+  TeamDateChangedAction(this.params);
 }
 
 class TeamDateAlreadyDownloaded extends TeamAction {}

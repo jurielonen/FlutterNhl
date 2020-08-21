@@ -6,6 +6,7 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/player/player_preview_table_source.dart';
+import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:flutter/foundation.dart';
@@ -91,6 +92,7 @@ class Team {
 
   String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
   String get logoSvg => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
+  static String logoSvgUrl(String abb) { return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';}
   Color get teamColor => getTeamColor(name);
 
   static parsePlayerStats(List<PlayerGame> players, List<PlayerGame> skaters,
@@ -263,7 +265,7 @@ class TeamPage extends Team {
 
   PlayerPreviewTableSource playerTableSource;
   PlayerPreviewTableSource goalieTableSource;
-  Map<String, List<Game>> gameLog = {};
+  Map<GameLogParams, List<Game>> gameLog = {};
   Map<String, PlayerSeasonTableSource> stats = {};
 
   TeamPage(
@@ -326,7 +328,7 @@ class TeamPage extends Team {
     return playerTableSource != null && goalieTableSource != null;
   }
 
-  bool containsGameLog(String date) {
+  bool containsGameLog(GameLogParams date) {
     return gameLog.containsKey(date);
   }
 
@@ -334,8 +336,8 @@ class TeamPage extends Team {
     return stats.containsKey(stat);
   }
 
-  List<Game> getGames(String date) {
-    if (gameLog.containsKey(date)) return gameLog[date];
+  List<Game> getGames(GameLogParams params) {
+    if (gameLog.containsKey(params)) return gameLog[params];
     return [];
   }
 
@@ -344,8 +346,8 @@ class TeamPage extends Team {
     return null;
   }
 
-  void addGameLog(String date, List<Game> games) {
-    gameLog[date] = games;
+  void addGameLog(GameLogParams params, List<Game> games) {
+    gameLog[params] = games;
   }
 
   void addStat(String stat, PlayerSeasonTableSource table) {

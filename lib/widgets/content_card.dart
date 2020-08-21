@@ -95,7 +95,7 @@ class PressableCard extends StatefulWidget {
     this.shadowColor = CupertinoColors.black,
     this.duration = const Duration(milliseconds: 100),
     this.onPressed,
-    this.color = CupertinoColors.lightBackgroundGray,
+    this.color = Colors.black,
     Key key,
   })  : assert(child != null),
         assert(borderRadius != null),

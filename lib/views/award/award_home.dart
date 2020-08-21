@@ -28,7 +28,7 @@ class AwardsHome extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext ctx, KtMap<int, Award> awards) {
+  Widget _buildBody(BuildContext ctx, KtMap<int, AwardTableSource> awards) {
     if (awards.isEmpty()) {
       return SliverFillRemaining(
         child: ErrorView('No data downloaded yet'),
@@ -42,12 +42,12 @@ class AwardsHome extends StatelessWidget {
           final award = awards.toList()[index];
           return ImageCard(
             onPressed: () {
-              print('pressed: ${award.second.name}');
+              print('pressed: ${award.second.award.name}');
               Navigator.pushNamed(ctx, RecipientHome.routeName, arguments: award.first);
             },
-            imageUrl: award.second.imageUrl,
-            title: award.second.name,
-            description: award.second.briefDesc,
+            imageUrl: award.second.award.imageUrl,
+            title: award.second.award.name,
+            description: award.second.award.briefDesc,
           );
         },
         childCount: awards.size,

@@ -8,7 +8,7 @@ final selectedAwardIdSelector = (AppState state) => state.awardState.selectedAwa
 
 final selectedAwardSelector = createSelector2(awardsMapSelector, selectedAwardIdSelector, _getAward);
 
-Award _getAward(KtMap<int, Award> awards, int selectedAward){
+AwardTableSource _getAward(KtMap<int, AwardTableSource> awards, int selectedAward){
   if(awards.containsKey(selectedAward)){
     return awards[selectedAward];
   } else {

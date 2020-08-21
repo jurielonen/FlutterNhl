@@ -11,7 +11,7 @@ class RecordsApi {
   static const String basePath = '/site/api/';
   static final String printMsg = 'RecordApi';
 
-  Future<Map<int, Award>> fetchAwards() async {
+  Future<Map<int, AwardTableSource>> fetchAwards() async {
     final searchUri = Uri.https(baseUrl, '${basePath}trophy')
         .resolveUri(Uri(queryParameters: {
       'include': [
@@ -27,7 +27,7 @@ class RecordsApi {
     print('$printMsg fetchAwards: $searchUri');
 
     return await fetch(searchUri, client).then((value) {
-      return Map.fromIterable(List<Award>.from(getJsonList(['data'], value).map((award) => Award.fromJson(award))), key: (award) => award.id, value: (award) => award);
+      return Map.fromIterable(List<AwardTableSource>.from(getJsonList(['data'], value).map((award) => AwardTableSource(award: Award.fromJson(award)))), key: (award) => award.award.id, value: (award) => award);
     });
   }
 

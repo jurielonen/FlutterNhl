@@ -8,7 +8,7 @@ import 'package:redux/redux.dart';
 class AwardViewModel {
   final LoadingStatus loadingStatus;
   final int selectedAward;
-  final KtMap<int, Award> awards;
+  final KtMap<int, AwardTableSource> awards;
   final String errorMsg;
   /*final Function(Award) awardSelected;
   final Function() awardUnselected;*/

@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
+import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:meta/meta.dart';
 import 'package:kt_dart/collection.dart';
 
@@ -9,14 +10,14 @@ class TeamState {
       {@required this.loadingStatus,
       @required this.teamId,
       @required this.selectedStat,
-      @required this.selectedDate,
+      @required this.selectedParams,
       @required this.teams,
       @required this.errorMsg});
 
   final LoadingStatus loadingStatus;
   final int teamId;
   final String selectedStat;
-  final String selectedDate;
+  final GameLogParams selectedParams;
   final KtMap<int, TeamPage> teams;
   final String errorMsg;
 
@@ -25,7 +26,7 @@ class TeamState {
         loadingStatus: LoadingStatus.IDLE,
         teamId: 0,
         selectedStat: 'summary',
-        selectedDate: '',
+        selectedParams: null,
         teams: emptyMap(),
         errorMsg: '');
   }
@@ -34,14 +35,14 @@ class TeamState {
       {LoadingStatus loadingStatus,
       int teamId,
       String selectedStat,
-      String selectedDate,
+      GameLogParams selectedParams,
       KtMap<int, TeamPage> teams,
       String errorMsg}) {
     return TeamState(
         loadingStatus: loadingStatus ?? this.loadingStatus,
         teamId: teamId ?? this.teamId,
         selectedStat: selectedStat ?? this.selectedStat,
-        selectedDate: selectedDate ?? this.selectedDate,
+        selectedParams: selectedParams ?? this.selectedParams,
         teams: teams ?? this.teams,
         errorMsg: errorMsg ?? this.errorMsg);
   }
@@ -54,7 +55,7 @@ class TeamState {
           loadingStatus == other.loadingStatus &&
           teamId == other.teamId &&
           selectedStat == other.selectedStat &&
-          selectedDate == other.selectedDate &&
+          selectedParams == other.selectedParams &&
           teams == other.teams &&
           errorMsg == other.errorMsg;
 
@@ -63,7 +64,7 @@ class TeamState {
       loadingStatus.hashCode ^
       teamId.hashCode ^
       selectedStat.hashCode ^
-      selectedDate.hashCode ^
+      selectedParams.hashCode ^
       teams.hashCode ^
       errorMsg.hashCode;
 }

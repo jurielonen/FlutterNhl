@@ -1,12 +1,220 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/award/award_enums.dart';
 import 'package:FlutterNhl/redux/models/award/recipient.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
-import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
+//import 'package:FlutterNhl/redux/models/player/player.dart';
+//import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:FlutterNhl/widgets/custom_data_table.dart';
 
-class AwardDataTableSource extends DataTableSource {
+class AwardTableSource extends CustomDataTableSource {
+  final Award award;
+  List<DataRow> _rows = [];
+  List<DataColumn> _columns = [];
+  List<Widget> _firstColumn = [];
+  int _currentIndex = 0;
+  static const int _maxEntries = 20;
+
+  AwardTableSource({@required this.award});
+
+  void setRecipients(List<AwardFinalists> finalists){
+    award.recipients = finalists;
+    _setColumns();
+    _setRows();
+  }
+
+  String get headerText => 'Rows ${_currentIndex + 1}-${_currentIndex + _rows.length} of ${award.recipients.length}';
+  bool get pagesNext {
+    if((_currentIndex + _maxEntries) < award.recipients.length){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void nextPage(){
+    _currentIndex += _maxEntries;
+    _setRows();
+  }
+
+  bool get pagesPrevious {
+    if((_currentIndex - _maxEntries) > 0){
+      return true;
+    } else {
+      if(_currentIndex != 0){
+        return true;
+      }
+      return false;
+    }
+  }
+
+  void previousPage(){
+    _currentIndex -= _maxEntries;
+    _setRows();
+  }
+
+  @override
+  List<DataRow> get rows {
+    if (_rows != null && _rows.isNotEmpty) return _rows;
+
+    _setRows();
+
+    return _rows;
+  }
+
+  void _setRows(){
+    _rows = [];
+    _firstColumn = [];
+    if(award.recipients == null)
+      return;
+    for(int x = _currentIndex; x < _currentIndex + _maxEntries; x++){
+      if(award.recipients.length <= x)
+        continue;
+      AwardFinalists finalists = award.recipients[x];
+      _firstColumn.add(CustomDataTableSource.createTableFirstColumn(Text(finalists.seasonId.toString(), style: CustomDataTableSource.firstColumnStyle,)));
+      _rows.add(_getCells(finalists));
+    }
+  }
+
+  DataRow _getCells(AwardFinalists finalists){
+        switch (award.trophyCategory) {
+      case TrophyType.TEAM:
+        return DataRow(cells: [
+          CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.name)),
+          CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.runnerUp.name)),
+        ]);
+      case TrophyType.PLAYER:
+      case TrophyType.COACH:
+      case TrophyType.GM:
+        if (_columns.length == 6) {
+          return DataRow(cells: [
+            CustomDataTableSource.createTableCell(finalists.winner.name),
+            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.teamName)),
+            CustomDataTableSource.createTableCell(finalists.runnerUp.name),
+            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.runnerUp.teamName)),
+            CustomDataTableSource.createTableCell(finalists.finalist.name),
+            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.finalist.teamName)),
+          ]);
+        } else if (_columns.length == 4) {
+          return DataRow(cells: [
+            CustomDataTableSource.createTableCell(finalists.winner.name),
+            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.teamName)),
+            CustomDataTableSource.createTableCell(finalists.runnerUp.name),
+            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.runnerUp.teamName)),
+          ]);
+        }
+        return DataRow( cells: [
+          CustomDataTableSource.createTableCell(finalists.winner.name),
+          CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.teamName)),
+        ]);
+      case TrophyType.OTHER:
+        return DataRow( cells: [
+          CustomDataTableSource.createTableCell(finalists.winner.name),
+        ]);
+    }
+
+    return DataRow(cells: _columns.map((e) => CustomDataTableSource.createTableCell('')));
+  }
+
+  @override
+  List<DataColumn> get columns {
+    if (_columns != null && _columns.isNotEmpty) return _columns;
+
+    _setColumns();
+
+    return _columns;
+  }
+
+  void _setColumns(){
+    _columns = [];
+    switch (award.trophyCategory) {
+      case TrophyType.TEAM:
+        _columns.addAll(<DataColumn>[
+          CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
+          CustomDataTableSource.createTableColumn('2nd', 'Award runner up'),
+        ]);
+        break;
+      case TrophyType.PLAYER:
+      case TrophyType.COACH:
+      case TrophyType.GM:
+        if (award.recipients
+            .any((recipient) => recipient.finalist.name != '')) {
+          _columns.addAll(<DataColumn>[
+            CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
+            CustomDataTableSource.createTableColumn('Team', 'Award winners team'),
+            CustomDataTableSource.createTableColumn('2nd', 'Award runner up'),
+            CustomDataTableSource.createTableColumn('Team', 'Award runner ups team'),
+            CustomDataTableSource.createTableColumn('3rd', 'Award finalist'),
+            CustomDataTableSource.createTableColumn('Team', 'Award finalists team'),
+          ]);
+        } else if (award.recipients
+            .any((recipient) => recipient.runnerUp.name != '')) {
+          _columns.addAll(<DataColumn>[
+            CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
+            CustomDataTableSource.createTableColumn('Team', 'Award winners team'),
+            CustomDataTableSource.createTableColumn('2nd', 'Award runner up'),
+            CustomDataTableSource.createTableColumn('Team', 'Award runner ups team'),
+          ]);
+        } else {
+          _columns.addAll(<DataColumn>[
+            CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
+            CustomDataTableSource.createTableColumn('Team', 'Award winners team'),
+          ]);
+        }
+        break;
+      case TrophyType.OTHER:
+        _columns.addAll(<DataColumn>[
+          CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
+        ]);
+        break;
+    }
+    print('COLUMN LENGHT: ${_columns.length}');
+  }
+
+  Widget _createTeamCell(String teamAbb){
+    return Row(
+            children: [
+              Styles.buildTeamSvgImageAbb(Team.logoSvgUrl(teamAbb), size: 15),
+              Text(teamAbb, style: CustomDataTableSource.cellRowStyle)
+            ],
+          );
+  }
+
+  @override
+  List<Widget> get firstColumn {
+    if (_firstColumn != null && _firstColumn.isNotEmpty) return _firstColumn;
+
+    _setRows();
+
+    return _firstColumn;
+  }
+
+  @override
+  void callback(int columnIndex, bool ascending) {
+      // TODO: implement callback
+    }
+  
+    @override
+    void set setRowCallBack(dataRowTapCallBack) {
+    // TODO: implement setRowCallBack
+  }
+
+  @override
+  bool get sortAscending => false;
+
+  @override
+  Widget get tableCorner => CustomDataTableSource.createTableCorner('Year');
+
+  @override
+  void set setColumnSortCallBack(dataColumnSortCallback) {
+    // TODO: implement setColumnSortCallBack
+  }
+
+}
+
+/*class AwardDataTableSource extends DataTableSource {
   final Award award;
   final Function(int) onRowPressed;
   List<DataColumn> _columns = [];
@@ -73,6 +281,7 @@ class AwardDataTableSource extends DataTableSource {
   int get selectedRowCount => 0;
 
   int get rowsPerPage => rowCount < 10 ? rowCount : 10;
+
   List<DataColumn> get columns {
     if (_columns != null && _columns.isNotEmpty) {
       return _columns;
@@ -121,7 +330,7 @@ class AwardDataTableSource extends DataTableSource {
     }
     return _columns;
   }
-}
+}*/
 
 class Award {
   final int id;

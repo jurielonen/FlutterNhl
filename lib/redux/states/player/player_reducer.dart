@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/player/player_action.dart';
@@ -11,7 +12,7 @@ PlayerState playerReducer(PlayerState state, dynamic action) {
     return state.copyWith(
         playerId: action.playerId,
         playerType: action.statType,
-        selectedYear: '20192020',
+        gameLogParams: GameLogParams(Config.getCurrentSeason, !Config.isPlayoffsCurrent()),
         selectedStat: 'summary');
   } else if (action is PlayerRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
@@ -33,7 +34,7 @@ PlayerState playerReducer(PlayerState state, dynamic action) {
   } else if (action is PlayerReceivedGameLogsAction) {
     final players = state.players.toMutableMap();
     PlayerPage player = players[state.playerId];
-    player.addGameLog(state.selectedYear, action.logs);
+    player.addGameLog(state.gameLogParams, action.logs);
     players[player.id] = player;
     return state.copyWith(
         loadingStatus: LoadingStatus.SUCCESS, players: players);
@@ -42,7 +43,7 @@ PlayerState playerReducer(PlayerState state, dynamic action) {
         errorMsg: action.error, loadingStatus: LoadingStatus.ERROR);
   } else if (action is PlayerGetGameLogsAction) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.IDLE, selectedYear: action.year);
+        loadingStatus: LoadingStatus.IDLE, gameLogParams: action.params);
   } else if (action is PlayerStatsAlreadyDownloaded) {
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   } else if (action is PlayerGameLogsAlreadyDownloaded) {

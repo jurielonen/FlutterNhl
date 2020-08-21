@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
+import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 
 class PlayerRequestingAction extends PlayerAction {}
@@ -23,8 +24,8 @@ class PlayerReceivedStatAction extends PlayerAction {
 }
 
 class PlayerGetGameLogsAction extends PlayerAction {
-  final String year;
-  PlayerGetGameLogsAction(this.year);
+  final GameLogParams params;
+  PlayerGetGameLogsAction(this.params);
 }
 
 class PlayerGameLogsAlreadyDownloaded extends PlayerAction {}

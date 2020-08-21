@@ -28,7 +28,7 @@ class AwardMiddleware extends MiddlewareClass<AppState> {
     next(AwardRequestingAction());
     if (store.state.awardState.awards.isEmpty()) {
       try {
-        final Map<int, Award> awards = await recordsApi.fetchAwards();
+        final Map<int, AwardTableSource> awards = await recordsApi.fetchAwards();
         next(AwardDownloadedAction(awards));
       } catch (error) {
         next(AwardError(error.toString()));
@@ -42,7 +42,7 @@ class AwardMiddleware extends MiddlewareClass<AppState> {
     next(AwardRequestingAction());
     if (store.state.awardState.selectedAward != null) {
       try {
-        final List<AwardFinalists> recipient = await recordsApi.fetchRecipients(selectedAwardSelector(store.state));
+        final List<AwardFinalists> recipient = await recordsApi.fetchRecipients(selectedAwardSelector(store.state).award);
         next(AwardRecipientDownloadedAction(recipient));
       } catch (error) {
         next(AwardError(error.toString()));

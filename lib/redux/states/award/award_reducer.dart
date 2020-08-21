@@ -22,7 +22,7 @@ AwardState awardReducer(AwardState state, dynamic action) {
         awards: KtMap.from(action.awards));
   } else if (action is AwardRecipientDownloadedAction) {
     final awards = state.awards.toMutableMap();
-    awards[state.selectedAward].recipients = action.recipients;
+    awards[state.selectedAward].setRecipients(action.recipients);
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, awards: awards);
   } else if (action is AwardChosenAction) {
     return state.copyWith(selectedAward: action.selectedAward);

@@ -273,6 +273,22 @@ abstract class Styles {
     }
   }
 
+  static Widget buildNetworkCircleIcon(String url, {double size=25.0}) {
+    if (url != null && url.length > 0) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(size/2),
+        child: Container( decoration: BoxDecoration(color: Colors.black), child: FadeInImage.memoryNetwork(width: size, height: size, placeholder: kTransparentImage, image: url, imageErrorBuilder: (context, obj, stackTrace){
+          return Image.asset('assets/skater.jpg', width: size, height: size,);
+        },),),
+      );
+    } else {
+      return CircleAvatar(
+        backgroundImage: AssetImage('assets/skater.jpg'),
+        backgroundColor: Colors.black,
+      );
+    }
+  }
+
   static Widget buildNetworkImage(String url) {
     if (url != null && url != '') {
       return Image.network(

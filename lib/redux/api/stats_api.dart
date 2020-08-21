@@ -112,9 +112,9 @@ class StatsApi {
   }
 
   Future<List<GameLogsPlayer>> fetchPlayerGameLogs(
-      int playerId, String year) async {
+      int playerId, String year, bool regular) async {
     final searchUri = Uri.https(baseUrl, '/api/v1/people/$playerId/stats',
-        {'stats': 'gameLog', 'expand': 'stats.team', 'season': year});
+        {'stats': regular ? 'gameLog' : 'playoffGameLog', 'expand': 'stats.team', 'season': year});
     print('$printMsg fetchPlayerGameLogs: $searchUri');
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
@@ -153,7 +153,7 @@ class StatsApi {
     }).catchError((error) => throw Exception(error.toString()));
   }
 
-  Future<List<Game>> fetchTeamGameLog(int teamId, String season) async {
+  Future<List<Game>> fetchTeamGameLog(int teamId, String season, bool regular) async {
     final searchUri = Uri.https(baseUrl, 'api/v1/schedule', {
       'teamId': teamId.toString(),
       'season': season,

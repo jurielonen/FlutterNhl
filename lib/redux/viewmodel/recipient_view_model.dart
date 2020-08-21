@@ -6,7 +6,7 @@ import 'package:redux/redux.dart';
 
 class RecipientViewModel {
   final LoadingStatus loadingStatus;
-  final Award award;
+  final AwardTableSource award;
   final String errorMsg;
 
   RecipientViewModel({this.loadingStatus, this.award, this.errorMsg});

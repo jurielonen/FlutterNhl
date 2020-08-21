@@ -2,6 +2,7 @@ import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
+import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
@@ -221,7 +222,7 @@ class PlayerPage extends Player {
   final int height;
   final PlayerAllTimeStats allTimeStats;
   Map<String, PlayerSeasonTableSource> stats = {};
-  Map<String, List<GameLogsPlayer>> gameLog = {};
+  Map<GameLogParams, List<GameLogsPlayer>> gameLog = {};
 
   PlayerPage({
     @required Player player,
@@ -361,20 +362,20 @@ class PlayerPage extends Player {
     }
   }
 
-  bool containsGameLogs(String year) {
+  bool containsGameLogs(GameLogParams year) {
     if (gameLog.isEmpty) return false;
     return gameLog.containsKey(year);
   }
 
-  List<GameLogsPlayer> getGameLog(String year) {
-    if (gameLog.containsKey(year)) {
-      return gameLog[year];
+  List<GameLogsPlayer> getGameLog(GameLogParams params) {
+    if (gameLog.containsKey(params)) {
+      return gameLog[params];
     }
     return [];
   }
 
-  void addGameLog(String year, List<GameLogsPlayer> logs) {
-    gameLog[year] = logs;
+  void addGameLog(GameLogParams params, List<GameLogsPlayer> logs) {
+    gameLog[params] = logs;
   }
 
   StatType getStatType() {

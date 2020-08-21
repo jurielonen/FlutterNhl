@@ -6,7 +6,7 @@ class AwardRequestingAction extends AwardAction {}
 class AwardAlreadyDownloadedAction  extends AwardAction {}
 
 class AwardDownloadedAction extends AwardAction {
-  final Map<int, Award> awards;
+  final Map<int, AwardTableSource> awards;
   AwardDownloadedAction(this.awards);
 }
 

@@ -78,12 +78,12 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
   }
 
   Future<Null> _getDate(Store<AppState> store, NextDispatcher next) async {
-    if (selectedTeamSelector(store.state).containsGameLog(store.state.teamState.selectedDate)) {
+    if (selectedTeamSelector(store.state).containsGameLog(store.state.teamState.selectedParams)) {
       next(TeamDateAlreadyDownloaded());
     } else {
       try {
         final List<Game> games = await statsApi.fetchTeamGameLog(
-            store.state.teamState.teamId, store.state.teamState.selectedDate);
+            store.state.teamState.teamId, store.state.teamState.selectedParams.year, store.state.teamState.selectedParams.gameType);
         next(TeamReceivedDateAction(games));
       } catch (error) {
         next(TeamErrorAction(error.toString()));

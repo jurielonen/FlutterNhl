@@ -36,7 +36,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
         next(PlayerStatsAlreadyDownloaded());
       }
     } else if (action is PlayerGetGameLogsAction) {
-      if (!selectedPlayerSelector(store.state).containsGameLogs(action.year)) {
+      if (!selectedPlayerSelector(store.state).containsGameLogs(action.params)) {
         await _getGameLogs(store, next);
       } else {
         next(PlayerGameLogsAlreadyDownloaded());
@@ -80,7 +80,9 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
       try {
         List<GameLogsPlayer> logs = await statsApi.fetchPlayerGameLogs(
             store.state.playerState.playerId,
-            store.state.playerState.selectedYear);
+            store.state.playerState.gameLogParams.year,
+            store.state.playerState.gameLogParams.gameType
+            );
         next(PlayerReceivedGameLogsAction(logs));
       } catch (error) {
         next(PlayerErrorAction(error.toString()));

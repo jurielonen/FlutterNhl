@@ -4,6 +4,17 @@ import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:meta/meta.dart';
 import 'package:kt_dart/collection.dart';
 
+class GameLogParams {
+  String year;
+  bool gameType;
+
+  GameLogParams(this.year, this.gameType);
+
+  GameLogParams copyWith({ String year, bool gameType}){
+    return GameLogParams(year ?? this.year, gameType ?? this.gameType);
+  }
+}
+
 @immutable
 class PlayerState {
   PlayerState(
@@ -11,15 +22,15 @@ class PlayerState {
       @required this.playerId,
       @required this.playerType,
       @required this.selectedStat,
-      @required this.selectedYear,
+      @required this.gameLogParams,
       @required this.players,
-      @required this.errorMsg});
+      @required this.errorMsg,});
 
   final LoadingStatus loadingStatus;
   final int playerId;
   final StatType playerType;
   final String selectedStat;
-  final String selectedYear;
+  final GameLogParams gameLogParams;
   final KtMap<int, PlayerPage> players;
   final String errorMsg;
 
@@ -31,7 +42,7 @@ class PlayerState {
       ///TODO: Unknown enum to StatType
       playerType: StatType.PLAYER,
       selectedStat: 'summary',
-      selectedYear: '20192020',
+      gameLogParams: null,
       players: emptyMap(),
       errorMsg: '',
     );
@@ -42,7 +53,7 @@ class PlayerState {
       int playerId,
       StatType playerType,
       String selectedStat,
-      String selectedYear,
+      GameLogParams gameLogParams,
       KtMap<int, PlayerPage> players,
       String errorMsg}) {
     return PlayerState(
@@ -50,9 +61,10 @@ class PlayerState {
         playerId: playerId ?? this.playerId,
         playerType: playerType ?? this.playerType,
         selectedStat: selectedStat ?? this.selectedStat,
-        selectedYear: selectedYear ?? this.selectedYear,
+        gameLogParams: gameLogParams ?? this.gameLogParams,
         players: players ?? this.players,
-        errorMsg: errorMsg ?? this.errorMsg);
+        errorMsg: errorMsg ?? this.errorMsg,
+        );
   }
 
   @override
@@ -64,7 +76,7 @@ class PlayerState {
           playerId == other.playerId &&
           playerType == other.playerType &&
           selectedStat == other.selectedStat &&
-          selectedYear == other.selectedYear &&
+          gameLogParams == other.gameLogParams &&
           players == other.players &&
           errorMsg == other.errorMsg;
 
@@ -74,7 +86,7 @@ class PlayerState {
       playerId.hashCode ^
       playerType.hashCode ^
       selectedStat.hashCode ^
-      selectedYear.hashCode ^
+      gameLogParams.hashCode ^
       players.hashCode ^
       errorMsg.hashCode;
 }

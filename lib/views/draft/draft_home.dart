@@ -19,8 +19,8 @@ class DraftHome extends StatefulWidget {
 }
 
 class _DraftHomeState extends State<DraftHome> {
-  int _round = 1;
-  int _firstIndex = 0;
+  //int _round = 1;
+  //int _firstIndex = 0;
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, DraftViewModel>(
@@ -78,32 +78,6 @@ class _DraftHomeState extends State<DraftHome> {
           CustomDataTable(dataTableSource: draft),
         ],
       ),
-
-      /*PaginatedDataTable(
-        header: Text('Draft ${source.year}, round: $_round'),
-        columns: <DataColumn>[
-          //DataColumn(label: Text('Round')),
-          DataColumn(label: Text('Pick')),
-          DataColumn(label: Text('Overall pick')),
-          DataColumn(label: Text('Prospect')),
-          DataColumn(label: Text('Team')),
-          DataColumn(label: Text('Position')),
-          DataColumn(label: Text('Country')),
-          DataColumn(label: Text('Amateur league')),
-          DataColumn(label: Text('Amateur team')),
-        ],
-        rowsPerPage: source.rowsPerPage,
-        source: source,
-        onPageChanged: (int index) {
-          setState(() {
-            if(index > _firstIndex)
-              _round++;
-            else if(index < _firstIndex)
-              _round--;
-            _firstIndex = index;
-          });
-        },
-      ),*/
     );
   }
 
