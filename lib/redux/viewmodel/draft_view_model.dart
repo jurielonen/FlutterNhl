@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/draft/draft.dart';
+import 'package:FlutterNhl/redux/models/draft/draft_table_source.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_action.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_selectors.dart';
@@ -8,7 +9,7 @@ import 'package:redux/redux.dart';
 
 class DraftViewModel {
   final LoadingStatus loadingStatus;
-  final Draft selectedDraft;
+  final DraftTableSource selectedDraft;
   final int selectedYear;
   final String errorMsg;
   final Function(int) getYear;

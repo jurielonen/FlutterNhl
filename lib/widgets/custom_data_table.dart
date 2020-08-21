@@ -81,6 +81,12 @@ abstract class CustomDataTableSource {
       ),
     );
   }
+
+  static DataCell createTableCellWidget(Widget value) {
+    return DataCell(
+      value
+    );
+  }
 }
 
 class CustomDataTable extends StatefulWidget {

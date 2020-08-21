@@ -1,12 +1,13 @@
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/draft/draft.dart';
+import 'package:FlutterNhl/redux/models/draft/draft_table_source.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kt_dart/collection.dart';
 
 @immutable
 class DraftState {
   final LoadingStatus loadingStatus;
-  final KtMap<int, Draft> drafts;
+  final KtMap<int, DraftTableSource> drafts;
   final int selectedYear;
   final String errorMsg;
 
@@ -26,7 +27,7 @@ class DraftState {
 
   DraftState copyWith(
       {LoadingStatus loadingStatus,
-      KtMap<int, Draft> drafts,
+      KtMap<int, DraftTableSource> drafts,
       int selectedYear,
       String errorMsg}) {
     return DraftState(

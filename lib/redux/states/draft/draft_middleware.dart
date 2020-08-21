@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/api/stats_api.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/draft/draft.dart';
+import 'package:FlutterNhl/redux/models/draft/draft_table_source.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_action.dart';
@@ -23,7 +24,7 @@ class DraftMiddleware extends MiddlewareClass<AppState> {
           try {
             final Draft draft = await statsApi.fetchDraft(
                 store.state.draftState.selectedYear);
-            next(DraftDownloadedAction(draft));
+            next(DraftDownloadedAction(DraftTableSource(draft: draft)));
           } catch(error){
             next(DraftErrorAction(error.toString()));
           }

@@ -26,13 +26,13 @@ class DraftDataTableSource extends DataTableSource {
       //DataCell(Text(pick.round)),
       DataCell(Text(pick.pickRound.toString())),
       DataCell(Text(pick.pickOverall.toString())),
-      DataCell(Text(pick.prospect.fullname),
+      DataCell(Text(pick.prospect.nameString),
           onTap: () => onRowPressed(pick.prospect.id)),
       DataCell(Text(pick.team.abb)),
-      DataCell(Text(pick.prospect.position.toString())),
-      DataCell(Text(pick.prospect.birthCountry)),
-      DataCell(Text(pick.prospect.amateurLeague)),
-      DataCell(Text(pick.prospect.amateurTeam)),
+      DataCell(Text(pick.prospect.positionString)),
+      DataCell(Text(pick.prospect.birthCountryString)),
+      DataCell(Text(pick.prospect.amateurLeagueString)),
+      DataCell(Text(pick.prospect.amateurTeamString)),
     ];
   }
 
@@ -90,6 +90,10 @@ class Draft {
     });
     return pick;
   }
+
+  DraftRound getRound(int round){
+    return rounds.firstWhere((dRound) => dRound.round == round, orElse: () => null);
+  }
 }
 
 class DraftRound {
@@ -133,6 +137,36 @@ class Pick {
 }
 
 class Prospect extends Player {
+
+  Prospect.clone(Player player) : super.clone(player);
+  Prospect();
+
+  String get nameString => 'UNK';
+  String get positionString => 'UNK';
+  String get birthCountryString => 'UNK';
+  String get amateurLeagueString => 'UNK';
+  String get amateurTeamString => 'UNK';
+
+  factory Prospect.fromJson(Map<String, dynamic> json){
+    if(json.length > 2){
+      return ProspectWithFullDetails.fromJson(json);
+    } else {
+      return ProspectWithJustName(getJsonString('fullName', json));
+    }
+  }
+}
+
+class ProspectWithJustName extends Prospect {
+  final String name;
+
+  @override
+  String get nameString => name;
+  ProspectWithJustName(this.name);
+
+
+}
+
+class ProspectWithFullDetails extends Prospect {
   final String nationality;
   final String birthCity;
   final String birthCountry;
@@ -143,7 +177,7 @@ class Prospect extends Player {
   final String amateurTeam;
   final String amateurLeague;
 
-  Prospect(
+  ProspectWithFullDetails(
       {@required Player player,
       @required this.nationality,
       @required this.birthCity,
@@ -156,8 +190,8 @@ class Prospect extends Player {
       @required this.amateurLeague})
       : super.clone(player);
 
-  factory Prospect.fromJson(Map<String, dynamic> json) {
-    return Prospect(
+  factory ProspectWithFullDetails.fromJson(Map<String, dynamic> json) {
+    return ProspectWithFullDetails(
       player: Player.fromJson(json),
       nationality: getJsonString('nationality', json),
       birthCity: getJsonString('birthCity', json),
@@ -171,4 +205,20 @@ class Prospect extends Player {
       amateurLeague: getJsonString2(['amateurLeague', 'name'], json),
     );
   }
+
+
+  @override
+  String get nameString => fullname;
+
+  @override
+  String get positionString => positionToAbbString(position);
+
+  @override
+  String get birthCountryString => birthCountry;
+
+  @override
+  String get amateurLeagueString => amateurLeague;
+
+  @override
+  String get amateurTeamString => amateurTeam;
 }

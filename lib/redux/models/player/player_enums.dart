@@ -26,3 +26,16 @@ String positionToFullString(Position position){
     default: return 'Unknown';
   }
 }
+
+String positionToAbbString(Position position){
+  switch(position) {
+    case Position.C: return 'C';
+    case Position.D: return 'D';
+    case Position.G: return 'G';
+    case Position.HC: return 'HC';
+    case Position.L: return 'LW';
+    case Position.N_A: return 'N_A';
+    case Position.R: return 'RW';
+    default: return 'N_A';
+  }
+}

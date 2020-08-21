@@ -1,8 +1,10 @@
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/draft/draft.dart';
+import 'package:FlutterNhl/redux/models/draft/draft_table_source.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/draft_view_model.dart';
+import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_year_select.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/template_view.dart';
@@ -33,19 +35,51 @@ class _DraftHomeState extends State<DraftHome> {
     );
   }
 
-  Widget _getTable(Draft draft) {
+  Widget _getTable(DraftTableSource draft) {
     if(draft == null){
       return SliverFillRemaining(
         child: ErrorView('No data downloaded yet'),
       );
     }
-    DraftDataTableSource source = DraftDataTableSource(
-        draft: draft,
-        onRowPressed: (int playerId) {
-          print('pressed: $playerId');
-        });
     return SliverToBoxAdapter(
-      child: PaginatedDataTable(
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+              height: 50,
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.navigate_before),
+                    tooltip: 'Previous round',
+                    onPressed: draft.roundsPreviousLeft ? () {
+                      setState(() {
+                        draft.previousPage();
+                      });
+                    } : null,
+                  ),
+                  Text('Draft round: ${draft.round}'),
+                  IconButton(
+                    icon: Icon(Icons.navigate_next),
+                    tooltip: 'Next round',
+                    onPressed: draft.roundsNextLeft ? () {
+                      print('next round');
+                      draft.nextPage();
+                      setState(() {});
+                    } : null,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          CustomDataTable(dataTableSource: draft),
+        ],
+      ),
+
+      /*PaginatedDataTable(
         header: Text('Draft ${source.year}, round: $_round'),
         columns: <DataColumn>[
           //DataColumn(label: Text('Round')),
@@ -69,7 +103,7 @@ class _DraftHomeState extends State<DraftHome> {
             _firstIndex = index;
           });
         },
-      ),
+      ),*/
     );
   }
 
@@ -80,26 +114,30 @@ class _DraftHomeState extends State<DraftHome> {
       snap: false,
       title: const Text('Draft'),
       bottom: PreferredSize(preferredSize: Size.fromHeight(50.0), child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.navigate_before),
-              tooltip: 'Previous draft',
-              onPressed: () => onChangeYear(selectedYear - 1),
-            ),
-            CustomYearPicker(
-                selected: selectedYear,
-                onSelected: onChangeYear,
-                maxValue: Config.getCurrentDraft(),
-                minValue: 1970),
-            IconButton(
-              icon: Icon(Icons.navigate_next),
-              tooltip: 'Next draft',
-              onPressed: () => onChangeYear(selectedYear + 1),
-            ),
-          ],
+        child: Container(
+          height: 50,
+          color: Colors.black,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.navigate_before),
+                tooltip: 'Previous draft',
+                onPressed: 1969 < selectedYear ? () => onChangeYear(selectedYear - 1) : null,
+              ),
+              CustomYearPicker(
+                  selected: selectedYear,
+                  onSelected: onChangeYear,
+                  maxValue: Config.getCurrentDraft(),
+                  minValue: 1969),
+              IconButton(
+                icon: Icon(Icons.navigate_next),
+                tooltip: 'Next draft',
+                onPressed: Config.getCurrentDraft() > selectedYear ? () => onChangeYear(selectedYear + 1) : null,
+              ),
+            ],
+          ),
         ),
       ),),
     );

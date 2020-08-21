@@ -1,4 +1,4 @@
-import 'package:FlutterNhl/redux/models/draft/draft.dart';
+import 'package:FlutterNhl/redux/models/draft/draft_table_source.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 
 class DraftRequestingAction extends DraftAction {}
@@ -12,7 +12,7 @@ class DraftChangedAction extends DraftAction {
 class DraftAlreadyDownloadedAction extends DraftAction {}
 
 class DraftDownloadedAction extends DraftAction {
-  final Draft draft;
+  final DraftTableSource draft;
 
   DraftDownloadedAction(this.draft);
 }
