@@ -6,7 +6,6 @@ import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:kt_dart/collection.dart';
 
 PlayerState playerReducer(PlayerState state, dynamic action) {
-  print('PLAYERSTATE: ${action.runtimeType}');
   if (action is PlayerEntered) {
     ///TODO: set selected year and selected year with automatic string?
     return state.copyWith(

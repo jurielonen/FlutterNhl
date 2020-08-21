@@ -19,6 +19,8 @@ abstract class GameAction {}
 
 abstract class StandingsAction {}
 
+abstract class SearchAction {}
+
 class InitAction {}
 
 class DownloadAction {}

@@ -1,7 +1,6 @@
 import 'package:FlutterNhl/constants/colors.dart';
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/constants/styles.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/game/game_enums.dart';

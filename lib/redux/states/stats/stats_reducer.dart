@@ -6,7 +6,6 @@ import 'package:FlutterNhl/redux/states/stats/stats_action.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 
 StatsState statsReducer(StatsState state, dynamic action) {
-  print('STATSSTATE: ${action.runtimeType}');
   if (action is StatsParametersChangedAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE, selectedStat: action.param.copyWith(start: 0));

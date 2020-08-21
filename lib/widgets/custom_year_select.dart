@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:flutter/material.dart';
 
 class CustomYearPicker extends StatelessWidget {
@@ -20,7 +21,17 @@ class CustomYearPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () => callYearPicker(context),
-      child: Text(selected.toString()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(selected.toString(), style: Styles.infoTableHeaderText),
+          ),
+          Icon(Icons.keyboard_arrow_down),
+        ],
+      ),
     );
   }
 

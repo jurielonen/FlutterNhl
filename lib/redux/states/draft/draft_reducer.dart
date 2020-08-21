@@ -6,7 +6,6 @@ import 'package:FlutterNhl/redux/states/draft/draft_state.dart';
 import 'package:kt_dart/collection.dart';
 
 DraftState draftReducer(DraftState state, dynamic action){
-  print('DRAFTSTATE: ${action.runtimeType}');
   if(action is DraftEntered){
     return state.copyWith(loadingStatus: LoadingStatus.IDLE);
   } else if(action is DraftRequestingAction){

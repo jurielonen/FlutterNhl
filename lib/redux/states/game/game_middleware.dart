@@ -22,7 +22,7 @@ class GameMiddleware extends MiddlewareClass<AppState> {
       if (store.state.gameState.loadingStatus != LoadingStatus.LOADING) {
         next(GameRequestingAction());
         if (store.state.gameState.games
-            .containsKey(store.state.gameState.selectedGame.id)) {
+            .containsKey(store.state.gameState.selectedGame.id) && !store.state.gameState.selectedGame.isLive) {
           next(GameAlreadyDownloadedAction());
         } else {
           await _fetchGame(store.state.gameState.selectedGame, store, next);

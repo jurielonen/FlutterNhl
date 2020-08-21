@@ -15,8 +15,9 @@ class SliverErrorView extends StatelessWidget {
 
 class ErrorView extends StatelessWidget {
   final String msg;
+  final Color color;
 
-  ErrorView(this.msg);
+  ErrorView(this.msg, {this.color = Colors.red});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class ErrorView extends StatelessWidget {
         children: <Widget>[
           Icon(
             Icons.error_outline,
-            color: Colors.red,
+            color: color,
             size: 60,
           ),
           Padding(

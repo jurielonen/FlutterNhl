@@ -36,6 +36,8 @@ dependencies:
   kt_dart: ^0.7.0+1
   reselect: ^0.4.0
   flutter_svg: 0.18.0
+  cached_network_image: 2.2.0+1
+  transparent_image: 1.0.0
   video_player:
 
 dev_dependencies:
@@ -58,6 +60,9 @@ flutter:
   assets:
     - assets/drawer_header_background.png
     - assets/noimage.png
+    - assets/skater.jpg
+    - assets/133.svg
+    - assets/133-flat.svg
     - assets/logos/logo_ana.png
     - assets/logos/logo_ari.png
     - assets/logos/logo_bos.png

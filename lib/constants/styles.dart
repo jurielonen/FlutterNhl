@@ -6,6 +6,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'colors.dart';
+import 'package:transparent_image/transparent_image.dart';
+
+
+final Widget leagueSvg = SvgPicture.asset('assets/133.svg');
 
 abstract class Styles {
   static DateFormat apiDateFormat = DateFormat('yyyy-MM-dd');
@@ -225,15 +229,17 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
-  static Widget buildPlayerCircleIcon(Player player) {
+  static Widget buildPlayerCircleIcon(Player player, {double size=25.0}) {
     if (player != null && player.id != -1) {
-      return CircleAvatar(
-        backgroundImage: NetworkImage(player.headShotUrl),
-        backgroundColor: Colors.black,
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(size/2),
+        child: FadeInImage.memoryNetwork(width: size, height: size, placeholder: kTransparentImage, image: player.headShotUrl, imageErrorBuilder: (context, obj, stackTrace){
+          return Image.asset('assets/skater.jpg', width: size, height: size,);
+        },),
       );
     } else {
       return CircleAvatar(
-        backgroundImage: AssetImage('assets/noimage.png'),
+        backgroundImage: AssetImage('assets/skater.jpg'),
         backgroundColor: Colors.black,
       );
     }
@@ -247,7 +253,7 @@ abstract class Styles {
       );
     } else {
       return Image.asset(
-        'assets/noimage.png',
+        'assets/skater.jpg',
         fit: BoxFit.cover,
       );
     }
@@ -272,6 +278,9 @@ abstract class Styles {
       return Image.network(
         url,
         fit: BoxFit.cover,
+        errorBuilder: (ctx, obj, sct){
+          return Image.asset('assets/noimage.png');
+        },
       );
     } else {
       return Image.asset(
@@ -290,6 +299,22 @@ abstract class Styles {
         child: SizedBox(
           width: size,
           height: size,
+          child: leagueSvg,
+        ),
+      ),
+    );
+  }
+
+  static Widget buildTeamSvgImageAbb(String url, {double size = 30}) {
+    return SvgPicture.network(
+      url,
+      width: size,
+      height: size,
+      placeholderBuilder: (_) => Container(
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: leagueSvg,
         ),
       ),
     );

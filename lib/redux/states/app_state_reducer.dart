@@ -7,13 +7,13 @@ import 'package:FlutterNhl/redux/states/draft/draft_reducer.dart';
 import 'package:FlutterNhl/redux/states/game/game_reducer.dart';
 import 'package:FlutterNhl/redux/states/player/player_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
+import 'package:FlutterNhl/redux/states/search/search_reducer.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_reducer.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_reducer.dart';
 import 'package:FlutterNhl/redux/states/team/team_reducer.dart';
 
 ///TODO: config to static
 AppState appReducer(AppState state, dynamic action) {
-  print('APPSTATE: ${action.runtimeType}');
   if (action is DownloadAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is ConfigReceived) {
@@ -58,6 +58,8 @@ AppState appReducer(AppState state, dynamic action) {
     return state.copyWith(showSnackBar: s);
   } else if(action is StandingsAction){
     return state.copyWith(standingsState: standingsReducer(state.standingsState, action));
+  } else if(action is SearchAction){
+    return state.copyWith(searchState: searchReducer(state.searchState, action));
   }
   return state;
 }

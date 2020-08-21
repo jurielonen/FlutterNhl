@@ -470,42 +470,66 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
 
   @override
   Iterable<Widget> get getStatsWidget sync* {
-    yield Table(
-      children: [
-        TableRow(children: [
-          Center(child: Text('GP', style: Styles.infoTableHeaderText)),
-          Center(child: Text('G', style: Styles.infoTableHeaderText)),
-          Center(child: Text('A', style: Styles.infoTableHeaderText)),
-          Center(child: Text('P', style: Styles.infoTableHeaderText))
-        ]),
-        TableRow(children: [
-          Center(
-            child: Text(regular.gamesPlayed.toString(),
-                style: Styles.infoTableValueText),
-          ),
-          Center(child: Text(regular.goals.toString(), style: Styles.infoTableValueText)),
-          Center(child: Text(regular.assists.toString(), style: Styles.infoTableValueText)),
-          Center(child: Text(regular.points.toString(), style: Styles.infoTableValueText))
-        ]),
-      ],
-    );
-    yield Table(
-      children: [
-        TableRow(children: [
-          Text('GP', style: Styles.infoTableHeaderText),
-          Text('G', style: Styles.infoTableHeaderText),
-          Text('A', style: Styles.infoTableHeaderText),
-          Text('P', style: Styles.infoTableHeaderText)
-        ]),
-        TableRow(children: [
-          Text(playoff.gamesPlayed.toString(),
-              style: Styles.infoTableValueText),
-          Text(playoff.goals.toString(), style: Styles.infoTableValueText),
-          Text(playoff.assists.toString(), style: Styles.infoTableValueText),
-          Text(playoff.points.toString(), style: Styles.infoTableValueText)
-        ]),
-      ],
-    );
+    if(regular.gamesPlayed > 0) {
+      yield Table(
+        children: [
+          TableRow(children: [
+            Center(child: Text('GP', style: Styles.infoTableHeaderText)),
+            Center(child: Text('G', style: Styles.infoTableHeaderText)),
+            Center(child: Text('A', style: Styles.infoTableHeaderText)),
+            Center(child: Text('P', style: Styles.infoTableHeaderText))
+          ]),
+          TableRow(children: [
+            Center(
+              child: Text(regular.gamesPlayed.toString(),
+                  style: Styles.infoTableValueText),
+            ),
+            Center(child: Text(
+                regular.goals.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(
+                regular.assists.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(
+                regular.points.toString(), style: Styles.infoTableValueText))
+          ]),
+        ],
+      );
+    } else {
+      yield Table(
+        children: [
+          TableRow(children: [Center(child: Text('Player hasnt played regular season games'),)])
+        ],
+      );
+    }
+    if(playoff.gamesPlayed > 0) {
+      yield Table(
+        children: [
+          TableRow(children: [
+            Center(child: Text('GP', style: Styles.infoTableHeaderText)),
+            Center(child: Text('G', style: Styles.infoTableHeaderText)),
+            Center(child: Text('A', style: Styles.infoTableHeaderText)),
+            Center(child: Text('P', style: Styles.infoTableHeaderText))
+          ]),
+          TableRow(children: [
+            Center(
+              child: Text(playoff.gamesPlayed.toString(),
+                  style: Styles.infoTableValueText),
+            ),
+            Center(child: Text(
+                playoff.goals.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(
+                playoff.assists.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(
+                playoff.points.toString(), style: Styles.infoTableValueText))
+          ]),
+        ],
+      );
+    } else{
+      yield Table(
+        children: [
+          TableRow(children: [Center(child: Text('Player hasnt played playoff games'),)])
+        ],
+      );
+    }
   }
 }
 

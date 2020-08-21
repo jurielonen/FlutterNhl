@@ -5,7 +5,6 @@ import 'package:FlutterNhl/redux/states/game/game_state.dart';
 import 'package:kt_dart/collection.dart';
 
 GameState gameReducer(GameState state, dynamic action){
-  print('GAMESTATE: ${action.runtimeType}');
   if(action is GameEntered){
     return state.copyWith(loadingStatus: LoadingStatus.IDLE, selectedGame: action.game);
   } else if(action is GameRequestingAction){

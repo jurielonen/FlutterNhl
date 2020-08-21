@@ -27,19 +27,15 @@ class PlayerGameLogView extends StatelessWidget {
         Expanded(
           child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 1.0),
-                  child: listTiles.elementAt(index),
-                );
+                return listTiles.elementAt(index);
               },
-              //separatorBuilder: (BuildContext context, int index) => Divider(),
               itemCount: listTiles.length),
         ),
       ],
     );
   }
 
-  Iterable<Row> get listTiles sync* {
+  Iterable<Widget> get listTiles sync* {
     for (GameLogsPlayer log in logs) yield getGameRow(log);
   }
 
@@ -75,38 +71,43 @@ class PlayerGameLogView extends StatelessWidget {
 
   Widget getGameRow(GameLogsPlayer log) {
     List<String> stats = isSkater ? skaterColumns : goalieColumns;
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 2,
-          child: Container(
-            color: Colors.grey,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Styles.buildTeamSvgImage(log.opponent, size: 20),
-                  Text('${log.isHome} ${log.opponent.abb}',
-                      style: CustomDataTableSource.firstColumnStyle),
-                  Text(log.result, style: CustomDataTableSource.firstColumnStyle,)
-                ],
+    return Container(
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(color: Colors.white))),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: Container(
+              color: Colors.grey,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Styles.buildTeamSvgImage(log.opponent, size: 20),
+                    Text('${log.isHome} ${log.opponent.abb}',
+                        style: CustomDataTableSource.firstColumnStyle),
+                    Text(log.result, style: CustomDataTableSource.firstColumnStyle,)
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Text(Styles.gameLogFormat.format(log.date),
-                    style: CustomDataTableSource.firstColumnStyle),
-            ),
-            ),
-        ...stats.map((item) => Expanded(
-            child: Text(getStatFromMap(item, log.stats),
-                  style: CustomDataTableSource.cellRowStyle),
-            )),
-      ],
+          Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Text(Styles.gameLogFormat.format(log.date),
+                      style: CustomDataTableSource.firstColumnStyle),
+              ),
+              ),
+          ...stats.map((item) => Expanded(
+              child: Text(getStatFromMap(item, log.stats),
+                    style: CustomDataTableSource.cellRowStyle),
+              )),
+        ],
+      ),
     );
   }
 

@@ -5,7 +5,6 @@ import 'package:FlutterNhl/redux/states/standings/standings_state.dart';
 import 'package:kt_dart/collection.dart';
 
 StandingsState standingsReducer(StandingsState state, dynamic action){
-  print('STANDINGSSTATE: ${action.runtimeType}');
   if(action is StandingsSeasonChangedAction){
     if(action.season != null){
       return state.copyWith(loadingStatus: LoadingStatus.IDLE, selectedSeason: action.season);

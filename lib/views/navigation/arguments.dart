@@ -39,3 +39,8 @@ class VideoArguments extends Argument {
   final String url;
   VideoArguments(this.url);
 }
+
+class SearchArguments extends Argument {
+  final bool statsPage;
+  SearchArguments(this.statsPage);
+}

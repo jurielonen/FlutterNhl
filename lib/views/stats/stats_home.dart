@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/stats_view_model.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
+import 'package:FlutterNhl/views/search/search_home.dart';
 import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
@@ -22,6 +23,7 @@ class StatsHome extends StatelessWidget {
       distinct: true,
       onInit: (store) => store.dispatch(StatsEntered()),
       converter: (store) => StatsViewModel.fromStore(store),
+      onDidChange: (_) => print('stansview didchangeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'),
       builder: (ctx, viewModel) => TemplateView2(
         loadingStatus: viewModel.loadingStatus,
         errorMsg: viewModel.errorMsg,
@@ -33,6 +35,15 @@ class StatsHome extends StatelessWidget {
         },
         pageContent: (int index) => _buildStatsView(context, viewModel),
         initialIndex: viewModel.selectedStatType.index,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Search for a player',
+            onPressed: (){
+              Navigator.pushNamed(context, SearchHome.routeName, arguments: SearchArguments(true));
+            },
+          )
+        ],
       ),
     );
   }

@@ -47,6 +47,13 @@ class ScheduleHome extends StatelessWidget {
     return SliverAppBar(
       title: Text('NHL'),
       pinned: true,
+      actions: [
+        IconButton(
+          icon: Icon(Icons.calendar_today, color: Colors.green,),
+          onPressed: () => onChangeDate(DateTime.now()),
+          tooltip: 'Go to current date',
+        )
+      ],
       bottom: PreferredSize(
         child: _buildDatePicker(date, onChangeDate),
         preferredSize: Size.fromHeight(50),
@@ -89,6 +96,7 @@ class ScheduleHome extends StatelessWidget {
   }
 
   Widget _getGamesView(ScheduleGames selectedSchedule) {
+    print('scheduleview rebuilded');
     if (selectedSchedule == null) {
       return SliverFillRemaining(
         child: ErrorView('No data downloaded yet'),

@@ -11,6 +11,7 @@ class TemplateView2 extends StatefulWidget {
   final Function(int) onTabPressed;
   final List<Widget> Function(int) pageContent;
   final int initialIndex;
+  final List<Widget> actions;
 
   const TemplateView2(
       {Key key,
@@ -19,6 +20,7 @@ class TemplateView2 extends StatefulWidget {
       @required this.tabs,
       @required this.onTabPressed,
       @required this.pageContent,
+      this.actions,
       this.initialIndex = 0})
       : super(key: key);
   @override
@@ -63,6 +65,7 @@ class _TemplateView2State extends State<TemplateView2>
               pinned: true,
               forceElevated: true,
               title: Text('Stats'),
+              actions: widget.actions,
               bottom: TabBar(
                 controller: _tabController,
                 onTap: (int index) => widget.onTabPressed(index),

@@ -72,6 +72,10 @@ class Team {
     }
   }
 
+  static getTeamLogoUrl(String abb){
+    return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
+  }
+
   factory Team.empty() {
     return Team(
       id: -1,

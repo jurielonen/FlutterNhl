@@ -39,6 +39,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _getBody(LoadingStatus loadingStatus, DrawerPages page, String errorMsg){
+    print('rebuild homeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
     switch (loadingStatus) {
       case LoadingStatus.IDLE:
       case LoadingStatus.LOADING:

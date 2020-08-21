@@ -11,7 +11,7 @@ import 'package:redux/redux.dart';
 
 class ScheduleMiddleware extends MiddlewareClass<AppState> {
   final StatsApi api;
-  bool inSchedule = false;
+  bool refreshInitialized = false;
   ScheduleMiddleware(this.api);
 
   @override
@@ -19,7 +19,6 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
       Store<AppState> store, dynamic action, NextDispatcher next) async {
     next(action);
     if (action is ScheduleEntered) {
-      inSchedule = true;
       if (store.state.scheduleState.selectedDate == null) {
         next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }
@@ -29,8 +28,6 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
         next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
       }
       await _getSchedule(store, next);
-    } else if(action is ScheduleExited){
-      inSchedule = false;
     } else {
       if (action is ScheduleDateChangedAction) {
         await _getSchedule(store, next);
@@ -69,20 +66,15 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
   }
 
   void checkIfScheduleLive(Schedule schedule, Store<AppState> store) {
-    //gamesLive = schedule.isGameLive;
-    if (schedule.isGameLive && inSchedule) {
+    if (schedule.isGameLive && store.state.scheduleState.inSchedule && !refreshInitialized) {
+      refreshInitialized = true;
       Future.delayed(Duration(seconds: 30), () {
-        if(inSchedule) {
+        refreshInitialized = false;
+        if(store.state.scheduleState.inSchedule) {
           print('schedule refresh called ${DateTime.now()}');
           store.dispatch(RefreshScheduleAction());
         }
       });
     }
   }
-  /*void refreshCaller(Store<AppState> store){
-    print('_refreshCaller called ${DateTime.now()}');
-    if(gamesLive)
-      store.dispatch(RefreshScheduleAction());
-
-  }*/
 }

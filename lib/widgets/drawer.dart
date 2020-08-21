@@ -34,11 +34,6 @@ class AppDrawer extends StatelessWidget {
               text: 'Awards',
               onTap: () => _tilePressed(context, DrawerPages.AWARDS)),
           Divider(),
-          _createDrawerItem(icon: Icons.bug_report, text: 'Report an issue'),
-          ListTile(
-            title: Text('0.0.1'),
-            onTap: () {},
-          ),
         ],
       ),
     );

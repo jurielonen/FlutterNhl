@@ -5,8 +5,6 @@ import 'package:FlutterNhl/redux/states/award/award_state.dart';
 import 'package:kt_dart/collection.dart';
 
 AwardState awardReducer(AwardState state, dynamic action) {
-  print('AWARDSTATE: ${action.runtimeType}');
-
   if (action is AwardEntered) {
     return state.copyWith(loadingStatus: LoadingStatus.IDLE);
   } else if (action is AwardRequestingAction) {

@@ -32,4 +32,22 @@ class AppViewModel {
       onSnackBarShowed: () => store.dispatch(CloseSnackBar()),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppViewModel &&
+          runtimeType == other.runtimeType &&
+          loadingStatus == other.loadingStatus &&
+          errorMsg == other.errorMsg &&
+          currentPage == other.currentPage;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      errorMsg.hashCode ^
+      currentPage.hashCode ^
+      pageChanged.hashCode ^
+      showSnackBar.hashCode ^
+      onSnackBarShowed.hashCode;
 }

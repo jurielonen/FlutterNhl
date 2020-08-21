@@ -6,6 +6,7 @@ import 'package:FlutterNhl/redux/states/draft/draft_state.dart';
 import 'package:FlutterNhl/redux/states/game/game_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
+import 'package:FlutterNhl/redux/states/search/search_state.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_state.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 import 'package:FlutterNhl/redux/states/team/team_state.dart';
@@ -26,6 +27,7 @@ class AppState {
   final AwardState awardState;
   final GameState gameState;
   final StandingsState standingsState;
+  final SearchState searchState;
   final Config config;
 
   AppState({
@@ -41,6 +43,7 @@ class AppState {
     @required this.awardState,
     @required this.gameState,
     @required this.config,
+    @required this.searchState,
     @required this.standingsState,
   });
 
@@ -49,7 +52,7 @@ class AppState {
       showSnackBar: null,
       loadingStatus: LoadingStatus.IDLE,
       errorMsg: '',
-      currentPage: DrawerPages.SCHEDULE,
+      currentPage: DrawerPages.STATS,
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),
       playerState: PlayerState.initial(),
@@ -58,6 +61,7 @@ class AppState {
       awardState: AwardState.initial(),
       gameState: GameState.initial(),
       standingsState: StandingsState.initial(),
+      searchState: SearchState.initial(),
       config: Config(),
     );
   }
@@ -75,6 +79,7 @@ class AppState {
     AwardState awardState,
     GameState gameState,
     StandingsState standingsState,
+    SearchState searchState,
     Config config,
   }) {
     return AppState(
@@ -90,6 +95,7 @@ class AppState {
       awardState: awardState ?? this.awardState,
       gameState: gameState ?? this.gameState,
       standingsState: standingsState ?? this.standingsState,
+      searchState: searchState ?? this.searchState,
       config: config ?? this.config,
     );
   }

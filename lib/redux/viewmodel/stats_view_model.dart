@@ -57,4 +57,21 @@ class StatsViewModel {
       selectedStatType: selectedStatTypeSelector(store.state),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is StatsViewModel &&
+              runtimeType == other.runtimeType &&
+              loadingStatus == other.loadingStatus &&
+              errorMsg == other.errorMsg &&
+              selectedParams == other.selectedParams &&
+              downloadedStats == other.downloadedStats;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      errorMsg.hashCode ^
+      selectedParams.hashCode ^
+      downloadedStats.hashCode;
 }

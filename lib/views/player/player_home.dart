@@ -45,7 +45,7 @@ class PlayerHome extends StatelessWidget {
         onTabChanged: (String tab) => _createTab(tab, viewModel),
         appBarTitle: Row(
           children: <Widget>[
-            Styles.buildPlayerCircleIcon(playerArgs.player),
+            Styles.buildPlayerCircleIcon(playerArgs.player, size: 30.0),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(playerArgs.player.fullname),
@@ -66,25 +66,8 @@ class PlayerHome extends StatelessWidget {
             }
           }
         },
+        automaticLeading: true,
       ),
-      /*NestedTemplateView(
-          tabs: _createTabs(context, viewModel),
-          loadingStatus: viewModel.loadingStatus,
-          errorMsg: viewModel.error,
-          onTabPressed: (int index) {
-            if (_tabs.length > index) {
-              switch (_tabs[index]) {
-                case 'Stats':
-                  viewModel.getStats(viewModel.selectedStat);
-                  break;
-                case 'Game Logs':
-                  viewModel.getGameLogs(viewModel.selectedYear);
-                  break;
-              }
-            }
-          },
-          content: PlayerPageAppBarContent(viewModel.player),
-        ),*/
     );
   }
 
@@ -106,26 +89,6 @@ class PlayerHome extends StatelessWidget {
         return ErrorView('Unknown tab');
     }
   }
-
-  /*Map<String, List<Widget>> _createTabs(
-      BuildContext context, PlayerViewModel viewModel) {
-    return Map.fromIterable(_tabs,
-        key: (name) => name.toString(),
-        value: (name) {
-          switch (name) {
-            case 'Bio':
-              return _createBioTab(viewModel.player);
-            case 'Stats':
-              return _createStatTab(viewModel);
-            case 'Game Logs':
-              return _createGameLogTab(viewModel);
-            default:
-              return <Widget>[
-                SliverFillRemaining(child: ErrorView('Unknown tab'))
-              ];
-          }
-        });
-  }*/
 
   Widget _createBioTab(PlayerPage player) {
     if (player == null)

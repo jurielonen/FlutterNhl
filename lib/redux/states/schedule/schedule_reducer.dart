@@ -1,10 +1,10 @@
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
 import 'package:kt_dart/collection.dart';
 
 ScheduleState scheduleReducer(ScheduleState state, dynamic action) {
-  print('SCHEDULESTATE: ${action.runtimeType}');
   if (action is ScheduleDateChangedAction) {
     return state.copyWith(selectedDate: action.date);
   } else if (action is RequestingScheduleAction) {
@@ -22,7 +22,12 @@ ScheduleState scheduleReducer(ScheduleState state, dynamic action) {
   } else if (action is ErrorScheduleAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.ERROR, errorMsg: action.error);
-  }/* else if (action is SeasonConfigReceived) {
+  } else if(action is ScheduleEntered){
+    return state.copyWith(inSchedule: true);
+  } else if(action is ScheduleExited){
+    return state.copyWith(inSchedule: false);
+  }
+  /* else if (action is SeasonConfigReceived) {
     return state.copyWith(
         selectedDate: DateTime.parse(Config().regularSeasonEndDate));
   }*/

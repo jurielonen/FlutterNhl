@@ -5,6 +5,7 @@ import 'package:FlutterNhl/views/award/recipient/recipient_home.dart';
 import 'package:FlutterNhl/views/game/game_home.dart';
 import 'package:FlutterNhl/views/home_page.dart';
 import 'package:FlutterNhl/views/player/player_home.dart';
+import 'package:FlutterNhl/views/search/search_home.dart';
 import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/views/team/team_home.dart';
 import 'package:FlutterNhl/views/video/video_view.dart';
@@ -66,7 +67,10 @@ class _NHLAppState extends State<NHLApp> {
               arguments: ModalRoute.of(context).settings.arguments),
           Routes.video: (context) => VideoView(
                 arguments: ModalRoute.of(context).settings.arguments,
-              )
+              ),
+          Routes.search: (context) => SearchHome(
+                arguments: ModalRoute.of(context).settings.arguments,
+              ),
         },
         home: HomePage(),
         debugShowCheckedModeBanner: false,

@@ -6,7 +6,6 @@ import 'package:FlutterNhl/redux/states/team/team_state.dart';
 import 'package:kt_dart/collection.dart';
 
 TeamState teamReducer(TeamState state, dynamic action) {
-  print('TEAMSTATE: ${action.runtimeType}');
   if (action is TeamEntered) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE,
