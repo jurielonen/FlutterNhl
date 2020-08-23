@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
@@ -137,7 +138,7 @@ class _StatFilterPageState extends State<StatFilterPage> {
           children: _getGameTypeFilter.toList(),
         );
       default:
-        return ErrorView('Unknown expand title');
+        return ErrorView(UIUnknownStateException('stat_filter_popup _bodyBuilder'));
     }
   }
 

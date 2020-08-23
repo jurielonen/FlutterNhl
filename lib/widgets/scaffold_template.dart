@@ -2,13 +2,19 @@ import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
-import 'nested_template_view2.dart';
+
+class TemplateTab {
+  final Widget child;
+  final String text;
+
+  TemplateTab({@required this.child, @required this.text});
+}
 
 class ScaffoldTemplate extends StatefulWidget {
   final Widget appBarTitle;
-  final List<NestedTemplateTab> tabs;
+  final List<TemplateTab> tabs;
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
   final Widget Function(String tab) onTabChanged;
   final Function(int) onTabPressed;
   final String loadingText;
@@ -17,7 +23,7 @@ class ScaffoldTemplate extends StatefulWidget {
   const ScaffoldTemplate(
       {Key key,
       @required this.loadingStatus,
-      @required this.errorMsg,
+      @required this.error,
       @required this.onTabChanged,
       @required this.appBarTitle,
       @required this.tabs,
@@ -94,18 +100,18 @@ class _ScaffoldTemplateState extends State<ScaffoldTemplate>
       case LoadingStatus.SUCCESS:
         return widget.onTabChanged(text);
       case LoadingStatus.ERROR:
-        return ErrorView(widget.errorMsg == '' ? 'Error' : widget.errorMsg);
+        return ErrorView(widget.error == null ? UIUnknownStateException('Unknown tab scaffold template') : widget.error);
       default:
-        return ErrorView('Unknown tab scaffold template: $text');
+        return ErrorView(UIUnknownStateException('Unknown tab scaffold template: $text'));
     }
   }
 }
 
 class RefreshScaffoldTemplate extends StatefulWidget {
   final Widget appBarTitle;
-  final List<NestedTemplateTab> tabs;
+  final List<TemplateTab> tabs;
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
   final Widget Function(String tab) onTabChanged;
   final Function(int) onTabPressed;
   final String loadingText;
@@ -115,7 +121,7 @@ class RefreshScaffoldTemplate extends StatefulWidget {
   const RefreshScaffoldTemplate(
       {Key key,
       @required this.loadingStatus,
-      @required this.errorMsg,
+      @required this.error,
       @required this.onTabChanged,
       @required this.appBarTitle,
       @required this.tabs,
@@ -196,9 +202,9 @@ class _RefreshScaffoldTemplate extends State<RefreshScaffoldTemplate>
       case LoadingStatus.SUCCESS:
         return widget.onTabChanged(text);
       case LoadingStatus.ERROR:
-        return ErrorView(widget.errorMsg == '' ? 'Error' : widget.errorMsg);
+        return ErrorView(widget.error == null ? UIUnknownStateException('Error') : widget.error);
       default:
-        return ErrorView('Unknown tab scaffold template: $text');
+        return ErrorView(UIUnknownStateException('Unknown tab scaffold template: $text'));
     }
   }
 }

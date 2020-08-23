@@ -43,7 +43,7 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
             await statsApi.fetchTeamInfo(store.state.teamState.teamId);
         next(TeamReceivedBioAction(team));
       } catch (error) {
-        next(TeamErrorAction(error.toString()));
+        next(TeamErrorAction(error));
       }
     }
   }
@@ -57,7 +57,7 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
             await statsApi.fetchTeamRoster(store.state.teamState.teamId);
         next(TeamReceivedRosterAction(team));
       } catch (error) {
-        next(TeamErrorAction(error.toString()));
+        next(TeamErrorAction(error));
       }
     }
   }
@@ -72,7 +72,7 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
         next(TeamReceivedStatAction(PlayerSeasonTableSource.fromData(
             stats, teamFilterTypeSelector(store.state))));
       } catch (error) {
-        next(TeamErrorAction(error.toString()));
+        next(TeamErrorAction(error));
       }
     }
   }
@@ -86,7 +86,7 @@ class TeamMiddleware extends MiddlewareClass<AppState> {
             store.state.teamState.teamId, store.state.teamState.selectedParams.year, store.state.teamState.selectedParams.gameType);
         next(TeamReceivedDateAction(games));
       } catch (error) {
-        next(TeamErrorAction(error.toString()));
+        next(TeamErrorAction(error));
       }
     }
   }

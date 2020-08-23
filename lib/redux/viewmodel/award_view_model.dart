@@ -9,7 +9,7 @@ class AwardViewModel {
   final LoadingStatus loadingStatus;
   final int selectedAward;
   final KtMap<int, AwardTableSource> awards;
-  final String errorMsg;
+  final Exception error;
   /*final Function(Award) awardSelected;
   final Function() awardUnselected;*/
 
@@ -17,7 +17,7 @@ class AwardViewModel {
     @required this.loadingStatus,
     @required this.selectedAward,
     @required this.awards,
-    @required this.errorMsg,
+    @required this.error,
     //@required this.awardSelected,
     //@required this.awardUnselected,
   });
@@ -27,10 +27,25 @@ class AwardViewModel {
         loadingStatus: store.state.awardState.loadingStatus,
         selectedAward: store.state.awardState.selectedAward,
         awards: store.state.awardState.awards,
-        errorMsg: store.state.awardState.errorMsg,
+        error: store.state.awardState.error,
         /*awardSelected: (Award award) =>
             store.dispatch(AwardChosenAction(award)),
         awardUnselected: () => store.dispatch(AwardUnChosenAction())*/
         );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is AwardViewModel &&
+              runtimeType == other.runtimeType &&
+              loadingStatus == other.loadingStatus &&
+              error == other.error &&
+              selectedAward == other.selectedAward;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      error.hashCode ^
+      selectedAward.hashCode;
 }

@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/player/player_preview_table_source.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
@@ -31,7 +32,7 @@ class GamePlayerView extends StatelessWidget {
       );
     } else {
       return SliverErrorView(
-        msg: 'No players downloaded',
+        error: UINoDataDownloadedException('game_player_view build'),
       );
     }
   }
@@ -42,7 +43,7 @@ class GamePlayerView extends StatelessWidget {
         dataTableSource: players,
       );
     } else {
-      return ErrorView('Player data not loaded');
+      return ErrorView(UINoDataDownloadedException('game_player_view getPlayerTable'));
     }
   }
 
@@ -52,7 +53,7 @@ class GamePlayerView extends StatelessWidget {
         dataTableSource: goalies,
       );
     } else {
-      return ErrorView('Goalie data not loaded');
+      return ErrorView(UINoDataDownloadedException('game_player_view getGoalieTable'));
     }
   }
 }

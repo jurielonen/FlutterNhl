@@ -12,14 +12,14 @@ class TeamState {
       @required this.selectedStat,
       @required this.selectedParams,
       @required this.teams,
-      @required this.errorMsg});
+      @required this.error});
 
   final LoadingStatus loadingStatus;
   final int teamId;
   final String selectedStat;
   final GameLogParams selectedParams;
   final KtMap<int, TeamPage> teams;
-  final String errorMsg;
+  final Exception error;
 
   factory TeamState.initial() {
     return TeamState(
@@ -28,7 +28,7 @@ class TeamState {
         selectedStat: 'summary',
         selectedParams: null,
         teams: emptyMap(),
-        errorMsg: '');
+        error: null);
   }
 
   TeamState copyWith(
@@ -37,14 +37,14 @@ class TeamState {
       String selectedStat,
       GameLogParams selectedParams,
       KtMap<int, TeamPage> teams,
-      String errorMsg}) {
+      Exception error}) {
     return TeamState(
         loadingStatus: loadingStatus ?? this.loadingStatus,
         teamId: teamId ?? this.teamId,
         selectedStat: selectedStat ?? this.selectedStat,
         selectedParams: selectedParams ?? this.selectedParams,
         teams: teams ?? this.teams,
-        errorMsg: errorMsg ?? this.errorMsg);
+        error: error ?? this.error);
   }
 
   @override
@@ -57,7 +57,7 @@ class TeamState {
           selectedStat == other.selectedStat &&
           selectedParams == other.selectedParams &&
           teams == other.teams &&
-          errorMsg == other.errorMsg;
+          error == other.error;
 
   @override
   int get hashCode =>
@@ -66,5 +66,5 @@ class TeamState {
       selectedStat.hashCode ^
       selectedParams.hashCode ^
       teams.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

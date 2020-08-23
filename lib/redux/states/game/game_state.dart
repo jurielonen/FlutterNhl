@@ -9,31 +9,31 @@ class GameState {
       {@required this.loadingStatus,
       @required this.selectedGame,
       @required this.games,
-      @required this.errorMsg});
+      @required this.error});
 
   final LoadingStatus loadingStatus;
   final Game selectedGame;
   final KtMap<int, Game> games;
-  final String errorMsg;
+  final Exception error;
 
   factory GameState.initial() {
     return GameState(
         loadingStatus: LoadingStatus.IDLE,
         selectedGame: null,
         games: emptyMap(),
-        errorMsg: '');
+        error: null);
   }
 
   GameState copyWith(
       {LoadingStatus loadingStatus,
       Game selectedGame,
       KtMap<int, Game> games,
-      String errorMsg}) {
+      Exception error}) {
     return GameState(
         loadingStatus: loadingStatus ?? this.loadingStatus,
         selectedGame: selectedGame ?? this.selectedGame,
         games: games ?? this.games,
-        errorMsg: errorMsg ?? this.errorMsg);
+        error: error ?? this.error);
   }
 
   @override
@@ -44,12 +44,12 @@ class GameState {
           loadingStatus == other.loadingStatus &&
           selectedGame == other.selectedGame &&
           games == other.games &&
-          errorMsg == other.errorMsg;
+          error == other.error;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       selectedGame.hashCode ^
       games.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

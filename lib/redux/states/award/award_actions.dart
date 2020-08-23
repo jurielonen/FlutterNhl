@@ -23,7 +23,7 @@ class AwardRecipientDownloadedAction extends AwardAction {
 class AwardRecipientAlreadyDownloadedAction extends AwardAction {}
 
 class AwardError extends AwardAction {
-  final String error;
+  final Exception error;
   AwardError(this.error);
 }
 

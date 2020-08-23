@@ -14,7 +14,7 @@ class TeamViewModel {
   final String selectedStat;
   final GameLogParams selectedParams;
   final List<String> displayItems;
-  final String error;
+  final Exception error;
   final Function(String) getStats;
   final Function(GameLogParams) getGameLogs;
   final Function() getPlayers;
@@ -37,10 +37,31 @@ class TeamViewModel {
         selectedStat: store.state.teamState.selectedStat,
       selectedParams: store.state.teamState.selectedParams,
       displayItems: store.state.config.getStatTypes(StatType.TEAM),
-      error: store.state.teamState.errorMsg,
+      error: store.state.teamState.error,
       getStats: (String stat) => store.dispatch(TeamStatsChangedAction(stat)),
       getGameLogs: (GameLogParams date) => store.dispatch(TeamDateChangedAction(date)),
       getPlayers: () => store.dispatch(TeamDownloadRoster()),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is TeamViewModel &&
+              runtimeType == other.runtimeType &&
+              loadingStatus == other.loadingStatus &&
+              error == other.error &&
+              selectedParams == other.selectedParams &&
+              selectedStat == other.selectedStat &&
+              displayItems == other.displayItems &&
+              team == other.team;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      error.hashCode ^
+      selectedParams.hashCode ^
+      selectedStat.hashCode ^
+      displayItems.hashCode ^
+      team.hashCode;
 }

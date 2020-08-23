@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/draft/draft.dart';
 import 'package:FlutterNhl/redux/models/draft/draft_table_source.dart';
@@ -31,14 +32,14 @@ class _DraftHomeState extends State<DraftHome> {
           viewModel.loadingStatus,
           () => _getTable(viewModel.selectedDraft),
           _getAppBar(viewModel.selectedYear, viewModel.getYear),
-          viewModel.errorMsg),
+          viewModel.error),
     );
   }
 
   Widget _getTable(DraftTableSource draft) {
     if(draft == null){
       return SliverFillRemaining(
-        child: ErrorView('No data downloaded yet'),
+        child: ErrorView(UINoDataDownloadedException('draft_home _getTable')),
       );
     }
     return SliverToBoxAdapter(

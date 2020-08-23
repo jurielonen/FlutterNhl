@@ -1,7 +1,6 @@
 import 'package:FlutterNhl/redux/api/nhl_api.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_action.dart';
@@ -48,7 +47,7 @@ class StatsMiddleware extends MiddlewareClass<AppState> {
               tStats.total),
         );
       } catch (e) {
-        next(StatsErrorAction(e.toString()));
+        next(StatsErrorAction(e));
       }
     }
   }
@@ -76,7 +75,7 @@ Future<Null> getConfig(
             tStats.total),
       );
     } catch (e) {
-      next(StatsErrorAction(e.toString()));
+      next(StatsErrorAction(e));
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/award/award.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
@@ -23,7 +24,7 @@ class AwardsHome extends StatelessWidget {
         viewModel.loadingStatus,
           () => _buildBody(ctx, viewModel.awards),
         _buildAppBar(),
-        viewModel.errorMsg,
+        viewModel.error,
       ),
     );
   }
@@ -31,7 +32,7 @@ class AwardsHome extends StatelessWidget {
   Widget _buildBody(BuildContext ctx, KtMap<int, AwardTableSource> awards) {
     if (awards.isEmpty()) {
       return SliverFillRemaining(
-        child: ErrorView('No data downloaded yet'),
+        child: ErrorView(UINoDataDownloadedException('award_home _buildBody')),
       );
     }
 

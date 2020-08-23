@@ -10,7 +10,7 @@ SearchState searchReducer(SearchState state, dynamic action){
   } else if(action is SearchFilterAction){
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, searchQuery: action.query);
   } else if(action is SearchErrorAction){
-    return state.copyWith(loadingStatus: LoadingStatus.ERROR, errorMsg: action.errorMsg);
+    return state.copyWith(loadingStatus: LoadingStatus.ERROR, error: action.error);
   }
   return state;
 }

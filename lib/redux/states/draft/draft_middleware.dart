@@ -26,7 +26,7 @@ class DraftMiddleware extends MiddlewareClass<AppState> {
                 store.state.draftState.selectedYear);
             next(DraftDownloadedAction(DraftTableSource(draft: draft)));
           } catch(error){
-            next(DraftErrorAction(error.toString()));
+            next(DraftErrorAction(error));
           }
         }
       }

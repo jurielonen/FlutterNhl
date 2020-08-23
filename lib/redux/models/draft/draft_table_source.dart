@@ -143,7 +143,7 @@ class DraftTableSource extends CustomDataTableSource {
   }
 
   @override
-  void set setRowCallBack(dataRowTapCallBack) {
+  set setRowCallBack(dataRowTapCallBack) {
     // TODO: implement setRowCallBack
   }
 
@@ -154,7 +154,7 @@ class DraftTableSource extends CustomDataTableSource {
   Widget get tableCorner => CustomDataTableSource.createTableCorner('Player');
 
   @override
-  void set setColumnSortCallBack(dataColumnSortCallback) {
+  set setColumnSortCallBack(dataColumnSortCallback) {
     // TODO: implement setColumnSortCallBack
   }
 }

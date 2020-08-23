@@ -18,6 +18,6 @@ class SearchDownloadedAction extends SearchAction {
 }
 
 class SearchErrorAction extends SearchAction {
-  final String errorMsg;
-  SearchErrorAction(this.errorMsg);
+  final Exception error;
+  SearchErrorAction(this.error);
 }

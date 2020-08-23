@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
@@ -32,7 +33,7 @@ class ScheduleHome extends StatelessWidget {
               : _getEmptyView(viewModel.selectedSchedule),
           appBar: _buildSliverAppBar(
               viewModel.selectedDate, viewModel.changeSelectedDate),
-          errorMsg: viewModel.errorMsg,
+          error: viewModel.error,
           callback: () => _callBack(viewModel)),
     );
   }
@@ -99,7 +100,7 @@ class ScheduleHome extends StatelessWidget {
     print('scheduleview rebuilded');
     if (selectedSchedule == null) {
       return SliverFillRemaining(
-        child: ErrorView('No data downloaded yet'),
+        child: ErrorView(UINoDataDownloadedException('schedule_home _getGamesView')),
       );
     }
     bool isPlayoffs = Config.isPlayoffsDate(selectedSchedule.date);
@@ -117,7 +118,7 @@ class ScheduleHome extends StatelessWidget {
   Widget _getEmptyView(Schedule selectedSchedule) {
     if (selectedSchedule == null) {
       return SliverFillRemaining(
-        child: ErrorView('No data downloaded yet'),
+        child: ErrorView(UINoDataDownloadedException('schedule_home _getEmptyView')),
       );
     }
     return SliverFillRemaining(

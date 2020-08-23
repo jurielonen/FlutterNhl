@@ -48,6 +48,6 @@ class TeamReceivedRosterAction extends TeamAction {
 }
 
 class TeamErrorAction extends TeamAction {
-  final String error;
+  final Exception error;
   TeamErrorAction(this.error);
 }

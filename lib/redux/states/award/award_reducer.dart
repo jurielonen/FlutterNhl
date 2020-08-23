@@ -11,7 +11,7 @@ AwardState awardReducer(AwardState state, dynamic action) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is AwardError) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.ERROR, errorMsg: action.error);
+        loadingStatus: LoadingStatus.ERROR, error: action.error);
   } else if (action is AwardAlreadyDownloadedAction) {
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   } else if (action is AwardRecipientAlreadyDownloadedAction) {

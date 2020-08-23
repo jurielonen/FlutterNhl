@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
 import 'package:FlutterNhl/redux/models/game/play/play_enum.dart';
 import 'package:FlutterNhl/views/game/game_widgets/play_card.dart';
@@ -68,7 +69,7 @@ class _GamePlayViewState extends State<GamePlayView> {
             if (filteredPlayList.length > index)
               return filteredPlayList.elementAt(index);
             else
-              return ErrorView('Unknown index');
+              return ErrorView(UIUnknownStateException('game_play_view'));
           }, childCount: filteredPlayList.length),
         ),
       ],

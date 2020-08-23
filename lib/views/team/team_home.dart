@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
@@ -8,16 +9,11 @@ import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/team_view_model.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/team/widgets/team_bio.dart';
-import 'package:FlutterNhl/views/team/widgets/team_game_log.dart';
-import 'package:FlutterNhl/views/team/widgets/team_player.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
-import 'package:FlutterNhl/widgets/custom_list_tile.dart';
 import 'package:FlutterNhl/widgets/custom_year_select.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/game_log_item.dart';
-import 'package:FlutterNhl/widgets/nested_template_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:FlutterNhl/widgets/scaffold_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -36,7 +32,7 @@ class TeamHome extends StatelessWidget {
         converter: (store) => TeamViewModel.fromStore(store),
         builder: (ctx, viewModel) => ScaffoldTemplate(
           loadingStatus: viewModel.loadingStatus,
-          errorMsg: viewModel.error,
+          error: viewModel.error,
           onTabChanged: (String tab) => _createTab(tab, viewModel),
           appBarTitle: Row(
             children: <Widget>[
@@ -65,33 +61,12 @@ class TeamHome extends StatelessWidget {
             }
           },
         ),
-        /*NestedTemplateView(
-          tabs: _createTabs(ctx, viewModel),
-          loadingStatus: viewModel.loadingStatus,
-          errorMsg: viewModel.error,
-          onTabPressed: (int index) {
-            if (_tabs.length > index) {
-              switch (_tabs[index]) {
-                case 'Stats':
-                  viewModel.getStats(viewModel.selectedStat);
-                  break;
-                case 'Game Logs':
-                  viewModel.getGameLogs(viewModel.selectedDate);
-                  break;
-                case 'Players':
-                  viewModel.getPlayers();
-                  break;
-              }
-            }
-          },
-          content: TeamPageAppBarContent(viewModel.team),
-        ),*/
     );
   }
 
-  Iterable<NestedTemplateTab> get _createTabs sync* {
+  Iterable<TemplateTab> get _createTabs sync* {
     for (String tab in _tabs) {
-      yield NestedTemplateTab(child: Text(tab), text: tab);
+      yield TemplateTab(child: Text(tab), text: tab);
     }
   }
 
@@ -106,13 +81,13 @@ class TeamHome extends StatelessWidget {
       case 'Game Logs':
         return _createGameLogTab(viewModel);
       default:
-        return ErrorView('Unknown tab');
+        return ErrorView(UIUnknownStateException('Unknown tab'));
     }
   }
 
   Widget _createBioTab(TeamPage team) {
     if (team == null)
-      return ErrorView('No data downloaded');
+      return ErrorView(UINoDataDownloadedException('team_home _createBioTab'));
     else
       return TeamBioTab(
         team: team,
@@ -136,12 +111,12 @@ class TeamHome extends StatelessWidget {
           else if (index == 3)
             return CustomDataTable(dataTableSource: team.goalieTableSource);
           else
-            return ErrorView('Unknown index');
+            return ErrorView(UIUnknownStateException('team_home _createPlayerTab Unknown index: $index'));
         },
         itemCount: 4,
       );
     } else {
-      return ErrorView('Roster not downloaded');
+      return ErrorView(UINoDataDownloadedException('team_home _createPlayerTab'));
     }
   }
 
@@ -162,7 +137,7 @@ class TeamHome extends StatelessWidget {
           values: viewModel.displayItems,
           onValueChanged: viewModel.getStats,
         ),
-        widget ?? ErrorView('No data downloaded'),
+        widget ?? ErrorView(UINoDataDownloadedException('team_home _createStatTab')),
       ],
     );
   }
@@ -201,7 +176,7 @@ class TeamHome extends StatelessWidget {
           minValue: int.parse(viewModel.team.firstYear),
           reducer: 10001,
         ),
-      widget ?? ErrorView('No data downloaded'),
+      widget ?? ErrorView(UINoDataDownloadedException('team_home _createGameLogTab')),
     ],);
   }
 }

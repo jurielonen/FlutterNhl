@@ -18,7 +18,7 @@ class DraftDownloadedAction extends DraftAction {
 }
 
 class DraftErrorAction extends DraftAction {
-  final String error;
+  final Exception error;
 
   DraftErrorAction(this.error);
 }

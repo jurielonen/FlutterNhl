@@ -7,15 +7,30 @@ import 'package:redux/redux.dart';
 class RecipientViewModel {
   final LoadingStatus loadingStatus;
   final AwardTableSource award;
-  final String errorMsg;
+  final Exception error;
 
-  RecipientViewModel({this.loadingStatus, this.award, this.errorMsg});
+  RecipientViewModel({this.loadingStatus, this.award, this.error});
 
   static RecipientViewModel fromStore(Store<AppState> store){
     return RecipientViewModel(
       loadingStatus: store.state.awardState.loadingStatus,
       award: selectedAwardSelector(store.state),
-      errorMsg: store.state.awardState.errorMsg,
+      error: store.state.awardState.error,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is RecipientViewModel &&
+              runtimeType == other.runtimeType &&
+              loadingStatus == other.loadingStatus &&
+              error == other.error &&
+              award == other.award;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      error.hashCode ^
+      award.hashCode;
 }

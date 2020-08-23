@@ -29,7 +29,7 @@ class StandingsMiddleware extends MiddlewareClass<AppState> {
             standing = await api.fetchStandings();
           next(StandingsDownloaded(standing));
         } catch (error) {
-          next(StandingsError(error.toString()));
+          next(StandingsError(error));
         }
       }
     }

@@ -8,33 +8,33 @@ class StatsState {
   StatsState(
       {@required this.loadingStatus,
       @required this.selectedParams,
-      @required this.errorMsg,
+      @required this.error,
       @required this.downloadedStats});
 
   final LoadingStatus loadingStatus;
   final StatParameters selectedParams;
   final StatTableSource downloadedStats;
-  final String errorMsg;
+  final Exception error;
 
   factory StatsState.initial() {
     return StatsState(
       loadingStatus: LoadingStatus.IDLE,
       selectedParams: StatParameters.initial(),
       downloadedStats: null,
-      errorMsg: '',
+      error: null,
     );
   }
 
   StatsState copyWith(
       {LoadingStatus loadingStatus,
-      StatParameters selectedStat,
+      StatParameters selectedParams,
       StatTableSource downloadedStats,
-      String errorMsg}) {
+      Exception error}) {
     return StatsState(
       loadingStatus: loadingStatus ?? this.loadingStatus,
-      selectedParams: selectedStat ?? this.selectedParams,
+      selectedParams: selectedParams ?? this.selectedParams,
       downloadedStats: downloadedStats ?? this.downloadedStats,
-      errorMsg: errorMsg ?? this.errorMsg,
+      error: error ?? this.error,
     );
   }
 
@@ -46,12 +46,12 @@ class StatsState {
           loadingStatus == other.loadingStatus &&
           selectedParams == other.selectedParams &&
           downloadedStats == other.downloadedStats &&
-          errorMsg == other.errorMsg;
+          error == other.error;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       selectedParams.hashCode ^
       downloadedStats.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

@@ -40,7 +40,7 @@ PlayerState playerReducer(PlayerState state, dynamic action) {
         loadingStatus: LoadingStatus.SUCCESS, players: players);
   } else if (action is PlayerErrorAction) {
     return state.copyWith(
-        errorMsg: action.error, loadingStatus: LoadingStatus.ERROR);
+        error: action.error, loadingStatus: LoadingStatus.ERROR);
   } else if (action is PlayerGetGameLogsAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE, gameLogParams: action.params);

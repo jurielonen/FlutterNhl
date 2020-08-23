@@ -1,24 +1,20 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
-import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:FlutterNhl/views/player/widgets/player_game_log_view.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
-import 'package:FlutterNhl/widgets/custom_list_tile.dart';
 import 'package:FlutterNhl/widgets/custom_year_select.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:FlutterNhl/widgets/scaffold_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -41,7 +37,7 @@ class PlayerHome extends StatelessWidget {
       converter: (store) => PlayerViewModel.fromStore(store),
       builder: (_, viewModel) => ScaffoldTemplate(
         loadingStatus: viewModel.loadingStatus,
-        errorMsg: viewModel.error,
+        error: viewModel.error,
         onTabChanged: (String tab) => _createTab(tab, viewModel),
         appBarTitle: Row(
           children: <Widget>[
@@ -71,9 +67,9 @@ class PlayerHome extends StatelessWidget {
     );
   }
 
-  Iterable<NestedTemplateTab> get createTabs sync* {
+  Iterable<TemplateTab> get createTabs sync* {
     for (String tab in _tabs) {
-      yield NestedTemplateTab(child: Text(tab), text: tab);
+      yield TemplateTab(child: Text(tab), text: tab);
     }
   }
 
@@ -86,13 +82,13 @@ class PlayerHome extends StatelessWidget {
       case 'Game Logs':
         return _createGameLogTab(viewModel);
       default:
-        return ErrorView('Unknown tab');
+        return ErrorView(UIUnknownStateException('player_home _createTab'));
     }
   }
 
   Widget _createBioTab(PlayerPage player) {
     if (player == null)
-      return ErrorView('No data downloaded');
+      return ErrorView(UINoDataDownloadedException('player_home _createBioTab'));
     else
       return PlayerBioTab(player: player);
   }
@@ -114,7 +110,7 @@ class PlayerHome extends StatelessWidget {
           values: viewModel.displayItems,
           onValueChanged: viewModel.getStats,
         ),
-        widget ?? ErrorView('No data downloaded'),
+        widget ?? ErrorView(UINoDataDownloadedException('player_home _createStatTab')),
       ],
     );
   }
@@ -136,15 +132,6 @@ class PlayerHome extends StatelessWidget {
           viewModel.player.getGameLog(viewModel.selectedParams);
 
       widget = Expanded(child: PlayerGameLogView(logs, viewModel.player.position != Position.G));
-      /*.add(
-        SliverFixedExtentList(
-          itemExtent: 100,
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) => PlayerGameLogCard(logs[index]),
-            childCount: logs.length,
-          ),
-        ),
-      );*/
     }
     return Column(
       children: <Widget>[
@@ -155,7 +142,7 @@ class PlayerHome extends StatelessWidget {
           minValue: viewModel.player.firstSeason,
           reducer: 10001,
         ),
-        widget ?? ErrorView('No data downloaded'),
+        widget ?? UINoDataDownloadedException('player_home _createGameLogTab'),
       ],
     );
   }

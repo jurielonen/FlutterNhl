@@ -12,8 +12,8 @@ class GameDownloadedAction extends GameAction {
 }
 
 class GameErrorAction extends GameAction {
-  final String msg;
-  GameErrorAction(this.msg);
+  final Exception error;
+  GameErrorAction(this.error);
 }
 
 class GameRefreshAction extends GameAction {}

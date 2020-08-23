@@ -19,13 +19,7 @@ class GameHome extends StatelessWidget {
   const GameHome({Key key, @required this.argument}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return /*Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: _getTitle(),
-      ),
-      body: */
-        Material(
+    return Material(
       child: StoreConnector<AppState, GameViewModel>(
           distinct: true,
           onInit: (store)  {
@@ -43,7 +37,7 @@ class GameHome extends StatelessWidget {
               return GameFinalView(
                 game: viewModel.game,
                 loadingStatus: viewModel.loadingStatus,
-                errorMsg: viewModel.errorMsg,
+                error: viewModel.error,
                 contentCallBack: viewModel.contentCallBack,
                 refreshCallBack: viewModel.refreshCallBack,
               );
@@ -51,50 +45,16 @@ class GameHome extends StatelessWidget {
               return GamePreviewView(
                 game: viewModel.game,
                 loadingStatus: viewModel.loadingStatus,
-                errorMsg: viewModel.errorMsg,
+                error: viewModel.error,
               );
             } else {
-              if (viewModel.errorMsg != '') {
-                return ErrorView(viewModel.errorMsg);
+              if (viewModel.error != null) {
+                return ErrorView(viewModel.error);
               } else {
                 return ProgressView('Loading game');
               }
             }
           }),
-    );
-  }
-
-  Widget _getTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Styles.buildTeamSvgImage(argument.game.homeTeam),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RichText(
-              text: TextSpan(
-                style: Styles.scaffoldGameLoserText,
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '${argument.game.homeTeam.abb}',
-                      style: Styles.scaffoldGameWinnerText),
-                  TextSpan(text: ' VS ', style: Styles.scaffoldGameVsText),
-                  TextSpan(
-                      text: '${argument.game.awayTeam.abb}',
-                      style: Styles.scaffoldGameWinnerText),
-                ],
-              ),
-            ),
-            Text(
-              Styles.dateTimeFormat.format(argument.game.dateTime),
-              style: Styles.scaffoldGameVsText,
-            ),
-          ],
-        ),
-        Styles.buildTeamSvgImage(argument.game.awayTeam),
-      ],
     );
   }
 }

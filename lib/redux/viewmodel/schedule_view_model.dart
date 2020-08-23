@@ -10,7 +10,7 @@ class ScheduleViewModel {
   final LoadingStatus loadingStatus;
   final DateTime selectedDate;
   final Schedule selectedSchedule;
-  final String errorMsg;
+  final Exception error;
   final bool inSchedule;
   final Function(DateTime) changeSelectedDate;
   final Function refreshSchedule;
@@ -19,7 +19,7 @@ class ScheduleViewModel {
     @required this.loadingStatus,
     @required this.selectedDate,
     @required this.selectedSchedule,
-    @required this.errorMsg,
+    @required this.error,
     @required this.inSchedule,
     @required this.changeSelectedDate,
     @required this.refreshSchedule
@@ -30,7 +30,7 @@ class ScheduleViewModel {
       loadingStatus: store.state.scheduleState.loadingStatus,
       selectedDate: store.state.scheduleState.selectedDate,
       selectedSchedule: scheduleSelector(store.state),
-      errorMsg: store.state.scheduleState.errorMsg,
+      error: store.state.scheduleState.error,
       inSchedule: store.state.scheduleState.inSchedule,
       changeSelectedDate: (DateTime newDate) => store.dispatch(ScheduleDateChangedAction(newDate)),
       refreshSchedule: () => store.dispatch(RefreshScheduleAction())
@@ -45,12 +45,12 @@ class ScheduleViewModel {
               loadingStatus == other.loadingStatus &&
               selectedDate == other.selectedDate &&
               selectedSchedule == other.selectedSchedule &&
-              errorMsg == other.errorMsg;
+              error == other.error;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       selectedDate.hashCode ^
       selectedSchedule.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

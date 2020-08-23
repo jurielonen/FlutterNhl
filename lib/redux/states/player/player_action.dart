@@ -36,6 +36,6 @@ class PlayerReceivedGameLogsAction extends PlayerAction {
 }
 
 class PlayerErrorAction extends PlayerAction {
-  final String error;
+  final Exception error;
   PlayerErrorAction(this.error);
 }

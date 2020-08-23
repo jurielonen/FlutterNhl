@@ -7,14 +7,13 @@ import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:FlutterNhl/widgets/scaffold_template.dart';
 import 'package:flutter/material.dart';
 
 class GameFinalView extends StatelessWidget {
   final GameFinal game;
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
   final VoidCallback contentCallBack;
   final VoidCallback refreshCallBack;
 
@@ -22,7 +21,7 @@ class GameFinalView extends StatelessWidget {
       {Key key,
       @required this.game,
       @required this.loadingStatus,
-      @required this.errorMsg,
+      @required this.error,
       @required this.contentCallBack,
       @required this.refreshCallBack})
       : super(key: key);
@@ -38,7 +37,7 @@ class GameFinalView extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshScaffoldTemplate(
       loadingStatus: loadingStatus,
-      errorMsg: errorMsg,
+      error: error,
       onTabChanged: (String tab) => _buildTabContent(tab),
       appBarTitle: GameAppBar.getTitle(game),
       tabs: _createTabs.toList(),
@@ -56,10 +55,10 @@ class GameFinalView extends StatelessWidget {
     return null;
   }
 
-  Iterable<NestedTemplateTab> get _createTabs sync* {
+  Iterable<TemplateTab> get _createTabs sync* {
     for (String tab in _tabs) {
       if (tab == 'Home')
-        yield NestedTemplateTab(
+        yield TemplateTab(
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -70,7 +69,7 @@ class GameFinalView extends StatelessWidget {
             ),
             text: tab);
       else if (tab == 'Away')
-        yield NestedTemplateTab(
+        yield TemplateTab(
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -81,7 +80,7 @@ class GameFinalView extends StatelessWidget {
             ),
             text: tab);
       else
-        yield NestedTemplateTab(child: Center(child: Text(tab)), text: tab);
+        yield TemplateTab(child: Center(child: Text(tab)), text: tab);
     }
   }
 
@@ -129,7 +128,7 @@ class GameFinalView extends StatelessWidget {
       default:
         return CustomScrollView(
           slivers: <Widget>[
-            SliverErrorView(msg: errorMsg),
+            SliverErrorView(error: error),
           ],
         );
     }

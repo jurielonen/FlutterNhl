@@ -1,5 +1,4 @@
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/draft/draft.dart';
 import 'package:FlutterNhl/redux/models/draft/draft_table_source.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kt_dart/collection.dart';
@@ -9,32 +8,32 @@ class DraftState {
   final LoadingStatus loadingStatus;
   final KtMap<int, DraftTableSource> drafts;
   final int selectedYear;
-  final String errorMsg;
+  final Exception error;
 
   DraftState(
       {@required this.loadingStatus,
       @required this.drafts,
       @required this.selectedYear,
-      @required this.errorMsg});
+      @required this.error});
 
   factory DraftState.initial() {
     return DraftState(
         loadingStatus: LoadingStatus.IDLE,
         drafts: emptyMap(),
         selectedYear: DateTime.now().year,
-        errorMsg: '');
+        error: null);
   }
 
   DraftState copyWith(
       {LoadingStatus loadingStatus,
       KtMap<int, DraftTableSource> drafts,
       int selectedYear,
-      String errorMsg}) {
+      Exception error}) {
     return DraftState(
         loadingStatus: loadingStatus ?? this.loadingStatus,
         drafts: drafts ?? this.drafts,
         selectedYear: selectedYear ?? this.selectedYear,
-        errorMsg: errorMsg ?? this.errorMsg);
+        error: error ?? this.error);
   }
 
   @override
@@ -45,12 +44,12 @@ class DraftState {
           loadingStatus == other.loadingStatus &&
           drafts == other.drafts &&
           selectedYear == other.selectedYear &&
-          errorMsg == other.errorMsg;
+          error == other.error;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       drafts.hashCode ^
       selectedYear.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

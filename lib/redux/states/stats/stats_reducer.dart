@@ -6,33 +6,38 @@ import 'package:FlutterNhl/redux/states/stats/stats_action.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 
 StatsState statsReducer(StatsState state, dynamic action) {
+  print('STATSREDUCER: ${action.runtimeType} ${state.loadingStatus}');
   if (action is StatsParametersChangedAction) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.IDLE, selectedStat: action.param.copyWith(start: 0));
+        loadingStatus: LoadingStatus.IDLE, selectedParams: action.param.copyWith(start: 0));
   } else if (action is StatsParamTypeChangedAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE,
-        selectedStat: StatParameters.create(action.type),
+      selectedParams: state.selectedParams.copyWith(paramType: action.type, start: 0),// StatParameters(action.type),
     );
   } else if (action is StatsRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is StatsNextAction) {
-    return state.copyWith(selectedStat: state.selectedParams.nextStats());
+    return state.copyWith(selectedParams: state.selectedParams.nextStats(), loadingStatus: LoadingStatus.IDLE);
   } else if (action is StatsPreviousAction) {
-    return state.copyWith(selectedStat: state.selectedParams.previousStats());
+    return state.copyWith(selectedParams: state.selectedParams.previousStats(), loadingStatus: LoadingStatus.IDLE);
   } else if (action is StatsReceived) {
-    StatParameters params = state.selectedParams;
-    params.total = action.total;
-    return state.copyWith(
-        loadingStatus: LoadingStatus.SUCCESS, downloadedStats: action.stats, selectedStat: params);
+    if(state.selectedParams.paramType.type == action.stats.type) {
+      return state.copyWith(
+          loadingStatus: LoadingStatus.SUCCESS,
+          downloadedStats: action.stats,
+          selectedParams: state.selectedParams.copyWith(total: action.total));
+    } else {
+      return state.copyWith(loadingStatus: LoadingStatus.LOADING);
+    }
   } else if (action is StatsErrorAction) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.ERROR, errorMsg: action.errorMsg);
+        loadingStatus: LoadingStatus.ERROR, error: action.error);
   } else if (action is ConfigReceived) {
     String firstKey = Config().playerReportData.keys.first;
     ParamType paramType = ParamType(StatType.PLAYER, firstKey,
         Config().playerReportData[firstKey].season.getSortKeys());
-    return state.copyWith(selectedStat: StatParameters.create(paramType));
+    return state.copyWith(selectedParams: StatParameters.create(paramType));
   }
 
   return state;

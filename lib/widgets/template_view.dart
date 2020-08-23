@@ -7,10 +7,10 @@ class TemplateView extends StatelessWidget {
   final LoadingStatus loadingStatus;
   final Widget Function() successContent;
   final Widget appBar;
-  final String errorMsg;
+  final Exception error;
 
   TemplateView(
-      this.loadingStatus, this.successContent, this.appBar, this.errorMsg,
+      this.loadingStatus, this.successContent, this.appBar, this.error,
       {Key key})
       : super(key: key);
 
@@ -33,13 +33,13 @@ class TemplateView extends StatelessWidget {
         );
       case LoadingStatus.ERROR:
         return SliverFillRemaining(
-          child: ErrorView(errorMsg),
+          child: ErrorView(error),
         );
       case LoadingStatus.SUCCESS:
         return successContent();
       default:
         return SliverFillRemaining(
-          child: ErrorView('Unknown state'),
+          child: ErrorView(UIUnknownStateException('Unknown state')),
         );
     }
   }
@@ -49,14 +49,14 @@ class RefreshTemplateView extends StatelessWidget {
   final LoadingStatus loadingStatus;
   final Widget successContent;
   final Widget appBar;
-  final String errorMsg;
+  final Exception error;
   final RefreshCallback callback;
 
   RefreshTemplateView(
       {@required this.loadingStatus,
       @required this.successContent,
       @required this.appBar,
-      @required this.errorMsg,
+      @required this.error,
       @required this.callback,
       Key key})
       : super(key: key);
@@ -89,13 +89,13 @@ class RefreshTemplateView extends StatelessWidget {
         );
       case LoadingStatus.ERROR:
         return SliverFillRemaining(
-          child: ErrorView(errorMsg),
+          child: ErrorView(error),
         );
       case LoadingStatus.SUCCESS:
         return successContent;
       default:
         return SliverFillRemaining(
-          child: ErrorView('Unknown state'),
+          child: ErrorView(UIUnknownStateException('Unknown state')),
         );
     }
   }

@@ -6,7 +6,6 @@ import 'package:FlutterNhl/views/game/game_widgets/game_matchup_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/nested_template_view2.dart';
 import 'package:FlutterNhl/widgets/scaffold_template.dart';
 import 'package:flutter/material.dart';
 
@@ -14,13 +13,13 @@ import 'package:flutter/material.dart';
 class GamePreviewView extends StatelessWidget {
   final GamePreview game;
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
 
   const GamePreviewView(
       {Key key,
       @required this.game,
       @required this.loadingStatus,
-      @required this.errorMsg})
+      @required this.error})
       : super(key: key);
 
   static const List<String> _tabs = ['Match Up', 'Stats', 'Home', 'Away'];
@@ -29,7 +28,7 @@ class GamePreviewView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScaffoldTemplate(
       loadingStatus: loadingStatus,
-      errorMsg: errorMsg,
+      error: error,
       onTabChanged: (String tab) => _buildTabContent(tab),
       appBarTitle: GameAppBar.getTitle(game),
       tabs: _createTabs.toList(),
@@ -38,10 +37,10 @@ class GamePreviewView extends StatelessWidget {
     );
   }
 
-  Iterable<NestedTemplateTab> get _createTabs sync* {
+  Iterable<TemplateTab> get _createTabs sync* {
     for (String tab in _tabs) {
       if (tab == 'Home')
-        yield NestedTemplateTab(
+        yield TemplateTab(
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -52,7 +51,7 @@ class GamePreviewView extends StatelessWidget {
             ),
             text: tab);
       else if (tab == 'Away')
-        yield NestedTemplateTab(
+        yield TemplateTab(
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -63,7 +62,7 @@ class GamePreviewView extends StatelessWidget {
             ),
             text: tab);
       else
-        yield NestedTemplateTab(child: Center(child: Text(tab)), text: tab);
+        yield TemplateTab(child: Center(child: Text(tab)), text: tab);
     }
   }
 
@@ -102,7 +101,7 @@ class GamePreviewView extends StatelessWidget {
           ],
         );
       default:
-        return ErrorView(errorMsg == '' ? 'Error' : errorMsg);
+        return ErrorView(error == null ? UIUnknownStateException('game_preview_view _buildTabContent') : error);
     }
   }
 }

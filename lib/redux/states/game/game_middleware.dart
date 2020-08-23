@@ -22,7 +22,8 @@ class GameMiddleware extends MiddlewareClass<AppState> {
       if (store.state.gameState.loadingStatus != LoadingStatus.LOADING) {
         next(GameRequestingAction());
         if (store.state.gameState.games
-            .containsKey(store.state.gameState.selectedGame.id) && !store.state.gameState.selectedGame.isLive) {
+                .containsKey(store.state.gameState.selectedGame.id) &&
+            !store.state.gameState.selectedGame.isLive) {
           next(GameAlreadyDownloadedAction());
         } else {
           await _fetchGame(store.state.gameState.selectedGame, store, next);
@@ -39,9 +40,13 @@ class GameMiddleware extends MiddlewareClass<AppState> {
     } else if (action is GameDownloadContentAction) {
       if (!selectedGameSelector(store.state).content.containsAllVideos) {
         next(GameRequestingAction());
-        final content =
-            await api.fetchGameContent(store.state.gameState.selectedGame.id);
-        next(GameDownloadedContentAction(content));
+        try {
+          final content =
+              await api.fetchGameContent(store.state.gameState.selectedGame.id);
+          next(GameDownloadedContentAction(content));
+        } catch (error) {
+          next(GameErrorAction(error));
+        }
       } else {
         next(GameAlreadyDownloadedContentAction());
       }
@@ -60,7 +65,7 @@ class GameMiddleware extends MiddlewareClass<AppState> {
         next(GameDownloadedAction(finalGame));
       }
     } catch (error) {
-      next(GameErrorAction(error.toString()));
+      next(GameErrorAction(error));
     }
   }
 

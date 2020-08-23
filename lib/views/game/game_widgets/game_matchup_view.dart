@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
@@ -35,7 +36,7 @@ class GameMatchUpView extends StatelessWidget {
             if (lastFivePlayersWidgets.length > index)
               return lastFivePlayersWidgets.elementAt(index);
             else
-              return ErrorView('Unknown index');
+              return ErrorView(UIUnknownStateException('game_matchup_view build 1'));
           }, childCount: lastFivePlayersWidgets.length),
         ),
         SliverToBoxAdapter(
@@ -53,7 +54,7 @@ class GameMatchUpView extends StatelessWidget {
             if (lastFiveGamesHomeWidgets.length > index)
               return lastFiveGamesHomeWidgets.elementAt(index);
             else
-              return ErrorView('Unknown index');
+              return ErrorView(UIUnknownStateException('game_matchup_view build 2'));
           }, childCount: lastFiveGamesHomeWidgets.length),
         ),
         SliverToBoxAdapter(
@@ -72,7 +73,7 @@ class GameMatchUpView extends StatelessWidget {
             if (lastFiveGamesAwayWidgets.length > index)
               return lastFiveGamesAwayWidgets.elementAt(index);
             else
-              return ErrorView('Unknown index');
+              return ErrorView(UIUnknownStateException('game_matchup_view build 3'));
           }, childCount: lastFiveGamesAwayWidgets.length),
         ),
       ],

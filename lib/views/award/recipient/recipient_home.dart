@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/award/award.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/award/award_actions.dart';
@@ -35,7 +36,7 @@ class _RecipientHomeState extends State<RecipientHome> {
           viewModel.loadingStatus,
             () => _buildBody(viewModel.award),
           _buildAppBar(viewModel.award.award),
-          viewModel.errorMsg,
+          viewModel.error,
         ),
       ),
     );
@@ -84,7 +85,7 @@ class _RecipientHomeState extends State<RecipientHome> {
     }
 
     return SliverFillRemaining(
-      child: ErrorView('No data downloaded yet'),
+      child: ErrorView(UINoDataDownloadedException('recipient_home _buildBody')),
     );
   }
 

@@ -53,7 +53,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
             store.state.playerState.playerType);
         next(PlayerReceivedBioAction(player));
       } catch (error) {
-        next(PlayerErrorAction(error.toString()));
+        next(PlayerErrorAction(error));
       }
     }
   }
@@ -69,7 +69,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
         next(PlayerReceivedStatAction(PlayerSeasonTableSource.fromData(
             stats, playerFilterTypeSelector(store.state))));
       } catch (error) {
-        next(PlayerErrorAction(error.toString()));
+        next(PlayerErrorAction(error));
       }
     }
   }
@@ -85,7 +85,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
             );
         next(PlayerReceivedGameLogsAction(logs));
       } catch (error) {
-        next(PlayerErrorAction(error.toString()));
+        next(PlayerErrorAction(error));
       }
     }
   }

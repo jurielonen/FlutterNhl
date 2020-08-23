@@ -18,7 +18,7 @@ class SearchMiddleware extends MiddlewareClass<AppState> {
               await api.fetchPlayers(action.query, active: action.active);
           next(SearchDownloadedAction(search));
         } catch (error) {
-          next(SearchErrorAction(error.toString()));
+          next(SearchErrorAction(error));
         }
       }
     } else {

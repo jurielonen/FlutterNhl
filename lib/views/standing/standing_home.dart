@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/standings/standings.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
@@ -24,7 +25,7 @@ class StandingHome extends StatelessWidget {
             () => _pageContent(viewModel.standing),
             _getAppBar(
                 int.parse(viewModel.selectedSeason), viewModel.seasonChanged),
-            viewModel.errorMsg));
+            viewModel.error));
   }
 
   Widget _getAppBar(int selectedYear, Function onChangeYear) {
@@ -69,7 +70,7 @@ class StandingHome extends StatelessWidget {
   Widget _pageContent(Standing standing) {
     if (standing == null) {
       return SliverErrorView(
-        msg: 'Error while loading standings',
+        error: UINoDataDownloadedException('standings_home _pageContent'),
       );
     } else {
       return SliverFillRemaining(

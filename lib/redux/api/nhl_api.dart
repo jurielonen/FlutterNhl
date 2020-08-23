@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/redux/api/fetch.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
@@ -16,12 +17,16 @@ class NHLApi {
     final searchUri = Uri.https(baseUrl, 'stats/rest/en/config');
     print('$printMsg fetchConfig: $searchUri');
     await fetch(searchUri, client).then((value) {
-      if (value is Map<String, dynamic>)
-        return Config().fromJson(value);
-      else
-        throw Exception(
-            'Error while formatting data in $printMsg::fetchConfig');
-    }).catchError((error) => onFetchError(error));
+      if (value is Map<String, dynamic>) {
+        try {
+          return Config().fromJson(value);
+        } catch (error) {
+          throw NetworkParseException(
+              'Failed to parse data.\nCall: fetchConfig.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+        }
+      }
+      throw Exception('Error while formatting data in $printMsg::fetchConfig');
+    });//.catchError((error) => onFetchError(error));
   }
 
   Future<StatResponse> fetchStats(StatParameters params) async {
@@ -29,8 +34,13 @@ class NHLApi {
     print('$printMsg fetchStats: $searchUri');
 
     return await fetch(searchUri, client).then((value) {
-      return StatResponse.fromJson(value);
-    }).catchError((error) => onFetchError(error));
+      try {
+        return StatResponse.fromJson(value);
+      } catch (error) {
+        throw NetworkParseException(
+            'Failed to parse data.\nCall: fetchStats.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+      }
+    });//.catchError((error) => onFetchError(error));
   }
 
   Future<PlayerPage> fetchPlayerBio(int playerId, StatType type) async {
@@ -43,15 +53,22 @@ class NHLApi {
     print('$printMsg fetchPlayerBio: $searchUri');
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
-        if (type == StatType.PLAYER)
-          return PlayerPage.fromJsonPlayer(value);
-        else if (type == StatType.GOALIE)
-          return PlayerPage.fromJsonGoalie(value);
-        else
-          throw Exception('$printMsg::fetchPlayer: Unknown player type $type');
+        try {
+          if (type == StatType.PLAYER)
+            return PlayerPage.fromJsonPlayer(value);
+          else if (type == StatType.GOALIE)
+            return PlayerPage.fromJsonGoalie(value);
+          else
+            throw Exception(
+                '$printMsg::fetchPlayer: Unknown player type $type');
+        } catch (error) {
+          throw NetworkParseException(
+              'Failed to parse data.\nCall: fetchPlayerBio.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+        }
       }
-      throw Exception('Error while formatting data in $printMsg::fetchPlayer');
-    }).catchError((error) => onFetchError(error));
+      throw Exception(
+          'Error while formatting data in $printMsg::fetchPlayerBio');
+    });//.catchError((error) => onFetchError(error));
   }
 
   Future<List<dynamic>> fetchPlayerStat(
@@ -67,10 +84,15 @@ class NHLApi {
     print('$printMsg fetchPlayerStat: $searchUri');
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
-        return getJsonList(['data'], value);
+        try {
+          return getJsonList(['data'], value);
+        } catch (error) {
+          throw NetworkParseException(
+              'Failed to parse data.\nCall: fetchPlayerStat.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+        }
       }
       throw Exception('Error while formatting data in $printMsg::fetchPlayer');
-    }).catchError((error) => onFetchError(error));
+    });//.catchError((error) => onFetchError(error));
   }
 
   Future<List<dynamic>> fetchTeamStat(String stat, int teamId) async {
@@ -84,10 +106,15 @@ class NHLApi {
     print('$printMsg fetchTeamStat: $searchUri');
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
-        return getJsonList(['data'], value);
+        try {
+          return getJsonList(['data'], value);
+        } catch (error) {
+          throw NetworkParseException(
+              'Failed to parse data.\nCall: fetchTeamStat.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+        }
       }
       throw Exception('Error while formatting data in $printMsg::fetchPlayer');
-    }).catchError((error) => onFetchError(error));
+    });//.catchError((error) => onFetchError(error));
   }
 
   void onFetchError(Exception error) {
@@ -102,8 +129,9 @@ class StatResponse {
 
   StatResponse(this.total, this.stats);
 
-  factory StatResponse.fromJson(Map<String, dynamic> json){
+  factory StatResponse.fromJson(Map<String, dynamic> json) {
     return StatResponse(getJsonInt('total', json), getJsonList(['data'], json));
   }
 }
+
 ///TODO: add fetch https://api.nhle.com/stats/rest/en/glossary?sort=fullName

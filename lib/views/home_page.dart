@@ -33,27 +33,24 @@ class HomePage extends StatelessWidget {
         drawer: AppDrawer(
           onTilePressed: (DrawerPages page) => viewModel.pageChanged(page),
         ),
-        body: _getBody(viewModel.loadingStatus, viewModel.currentPage, viewModel.errorMsg),
+        body: _getBody(viewModel.loadingStatus, viewModel.currentPage, viewModel.error),
       ),
     );
   }
 
-  Widget _getBody(LoadingStatus loadingStatus, DrawerPages page, String errorMsg){
-    print('rebuild homeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+  Widget _getBody(LoadingStatus loadingStatus, DrawerPages page, Exception error){
     switch (loadingStatus) {
       case LoadingStatus.IDLE:
       case LoadingStatus.LOADING:
         return Center(child: ProgressView('Loading initial data'));
       case LoadingStatus.ERROR:
         return Center(
-          child: ErrorView(errorMsg),
+          child: ErrorView(error),
         );
       case LoadingStatus.SUCCESS:
         return _getPage(page);
       default:
-        return Center(
-          child: ErrorView('Unknown state'),
-        );
+        return  ErrorView(UIUnknownStateException('Unknown state'));
     }
   }
 
@@ -81,7 +78,7 @@ class HomePage extends StatelessWidget {
         }
       default:
         {
-          return ErrorView('Error msg 1: $page');
+          return ErrorView(UIUnknownStateException('Error msg 1: $page'));
         }
     }
   }

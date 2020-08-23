@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/api/fetch.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/search/search.dart';
 import 'package:http/http.dart';
 
@@ -15,8 +16,13 @@ class SuggestApi {
     final searchUri = Uri.https(baseUrl, '${active ? basePathActive : basePath}/$query/${Search.maxValues}');
     print('$printMsg: $searchUri');
     return await fetch(searchUri, client).then((value) {
-      return Search.fromJson(value);
-    }).catchError((error) => throw Exception(error.toString()));
+      try {
+        return Search.fromJson(value);
+      } catch (error) {
+        throw NetworkParseException(
+            'Failed to parse data.\nCall: fetchConfig.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+      }
+    });//.catchError((error) => throw Exception(error.toString()));
   }
 
 }

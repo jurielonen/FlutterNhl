@@ -19,7 +19,7 @@ DraftState draftReducer(DraftState state, dynamic action){
     drafts[state.selectedYear] = action.draft;
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, drafts: drafts);
   } else if(action is DraftErrorAction){
-    return state.copyWith(loadingStatus: LoadingStatus.ERROR, errorMsg: action.error);
+    return state.copyWith(loadingStatus: LoadingStatus.ERROR, error: action.error);
   } else if(action is SeasonConfigReceived){
     return state.copyWith(selectedYear: Config.getCurrentDraft());
   }

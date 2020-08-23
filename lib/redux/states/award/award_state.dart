@@ -8,32 +8,32 @@ class AwardState {
   final LoadingStatus loadingStatus;
   final KtMap<int, AwardTableSource> awards;
   final int selectedAward;
-  final String errorMsg;
+  final Exception error;
 
   AwardState(
       {@required this.loadingStatus,
       @required this.awards,
       @required this.selectedAward,
-      @required this.errorMsg});
+      @required this.error});
 
   factory AwardState.initial() {
     return AwardState(
         loadingStatus: LoadingStatus.IDLE,
         awards: emptyMap(),
         selectedAward: null,
-        errorMsg: '');
+        error: null);
   }
 
   AwardState copyWith(
       {LoadingStatus loadingStatus,
       KtMap<int, AwardTableSource> awards,
       int selectedAward,
-      String errorMsg}) {
+      Exception error}) {
     return AwardState(
         loadingStatus: loadingStatus ?? this.loadingStatus,
         awards: awards ?? this.awards,
         selectedAward: selectedAward ?? this.selectedAward,
-        errorMsg: errorMsg ?? this.errorMsg);
+        error: error ?? this.error);
   }
 
   @override
@@ -44,12 +44,12 @@ class AwardState {
           loadingStatus == other.loadingStatus &&
           awards == other.awards &&
           selectedAward == other.selectedAward &&
-          errorMsg == other.errorMsg;
+          error == other.error;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       awards.hashCode ^
       selectedAward.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

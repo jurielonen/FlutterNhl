@@ -9,14 +9,14 @@ import 'package:redux/redux.dart';
 class GameViewModel {
   final LoadingStatus loadingStatus;
   final Game game;
-  final String errorMsg;
+  final Exception error;
   final VoidCallback refreshCallBack;
   final VoidCallback contentCallBack;
 
   GameViewModel(
       {@required this.loadingStatus,
       @required this.game,
-      @required this.errorMsg,
+      @required this.error,
       @required this.refreshCallBack,
       @required this.contentCallBack});
 
@@ -24,9 +24,24 @@ class GameViewModel {
     return GameViewModel(
       loadingStatus: store.state.gameState.loadingStatus,
       game: selectedGameSelector(store.state),
-      errorMsg: store.state.gameState.errorMsg,
+      error: store.state.gameState.error,
       refreshCallBack: () => store.dispatch(GameRefreshAction()),
       contentCallBack: () => store.dispatch(GameDownloadContentAction()),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is GameViewModel &&
+              runtimeType == other.runtimeType &&
+              loadingStatus == other.loadingStatus &&
+              error == other.error &&
+              game == other.game;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      error.hashCode ^
+      game.hashCode;
 }

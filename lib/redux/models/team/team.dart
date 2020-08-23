@@ -80,6 +80,7 @@ class Team {
   factory Team.empty() {
     return Team(
       id: -1,
+      franchiseId: -1,
       name: '',
       abb: '',
     );

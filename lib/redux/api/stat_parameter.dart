@@ -89,8 +89,8 @@ class StatParameters {
   Position position = Position.N_A;
   int franchiseId = 0;
 
-  static final Map<ParamType, StatParameters> _cache =
-      <ParamType, StatParameters>{};
+  /*static final Map<ParamType, StatParameters> _cache =
+      <ParamType, StatParameters>{};*/
 
   StatParameters(this.paramType);
 
@@ -120,13 +120,14 @@ class StatParameters {
   }
 
   factory StatParameters.create(ParamType paramType) {
-    if (_cache.containsKey(paramType)) {
+    /*if (_cache.containsKey(paramType)) {
       return _cache[paramType];
     } else {
       StatParameters temp = StatParameters(paramType);
       _cache[paramType] = temp;
       return temp;
-    }
+    }*/
+    return StatParameters(paramType);
   }
 
   factory StatParameters.initial() {
@@ -141,7 +142,8 @@ class StatParameters {
       String startSeason,
       String endSeason,
       Position position,
-      int franchiseId}) {
+      int franchiseId,
+      int total}) {
     return StatParameters.copy(
       paramType: paramType ?? this.paramType,
       start: start ?? this.start,
@@ -151,6 +153,7 @@ class StatParameters {
       endSeason: endSeason ?? this.endSeason,
       position: position ?? this.position,
       franchiseId: franchiseId ?? this.franchiseId,
+      total: total ?? this.total,
     );
   }
 
@@ -230,6 +233,7 @@ class StatParameters {
   }
 
   bool get isThereNextPage {
+    if(total == null) return false;
     if(total > 0){
       return total > (start + limit);
     }
@@ -252,5 +256,37 @@ class StatParameters {
       return paramType.sort.values.first;
     }
     return null;
+  }
+
+  @override
+  int get hashCode  =>
+      paramType.hashCode ^
+      start.hashCode ^
+      gamesPlayed.hashCode ^
+      gameType.hashCode ^
+      startSeason.hashCode ^
+      endSeason.hashCode ^
+      position.hashCode ^
+      franchiseId.hashCode ^
+      total.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is StatParameters &&
+              runtimeType == other.runtimeType &&
+              paramType == other.paramType &&
+              start == other.start &&
+              gamesPlayed == other.gamesPlayed &&
+              gameType == other.gameType &&
+              startSeason == other.startSeason &&
+              endSeason == other.endSeason &&
+              position == other.position &&
+              franchiseId == other.franchiseId &&
+              total == other.total;
+
+  @override
+  String toString() {
+    return 'params: $total, $start';
   }
 }

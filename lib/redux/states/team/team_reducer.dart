@@ -49,7 +49,7 @@ TeamState teamReducer(TeamState state, dynamic action) {
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, teams: teams);
   } else if (action is TeamErrorAction) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.ERROR, errorMsg: action.error);
+        loadingStatus: LoadingStatus.ERROR, error: action.error);
   }
   return state;
 }

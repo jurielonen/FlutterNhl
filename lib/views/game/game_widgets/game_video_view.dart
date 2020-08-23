@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/route.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/content_card.dart';
@@ -26,7 +27,7 @@ class GameVideoView extends StatelessWidget {
       final video = content.videos[index];
       return VideoCard(video: video,);
     } else {
-      return ErrorView('Unknown index');
+      return ErrorView(UIUnknownStateException('game_video_view build'));
     }
   }
 }

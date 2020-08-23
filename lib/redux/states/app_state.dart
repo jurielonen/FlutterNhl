@@ -17,7 +17,7 @@ import 'package:meta/meta.dart';
 class AppState {
   final SnackBarNotification showSnackBar;
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
   final DrawerPages currentPage;
   final ScheduleState scheduleState;
   final StatsState statsState;
@@ -33,7 +33,7 @@ class AppState {
   AppState({
     @required this.showSnackBar,
     @required this.loadingStatus,
-    @required this.errorMsg,
+    @required this.error,
     @required this.currentPage,
     @required this.scheduleState,
     @required this.statsState,
@@ -51,8 +51,8 @@ class AppState {
     return AppState(
       showSnackBar: null,
       loadingStatus: LoadingStatus.IDLE,
-      errorMsg: '',
-      currentPage: DrawerPages.AWARDS,
+      error: null,
+      currentPage: DrawerPages.STATS,
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),
       playerState: PlayerState.initial(),
@@ -69,7 +69,7 @@ class AppState {
   AppState copyWith({
     SnackBarNotification showSnackBar,
     LoadingStatus loadingStatus,
-    String errorMsg,
+    Exception error,
     DrawerPages currentPage,
     ScheduleState scheduleState,
     StatsState statsState,
@@ -85,7 +85,7 @@ class AppState {
     return AppState(
       showSnackBar: showSnackBar ?? this.showSnackBar,
       loadingStatus: loadingStatus ?? this.loadingStatus,
-      errorMsg: errorMsg ?? this.errorMsg,
+      error: error ?? this.error,
       currentPage: currentPage ?? this.currentPage,
       scheduleState: scheduleState ?? this.scheduleState,
       statsState: statsState ?? this.statsState,

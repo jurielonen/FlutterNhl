@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class TemplateView2 extends StatefulWidget {
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
   final List<String> tabs;
   final Function(int) onTabPressed;
   final List<Widget> Function(int) pageContent;
@@ -16,7 +16,7 @@ class TemplateView2 extends StatefulWidget {
   const TemplateView2(
       {Key key,
       @required this.loadingStatus,
-      @required this.errorMsg,
+      @required this.error,
       @required this.tabs,
       @required this.onTabPressed,
       @required this.pageContent,
@@ -87,7 +87,6 @@ class _TemplateView2State extends State<TemplateView2>
               physics: NeverScrollableScrollPhysics(),
               controller: _pageController,
               itemBuilder: (context, position) {
-                print('pagebuilder: $position');
                 return CustomScrollTemplateView(slivers: _getStateWidget());
               },
               itemCount: _tabController.length,
@@ -106,13 +105,13 @@ class _TemplateView2State extends State<TemplateView2>
         return [SliverProgressView(msg: 'Loading Stats')];
         break;
       case LoadingStatus.ERROR:
-        return [SliverErrorView(msg: widget.errorMsg)];
+        return [SliverErrorView(error: widget.error)];
         break;
       case LoadingStatus.SUCCESS:
         return widget.pageContent(_tabController.index);
         break;
       default:
-        return [SliverErrorView(msg: 'Unknown state')];
+        return [SliverErrorView(error: UIUnknownStateException('Unknown state'))];
     }
   }
 }

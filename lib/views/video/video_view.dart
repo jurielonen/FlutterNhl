@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
@@ -69,7 +70,7 @@ class _VideoViewState extends State<VideoView> {
             if (snapshot.connectionState == ConnectionState.done) {
               return videoPlayer();
             } else if (snapshot.hasError) {
-              return ErrorView('Error while downloading video');
+              return ErrorView(NetworkException('Error while downloading video: ${snapshot.error.toString()}'));
             } else {
               return ProgressView('Downloading video');
             }

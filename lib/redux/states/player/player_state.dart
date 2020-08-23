@@ -24,7 +24,7 @@ class PlayerState {
       @required this.selectedStat,
       @required this.gameLogParams,
       @required this.players,
-      @required this.errorMsg,});
+      @required this.error,});
 
   final LoadingStatus loadingStatus;
   final int playerId;
@@ -32,7 +32,7 @@ class PlayerState {
   final String selectedStat;
   final GameLogParams gameLogParams;
   final KtMap<int, PlayerPage> players;
-  final String errorMsg;
+  final Exception error;
 
   factory PlayerState.initial() {
     return PlayerState(
@@ -44,7 +44,7 @@ class PlayerState {
       selectedStat: 'summary',
       gameLogParams: null,
       players: emptyMap(),
-      errorMsg: '',
+      error: null,
     );
   }
 
@@ -55,7 +55,7 @@ class PlayerState {
       String selectedStat,
       GameLogParams gameLogParams,
       KtMap<int, PlayerPage> players,
-      String errorMsg}) {
+      Exception error}) {
     return PlayerState(
         loadingStatus: loadingStatus ?? this.loadingStatus,
         playerId: playerId ?? this.playerId,
@@ -63,7 +63,7 @@ class PlayerState {
         selectedStat: selectedStat ?? this.selectedStat,
         gameLogParams: gameLogParams ?? this.gameLogParams,
         players: players ?? this.players,
-        errorMsg: errorMsg ?? this.errorMsg,
+        error: error ?? this.error,
         );
   }
 
@@ -78,7 +78,7 @@ class PlayerState {
           selectedStat == other.selectedStat &&
           gameLogParams == other.gameLogParams &&
           players == other.players &&
-          errorMsg == other.errorMsg;
+          error == other.error;
 
   @override
   int get hashCode =>
@@ -88,5 +88,5 @@ class PlayerState {
       selectedStat.hashCode ^
       gameLogParams.hashCode ^
       players.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

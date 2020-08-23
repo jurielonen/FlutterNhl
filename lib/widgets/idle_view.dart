@@ -1,23 +1,25 @@
+
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:flutter/material.dart';
 
-class SliverErrorView extends StatelessWidget {
-  final Exception error;
+class SliverIdleView extends StatelessWidget {
+  final String msg;
+  final Color color;
 
-  const SliverErrorView({Key key, this.error}) : super(key: key);
+  const SliverIdleView({Key key, this.msg, this.color = Colors.grey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SliverFillRemaining(
-      child: ErrorView(error),
+      child: IdleView(msg),
     );
   }}
 
-class ErrorView extends StatelessWidget {
-  final Exception error;
+class IdleView extends StatelessWidget {
+  final String msg;
   final Color color;
 
-  ErrorView(this.error, {this.color = Colors.red});
+  IdleView(this.msg, {this.color = Colors.grey});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class ErrorView extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(top: 16),
-            child: Text(error.toString(), style: Styles.errorText),
+            child: Text(msg, style: Styles.errorText),
           ),
         ],
       ),

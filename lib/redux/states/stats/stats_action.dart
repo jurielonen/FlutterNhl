@@ -20,8 +20,8 @@ class StatsNextAction extends StatsAction {}
 class StatsPreviousAction extends StatsAction {}
 
 class StatsErrorAction extends StatsAction {
-  final String errorMsg;
-  StatsErrorAction(this.errorMsg);
+  final Exception error;
+  StatsErrorAction(this.error);
 }
 
 class StatsReceived extends StatsAction {

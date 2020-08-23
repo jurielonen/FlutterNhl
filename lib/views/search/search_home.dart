@@ -10,6 +10,7 @@ import 'package:FlutterNhl/redux/viewmodel/search_view_model.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/player/player_home.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/idle_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -94,9 +95,8 @@ class _SearchHomeState extends State<SearchHome> {
   Widget getBody(SearchViewModel viewModel) {
     switch (viewModel.loadingStatus) {
       case LoadingStatus.IDLE:
-        return ErrorView(
-          'Search for players',
-          color: Colors.grey,
+        return IdleView(
+          'Search for players'
         );
       case LoadingStatus.LOADING:
         return ProgressView('Searching for players');
@@ -104,20 +104,19 @@ class _SearchHomeState extends State<SearchHome> {
         return getList(viewModel.search);
       case LoadingStatus.ERROR:
         return ErrorView(
-            viewModel.errorMsg == '' ? 'Error' : viewModel.errorMsg);
+            viewModel.error == null ? UIUnknownStateException('search_home getBody') : viewModel.error);
       default:
-        return ErrorView('Unknown state in search view');
+        return ErrorView(UIUnknownStateException('search_home getBody ${viewModel.loadingStatus}'));
     }
   }
 
   Widget getList(Search search) {
     if (search == null || search.searchValues == null || _controller.text.length == 0) {
-      return ErrorView(
-        'Search for players',
-        color: Colors.grey,
+      return IdleView(
+        'Search for players'
       );
     } else if (search.searchValues.isEmpty) {
-      return ErrorView('No players found');
+      return IdleView('No players found');
     } else {
       List<PlayerSearch> players = search.getPlayersFiltered;
       return ListView.builder(

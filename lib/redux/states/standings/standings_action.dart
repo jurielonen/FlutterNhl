@@ -18,7 +18,7 @@ class StandingsDownloaded extends StandingsAction {
 }
 
 class StandingsError extends StandingsAction {
-  final String error;
+  final Exception error;
 
   StandingsError(this.error);
 }

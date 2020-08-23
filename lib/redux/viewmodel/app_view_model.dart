@@ -7,7 +7,7 @@ import 'package:redux/redux.dart';
 
 class AppViewModel {
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
   final DrawerPages currentPage;
   final Function(DrawerPages) pageChanged;
   final SnackBarNotification showSnackBar;
@@ -15,7 +15,7 @@ class AppViewModel {
 
   AppViewModel(
       {@required this.loadingStatus,
-      @required this.errorMsg,
+      @required this.error,
       @required this.currentPage,
       @required this.pageChanged,
       @required this.showSnackBar,
@@ -24,7 +24,7 @@ class AppViewModel {
   static AppViewModel fromStore(Store<AppState> store) {
     return AppViewModel(
       loadingStatus: store.state.loadingStatus,
-      errorMsg: store.state.errorMsg,
+      error: store.state.error,
       currentPage: store.state.currentPage,
       pageChanged: (DrawerPages page) =>
           store.dispatch(PageChangedAction(page)),
@@ -39,13 +39,13 @@ class AppViewModel {
       other is AppViewModel &&
           runtimeType == other.runtimeType &&
           loadingStatus == other.loadingStatus &&
-          errorMsg == other.errorMsg &&
+          error == other.error &&
           currentPage == other.currentPage;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
-      errorMsg.hashCode ^
+      error.hashCode ^
       currentPage.hashCode ^
       pageChanged.hashCode ^
       showSnackBar.hashCode ^

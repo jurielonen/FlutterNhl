@@ -6,32 +6,32 @@ class SearchState {
   final LoadingStatus loadingStatus;
   final Search searchResult;
   final String searchQuery;
-  final String errorMsg;
+  final Exception error;
 
   SearchState(
       {@required this.loadingStatus,
       @required this.searchResult,
       @required this.searchQuery,
-      @required this.errorMsg});
+      @required this.error});
 
   factory SearchState.initial() {
     return SearchState(
         loadingStatus: LoadingStatus.IDLE,
         searchResult: null,
         searchQuery: '',
-        errorMsg: '');
+        error: null);
   }
 
   SearchState copyWith(
       {LoadingStatus loadingStatus,
       Search searchResult,
       String searchQuery,
-      String errorMsg}) {
+      Exception error}) {
     return SearchState(
         loadingStatus: loadingStatus ?? this.loadingStatus,
         searchResult: searchResult ?? this.searchResult,
         searchQuery: searchQuery ?? this.searchQuery,
-        errorMsg: errorMsg ?? this.errorMsg);
+        error: error ?? this.error);
   }
 
   @override
@@ -42,12 +42,12 @@ class SearchState {
           loadingStatus == other.loadingStatus &&
           searchResult == other.searchResult &&
           searchQuery == other.searchQuery &&
-          errorMsg == other.errorMsg;
+          error == other.error;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       searchResult.hashCode ^
       searchQuery.hashCode ^
-      errorMsg.hashCode;
+      error.hashCode;
 }

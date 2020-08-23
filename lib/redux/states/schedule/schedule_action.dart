@@ -19,7 +19,7 @@ class ReceivedScheduleAction extends ScheduleAction {
 }
 
 class ErrorScheduleAction extends ScheduleAction {
-  final String error;
+  final Exception error;
   ErrorScheduleAction(this.error);
 }
 

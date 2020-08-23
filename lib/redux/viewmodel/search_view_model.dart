@@ -7,14 +7,14 @@ import 'package:redux/redux.dart';
 
 class SearchViewModel {
   final LoadingStatus loadingStatus;
-  final String errorMsg;
+  final Exception error;
   final String searchQuery;
   final Search search;
   final Function(String, bool) searchInitialized;
 
   SearchViewModel(
       {@required this.loadingStatus,
-      @required this.errorMsg,
+      @required this.error,
       @required this.searchQuery,
       @required this.search,
       @required this.searchInitialized});
@@ -22,11 +22,28 @@ class SearchViewModel {
   static SearchViewModel fromStore(Store<AppState> store) {
     return SearchViewModel(
       loadingStatus: store.state.searchState.loadingStatus,
-      errorMsg: store.state.searchState.errorMsg,
+      error: store.state.searchState.error,
       searchQuery: store.state.searchState.searchQuery,
       search: store.state.searchState.searchResult,
       searchInitialized: (String query, bool active) =>
           store.dispatch(SearchRequestingAction(query, active)),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is SearchViewModel &&
+              runtimeType == other.runtimeType &&
+              loadingStatus == other.loadingStatus &&
+              error == other.error &&
+              searchQuery == other.searchQuery &&
+              search == other.search;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      error.hashCode ^
+      searchQuery.hashCode ^
+      search.hashCode;
 }

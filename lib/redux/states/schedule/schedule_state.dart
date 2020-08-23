@@ -9,22 +9,22 @@ class ScheduleState {
       {@required this.loadingStatus,
       @required this.selectedDate,
       @required this.schedules,
-      @required this.errorMsg,
+      @required this.error,
       @required this.inSchedule});
 
   final LoadingStatus loadingStatus;
   final DateTime selectedDate;
   final KtMap<String, Schedule> schedules;
-  final String errorMsg;
+  final Exception error;
   final bool inSchedule;
 
   factory ScheduleState.initial() {
     return ScheduleState(
-        loadingStatus: LoadingStatus.IDLE,
-        selectedDate: DateTime.now(),
-        schedules: emptyMap(),
-        errorMsg: '',
-        inSchedule: false,
+      loadingStatus: LoadingStatus.IDLE,
+      selectedDate: DateTime.now(),
+      schedules: emptyMap(),
+      error: null,
+      inSchedule: false,
     );
   }
 
@@ -32,13 +32,14 @@ class ScheduleState {
       {LoadingStatus loadingStatus,
       DateTime selectedDate,
       KtMap<String, Schedule> schedules,
-      String errorMsg, bool inSchedule}) {
+      Exception error,
+      bool inSchedule}) {
     return ScheduleState(
-        loadingStatus: loadingStatus ?? this.loadingStatus,
-        selectedDate: selectedDate ?? this.selectedDate,
-        schedules: schedules ?? this.schedules,
-        errorMsg: errorMsg ?? this.errorMsg,
-        inSchedule: inSchedule ?? this.inSchedule,
+      loadingStatus: loadingStatus ?? this.loadingStatus,
+      selectedDate: selectedDate ?? this.selectedDate,
+      schedules: schedules ?? this.schedules,
+      error: error ?? this.error,
+      inSchedule: inSchedule ?? this.inSchedule,
     );
   }
 
@@ -50,7 +51,7 @@ class ScheduleState {
           loadingStatus == other.loadingStatus &&
           selectedDate == other.selectedDate &&
           schedules == other.schedules &&
-          errorMsg == other.errorMsg &&
+          error == other.error &&
           inSchedule == other.inSchedule;
 
   @override
@@ -58,6 +59,6 @@ class ScheduleState {
       loadingStatus.hashCode ^
       selectedDate.hashCode ^
       schedules.hashCode ^
-      errorMsg.hashCode ^
+      error.hashCode ^
       inSchedule.hashCode;
 }

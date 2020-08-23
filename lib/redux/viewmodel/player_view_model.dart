@@ -13,7 +13,7 @@ class PlayerViewModel {
   final String selectedStat;
   final GameLogParams selectedParams;
   final List<String> displayItems;
-  final String error;
+  final Exception error;
   final Function(String) getStats;
   final Function(GameLogParams) getGameLogs;
 
@@ -34,10 +34,31 @@ class PlayerViewModel {
         selectedStat: store.state.playerState.selectedStat,
         selectedParams: store.state.playerState.gameLogParams,
         displayItems: statTypes(store.state),
-        error: store.state.playerState.errorMsg,
+        error: store.state.playerState.error,
         getStats: (String stat) =>
             store.dispatch(PlayerStatsChangedAction(stat)),
         getGameLogs: (GameLogParams params) =>
             store.dispatch(PlayerGetGameLogsAction(params)));
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is PlayerViewModel &&
+              runtimeType == other.runtimeType &&
+              loadingStatus == other.loadingStatus &&
+              error == other.error &&
+              selectedParams == other.selectedParams &&
+              displayItems == other.displayItems &&
+              selectedStat == other.selectedStat &&
+              player == other.player;
+
+  @override
+  int get hashCode =>
+      loadingStatus.hashCode ^
+      error.hashCode ^
+      selectedParams.hashCode ^
+      selectedStat.hashCode ^
+      displayItems.hashCode ^
+      player.hashCode;
 }
