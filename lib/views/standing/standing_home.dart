@@ -13,6 +13,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 
 class StandingHome extends StatelessWidget {
   static const String routeName = '/standing';
+  static const int minSeason = 19781979;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class StandingHome extends StatelessWidget {
 
   Widget _getAppBar(int selectedYear, Function onChangeYear) {
     return SliverAppBar(
-      title: const Text('Draft'),
+      title: const Text('Standings'),
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(50.0),
         child: Container(
@@ -43,21 +44,23 @@ class StandingHome extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.navigate_before),
                   tooltip: 'Previous season',
-                  onPressed: () =>
-                      onChangeYear((selectedYear - 10001).toString()),
+                  onPressed: selectedYear > minSeason ?
+                      () =>
+                      onChangeYear((selectedYear - 10001).toString()) : null,
                 ),
                 CustomYearPicker(
                   selected: selectedYear,
                   onSelected: (int year) => onChangeYear(year.toString()),
                   maxValue: int.parse(Config.getCurrentSeason),
-                  minValue: 20102011,
+                  minValue: minSeason,
                   reducer: 10001,
                 ),
                 IconButton(
                   icon: Icon(Icons.navigate_next),
                   tooltip: 'Next season',
-                  onPressed: () =>
-                      onChangeYear((selectedYear + 10001).toString()),
+                  onPressed: selectedYear < int.parse(Config.getCurrentSeason) ?
+                      () =>
+                      onChangeYear((selectedYear + 10001).toString()) : null,
                 ),
               ],
             ),
@@ -100,7 +103,7 @@ class _StandingsTabViewState extends State<StandingsTabView>
     super.initState();
     print('INITSTATE: ${widget.source.tabs.length} ${widget.source.season}');
     _tabController = new TabController(
-        length: widget.source.tabs.length, vsync: this, initialIndex: 0);
+        length: widget.source.tabs.length, vsync: this, initialIndex: widget.source.selectedType.index);
     _pageController = new PageController(initialPage: _tabController.index);
   }
 
@@ -108,11 +111,16 @@ class _StandingsTabViewState extends State<StandingsTabView>
   void didUpdateWidget(StandingsTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
     print('didUpdateWidget');
-    if (oldWidget.source.tabs.length != widget.source.tabs.length) {
-      _tabController.dispose();
-      _tabController = new TabController(
-          length: widget.source.tabs.length, vsync: this, initialIndex: 0);
-    }
+    //if (oldWidget.source.tabs.length != widget.source.tabs.length) {
+      setState(() {
+        print(widget.source.selectedType);
+        print(widget.source.selectedType.index);
+        _tabController.index = widget.source.selectedType.index;
+        /*_tabController.dispose();
+        _tabController = new TabController(
+            length: widget.source.tabs.length, vsync: this, initialIndex: widget.source.selectedType.index);*/
+      });
+    //}
   }
 
   @override
@@ -150,7 +158,7 @@ class _StandingsTabViewState extends State<StandingsTabView>
                   physics: NeverScrollableScrollPhysics(),
                   controller: _pageController,
                   itemBuilder: (context, position) {
-                    print('StandingsTabView: $position');
+                    print('StandingsTabView: $type');
                     return SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: Column(
