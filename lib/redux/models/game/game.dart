@@ -3,7 +3,9 @@ import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/redux/models/game/game_enums.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
+import 'package:FlutterNhl/redux/models/game/play/play_enum.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
+import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -270,8 +272,9 @@ class GameFinal extends Game {
   List<Play> plays;
   final TeamFinal home;
   final TeamFinal away;
+  final Map<String, Player> decisions;
 
-  GameFinal({@required Game game, this.plays, this.home, this.away})
+  GameFinal({@required Game game, this.plays, this.home, this.away, this.decisions})
       : super.clone(game);
 
   factory GameFinal.fromJson(Game game, Map<String, dynamic> json) {
@@ -288,6 +291,9 @@ class GameFinal extends Game {
           getJsonObject(['liveData', 'boxscore', 'teams', 'home'], json)),
       away: TeamFinal.fromJson(
           getJsonObject(['liveData', 'boxscore', 'teams', 'away'], json)),
+      decisions: getJsonObject(['liveData', 'decisions'], json).map((key, value) {
+        return MapEntry(key, Player.fromJson(value));
+      }),
     );
   }
 
@@ -304,6 +310,13 @@ class GameFinal extends Game {
   @override
   String get getAppBarInfo =>
       '${lineScore.periodString} ${lineScore.timeRemaining}';
+
+  Iterable<Play> get scoringPlays sync* {
+    for(Play play in plays){
+      if(play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START)
+        yield play;
+    }
+  }
 }
 
 class LineScore {
@@ -386,17 +399,20 @@ class LineScoreStats {
 
 class Period {
   String periodType;
+  String ordinalNum;
   int num;
   Map<String, dynamic> home;
   Map<String, dynamic> away;
 
-  Period({this.periodType, this.num, this.home, this.away});
+  Period({this.periodType, this.num, this.home, this.away, this.ordinalNum});
 
   factory Period.fromJson(Map<String, dynamic> json) {
     return Period(
         periodType: getJsonString('periodType', json),
         num: getJsonInt('num', json),
         home: getJsonObject(['home'], json),
-        away: getJsonObject(['away'], json));
+        away: getJsonObject(['away'], json),
+        ordinalNum: getJsonString('ordinalNum', json),
+    );
   }
 }

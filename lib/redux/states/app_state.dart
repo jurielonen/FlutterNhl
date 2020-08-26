@@ -52,7 +52,7 @@ class AppState {
       showSnackBar: null,
       loadingStatus: LoadingStatus.IDLE,
       error: null,
-      currentPage: DrawerPages.STANDINGS,
+      currentPage: DrawerPages.SCHEDULE,
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),
       playerState: PlayerState.initial(),

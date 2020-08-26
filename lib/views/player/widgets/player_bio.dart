@@ -48,6 +48,7 @@ class PlayerBioTab extends StatelessWidget {
           child: Divider(
             thickness: 4,
             endIndent: 8,
+            color: Colors.white,
           ),
         ),
         title,
@@ -55,6 +56,7 @@ class PlayerBioTab extends StatelessWidget {
           child: Divider(
             thickness: 4,
             indent: 8,
+            color: Colors.white,
           ),
         ),
       ],
@@ -68,6 +70,7 @@ class PlayerBioTab extends StatelessWidget {
           child: Divider(
             thickness: 4,
             endIndent: 8,
+            color: Colors.white,
           ),
         ),
         Text(title.toUpperCase(), style: Styles.infoTableHeaderText),
@@ -75,6 +78,7 @@ class PlayerBioTab extends StatelessWidget {
           child: Divider(
             thickness: 4,
             indent: 8,
+            color: Colors.white,
           ),
         ),
       ],

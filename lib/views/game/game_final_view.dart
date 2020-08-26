@@ -5,6 +5,7 @@ import 'package:FlutterNhl/views/game/game_widgets/game_app_bar.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_play_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
+import 'package:FlutterNhl/views/game/game_widgets/game_summary.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/scaffold_template.dart';
@@ -26,7 +27,7 @@ class GameFinalView extends StatelessWidget {
       @required this.refreshCallBack})
       : super(key: key);
   static const List<String> _tabs = [
-    'Stats',
+    'Summary',
     'Plays',
     'Home',
     'Away',
@@ -86,17 +87,8 @@ class GameFinalView extends StatelessWidget {
 
   Widget _buildTabContent(String tab) {
     switch (tab) {
-      case 'Stats':
-        return CustomScrollView(
-          slivers: <Widget>[
-            GameStats(
-                homeStats: game.home.teamStats,
-                awayStats: game.away.teamStats,
-                homeColor: game.home.teamColor,
-                awayColor: game.away.teamColor,
-            ),
-          ],
-        );
+      case 'Summary':
+        return GameSummary(game: game,);
       case 'Plays':
         return GamePlayView(plays: game.plays, homeId: game.home.id);
       case 'Home':
