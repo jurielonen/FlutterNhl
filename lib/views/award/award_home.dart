@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/award_view_model.dart';
 import 'package:FlutterNhl/views/award/recipient/recipient_home.dart';
+import 'package:FlutterNhl/views/award/widgets/info_dialog.dart';
 import 'package:FlutterNhl/widgets/content_card.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/template_view.dart';
@@ -49,6 +50,7 @@ class AwardsHome extends StatelessWidget {
             imageUrl: award.second.award.imageUrl,
             title: award.second.award.name,
             description: award.second.award.briefDesc,
+            iconButton: InfoButton(award: award.second.award,)
           );
         },
         childCount: awards.size,

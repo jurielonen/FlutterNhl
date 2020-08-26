@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,20 +9,53 @@ class ImageCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String description;
+  final Widget iconButton;
 
-  const ImageCard({Key key, @required this.onPressed, @required this.imageUrl, @required this.title, @required this.description}) : super(key: key);
+  const ImageCard({Key key, @required this.onPressed, @required this.imageUrl, @required this.title, @required this.description, this.iconButton}) : super(key: key);
 
   Widget _buildDetails() {
-    return FrostyBackground(
-      color: Color(0x9049473d),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListTile(
-          title: Text(title),
-          subtitle: Text(description),
+    if(iconButton == null) {
+      return FrostyBackground(
+        color: Color(0x9049473d),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Styles.imageCardTitle, overflow: TextOverflow.ellipsis),
+              Text(description, style: Styles.imageCardSubtitle, overflow: TextOverflow.ellipsis, maxLines: 3,),
+            ],
+          ),
+          /*ListTile(
+          title: Text(title, style: Styles.imageCardTitle,),
+          subtitle: Text(description, style: Styles.imageCardSubtitle),
+        ),*/
         ),
-      ),
-    );
+      );
+    } else {
+      return FrostyBackground(
+        color: Color(0x9049473d),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: Styles.imageCardTitle, overflow: TextOverflow.ellipsis),
+                    Text(description, style: Styles.imageCardSubtitle, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              iconButton,
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -46,6 +80,7 @@ class ImageCard extends StatelessWidget {
               ),
             ),
             Positioned(
+              height: 80,
               bottom: 0,
               left: 0,
               right: 0,

@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/models/award/award.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/award/award_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/recipient_view_model.dart';
+import 'package:FlutterNhl/views/award/widgets/info_dialog.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/template_view.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +101,7 @@ class _RecipientHomeState extends State<RecipientHome> {
           Expanded(child: Text(award.name, overflow: TextOverflow.ellipsis))
         ],),
         actions: [
-          IconButton(icon: Icon(Icons.info_outline), onPressed: () => _showInfoDialog(award))
+          InfoButton(award: award,)
         ],
       );
     }
@@ -108,28 +109,5 @@ class _RecipientHomeState extends State<RecipientHome> {
       title: const Text('Award'),
     );
   }
-
-  Future<void> _showInfoDialog(Award award) async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(award.name),
-        content: SingleChildScrollView(
-          child: Html(data: award.description, style: {"p": Style.fromTextStyle(Styles.infoTableValueText),},)
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Okay!'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
 
 }

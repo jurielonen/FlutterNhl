@@ -20,6 +20,22 @@ abstract class Styles {
   static DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
   static DateFormat videoFormat = DateFormat('mm:ss');
 
+  static const imageCardTitle = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 20,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const imageCardSubtitle = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 10,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
   static const gameCardPlayoffs = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',

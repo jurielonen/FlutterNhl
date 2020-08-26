@@ -40,6 +40,6 @@ class VideoCard extends StatelessWidget {
     return ImageCard(onPressed: () => Navigator.pushNamed(context, Routes.video, arguments: VideoArguments(video.videoUrl)),
         imageUrl: video.videoPic.src,
         title: video.title,
-        description: video.blurb);
+        description: video.description);
   }
 }

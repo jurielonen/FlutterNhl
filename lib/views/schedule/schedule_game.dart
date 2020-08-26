@@ -59,41 +59,49 @@ class ScheduleGameCard extends StatelessWidget {
 
   Table _buildGameTable() {
     List<TableRow> rows = [];
-    if(_isPlayoffs && _game.seriesSummary != null){
-      rows.add(TableRow(children: [
-        TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 15.0, top: 1.0),
-              child: Align(alignment: Alignment.center, child: Text('GM ${_game.seriesSummary.gameNumber}', style: Styles.gameCardPlayoffs,)),
-            )),
-        TableCell(
-          child: Text(''),
-        ),
-        TableCell(
-          verticalAlignment: TableCellVerticalAlignment.top,
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Text(_game.seriesSummary.seriesStatus.toUpperCase(), style: Styles.gameCardPlayoffs),
+    if (_isPlayoffs && _game.seriesSummary != null) {
+      rows.add(
+        TableRow(children: [
+          TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 15.0, top: 1.0),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'GM ${_game.seriesSummary.gameNumber}',
+                      style: Styles.gameCardPlayoffs,
+                    )),
+              )),
+          TableCell(
+            child: Text(''),
           ),
-        )
-      ]),);
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.top,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Text(_game.seriesSummary.seriesStatus.toUpperCase(),
+                  style: Styles.gameCardPlayoffs),
+            ),
+          )
+        ]),
+      );
     }
     rows.addAll([
       _buildTeamTableRow(
           _game.homeTeam, _game.homeScheduleInfo, _game.homeOpacity),
       _buildTeamTableRow(
-          _game.awayTeam, _game.awayScheduleInfo, _game.awayOpacity),]);
+          _game.awayTeam, _game.awayScheduleInfo, _game.awayOpacity),
+    ]);
     return Table(
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      columnWidths: {
-        0: FixedColumnWidth(25),
-        1: FractionColumnWidth(0.30),
-        2: FractionColumnWidth(0.40),
-      },
-      //border: TableBorder.all(color: Colors.white),
-      children: rows
-    );
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        columnWidths: {
+          0: FixedColumnWidth(25),
+          1: FractionColumnWidth(0.30),
+          2: FractionColumnWidth(0.40),
+        },
+        //border: TableBorder.all(color: Colors.white),
+        children: rows);
   }
 
   TableRow _buildTeamTableRow(TeamSchedule team, Widget info, double opacity) {
@@ -148,20 +156,20 @@ class ScheduleGameCard extends StatelessWidget {
       );
     } else if (_game.isLive) {
       widgets.add(
-          Text(
-            _game.getLiveScheduleInfo,
-            style: Styles.gameStateText,
-          ),
+        Text(
+          _game.getLiveScheduleInfo,
+          style: Styles.gameStateText,
+        ),
       );
     } else if (_game.isFinal) {
       widgets.add(
-          IconButton(
-            icon: Icon(Icons.videocam),
-            onPressed: () {
-              _showDialog(context);
-            },
-            tooltip: 'Game recaps',
-          ),
+        IconButton(
+          icon: Icon(Icons.videocam),
+          onPressed: () {
+            _showDialog(context);
+          },
+          tooltip: 'Game recaps',
+        ),
       );
     }
 
@@ -177,6 +185,24 @@ class ScheduleGameCard extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            content: Builder(
+              builder: (context) {
+                // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                var height = MediaQuery.of(context).size.height;
+                var width = MediaQuery.of(context).size.width;
+
+                return Container(
+                  height: height - 400,
+                  width: width - 1,
+                  decoration: BoxDecoration(color: Colors.grey),
+                  child: SingleChildScrollView(
+                    child: ListBody(children: videoTiles.toList()),
+                  ),
+                );
+              },
+            ),
             titleTextStyle: Styles.cardTeamWinnerText,
             title: Text(
               '${_game.toString()}\nRECAPS',
@@ -185,12 +211,12 @@ class ScheduleGameCard extends StatelessWidget {
             contentPadding: const EdgeInsets.only(),
             titlePadding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
             actionsPadding: const EdgeInsets.only(),
-            content: Container(
+            /*content: Container(
               decoration: BoxDecoration(color: Colors.grey),
               child: SingleChildScrollView(
                 child: ListBody(children: videoTiles.toList()),
               ),
-            ),
+            ),*/
             actions: <Widget>[
               FlatButton(
                 child: Text('Close'),
