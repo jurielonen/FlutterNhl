@@ -138,37 +138,23 @@ class ScheduleGameCard extends StatelessWidget {
 
   Widget _getStateRow(BuildContext context) {
     List<Widget> widgets = [];
+    widgets.add(_game.gameStateText);
     if (_game.isPreview) {
-      widgets.addAll([
-        Text(
-          gameStateToString(_game.state).toUpperCase(),
-          style: Styles.gameStateText,
-        ),
+      widgets.add(
         Text(
           _game.getScheduleTime,
           style: Styles.gameStateText,
         ),
-      ]);
+      );
     } else if (_game.isLive) {
-      widgets.addAll(
-        [
-          Text(
-            gameStateToString(_game.state).toUpperCase(),
-            style: Styles.gameStateText.copyWith(color: Colors.green),
-          ),
+      widgets.add(
           Text(
             _game.getLiveScheduleInfo,
             style: Styles.gameStateText,
           ),
-        ],
       );
     } else if (_game.isFinal) {
-      widgets.addAll(
-        [
-          Text(
-            gameStateToString(_game.state).toUpperCase(),
-            style: Styles.gameStateText,
-          ),
+      widgets.add(
           IconButton(
             icon: Icon(Icons.videocam),
             onPressed: () {
@@ -176,16 +162,6 @@ class ScheduleGameCard extends StatelessWidget {
             },
             tooltip: 'Game recaps',
           ),
-        ],
-      );
-    } else {
-      widgets.addAll(
-        [
-          Text(
-            gameStateToString(_game.state).toUpperCase(),
-            style: Styles.gameStateText,
-          ),
-        ],
       );
     }
 

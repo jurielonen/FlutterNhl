@@ -199,6 +199,31 @@ class Game {
     else
       return Text(awayTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
   }
+
+  Text get gameStateText {
+    if(isPreview){
+      return Text(
+        gameStateToString(state).toUpperCase(),
+        style: Styles.gameStateText,
+      );
+    } else if(isLive){
+      return Text(
+        gameStateToString(state).toUpperCase(),
+        style: Styles.gameStateText.copyWith(color: Colors.green),
+      );
+    } else if(isFinal){
+      if(lineScore.period > 3){
+        return Text(
+          '${gameStateToString(state).toUpperCase()} ${lineScore.periodString}',
+          style: Styles.gameStateText,
+        );
+      }
+      return Text(
+        gameStateToString(state).toUpperCase(),
+        style: Styles.gameStateText,
+      );
+    }
+  }
 }
 
 class PlayoffSeriesSummary {
