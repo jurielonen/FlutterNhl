@@ -9,7 +9,7 @@ Future<Map<String, dynamic>> fetch(Uri url, Client client) async {
     throw NetworkTimeoutException('Network call took too much time');
   });
   if(response.statusCode == 200 && response.body != null)
-    return json.decode(response.body);
+    return json.decode(utf8.decode(response.bodyBytes));
   else
     throw NetworkException('[statuscode:${response.statusCode}, error:${response.reasonPhrase}]');
 }

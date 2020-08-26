@@ -8,8 +8,6 @@ import 'package:FlutterNhl/views/award/widgets/info_dialog.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/template_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 
