@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'colors.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-
 final Widget leagueSvg = SvgPicture.asset('assets/133.svg');
 
 abstract class Styles {
@@ -52,7 +51,6 @@ abstract class Styles {
     fontWeight: FontWeight.bold,
   );
 
-
   static const playDescText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
@@ -77,6 +75,30 @@ abstract class Styles {
     fontWeight: FontWeight.bold,
   );
 
+  static const infoTableSecondaryHeaderText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 11,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const decisionStatAbbText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 10,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const decisionStatText = TextStyle(
+    color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 10,
+    fontStyle: FontStyle.italic,
+    fontWeight: FontWeight.normal,
+  );
+
   static const infoTableValueText = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
@@ -96,7 +118,7 @@ abstract class Styles {
   static const statTileNumber = TextStyle(
     color: kPrimaryTextColor,
     fontFamily: 'NotoSans',
-    fontSize: 16,
+    fontSize: 10,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.normal,
   );
@@ -245,13 +267,23 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
-  static Widget buildPlayerCircleIcon(Player player, {double size=25.0}) {
+  static Widget buildPlayerCircleIcon(Player player, {double size = 25.0}) {
     if (player != null && player.id != -1) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(size/2),
-        child: FadeInImage.memoryNetwork(width: size, height: size, placeholder: kTransparentImage, image: player.headShotUrl, imageErrorBuilder: (context, obj, stackTrace){
-          return Image.asset('assets/skater.jpg', width: size, height: size,);
-        },),
+        borderRadius: BorderRadius.circular(size / 2),
+        child: FadeInImage.memoryNetwork(
+          width: size,
+          height: size,
+          placeholder: kTransparentImage,
+          image: player.headShotUrl,
+          imageErrorBuilder: (context, obj, stackTrace) {
+            return Image.asset(
+              'assets/skater.jpg',
+              width: size,
+              height: size,
+            );
+          },
+        ),
       );
     } else {
       return CircleAvatar(
@@ -289,13 +321,26 @@ abstract class Styles {
     }
   }
 
-  static Widget buildNetworkCircleIcon(String url, {double size=25.0}) {
+  static Widget buildNetworkCircleIcon(String url, {double size = 25.0}) {
     if (url != null && url.length > 0) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(size/2),
-        child: Container( decoration: BoxDecoration(color: Colors.black), child: FadeInImage.memoryNetwork(width: size, height: size, placeholder: kTransparentImage, image: url, imageErrorBuilder: (context, obj, stackTrace){
-          return Image.asset('assets/skater.jpg', width: size, height: size,);
-        },),),
+        borderRadius: BorderRadius.circular(size / 2),
+        child: Container(
+          decoration: BoxDecoration(color: Colors.black),
+          child: FadeInImage.memoryNetwork(
+            width: size,
+            height: size,
+            placeholder: kTransparentImage,
+            image: url,
+            imageErrorBuilder: (context, obj, stackTrace) {
+              return Image.asset(
+                'assets/skater.jpg',
+                width: size,
+                height: size,
+              );
+            },
+          ),
+        ),
       );
     } else {
       return CircleAvatar(
@@ -310,7 +355,7 @@ abstract class Styles {
       return Image.network(
         url,
         fit: BoxFit.cover,
-        errorBuilder: (ctx, obj, sct){
+        errorBuilder: (ctx, obj, sct) {
           return Image.asset('assets/noimage.png');
         },
       );

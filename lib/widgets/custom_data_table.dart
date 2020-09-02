@@ -43,8 +43,7 @@ abstract class CustomDataTableSource {
     );
   }
 
-  static DataColumn createTableColumn(String title, String tooltip,
-      {DataColumnSortCallback onSortCallBack}) {
+  static DataColumn createTableColumnBasic(String title) {
     return DataColumn(
       label: Container(
         decoration: BoxDecoration(
@@ -52,9 +51,23 @@ abstract class CustomDataTableSource {
         child: Padding(
           padding: const EdgeInsets.all(3.0),
           child: Text(
-            title,
+            '  $title  ',
             style: CustomDataTableSource.headerRowStyle,
           ),
+        ),
+      ),
+    );
+  }
+
+  static DataColumn createTableColumn(String title, String tooltip,
+      {DataColumnSortCallback onSortCallBack}) {
+    return DataColumn(
+      label: Container(
+        decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey, width: 3))),
+        child: Text(
+          '  $title  ',
+          style: CustomDataTableSource.headerRowStyle,
         ),
       ),
       tooltip: tooltip,
@@ -62,15 +75,29 @@ abstract class CustomDataTableSource {
     );
   }
 
-  static Widget createTableFirstColumn(Widget title) {
-    return SizedBox(
-      width: CustomDataTableSource.firstColumnWidth,
-      height: CustomDataTableSource.dataRowHeight,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: Align(alignment: Alignment.centerLeft, child: title),
-      ),
-    );
+  static Widget createTableFirstColumn(Widget title, {VoidCallback callBack}) {
+    if (callBack == null) {
+      return SizedBox(
+        width: CustomDataTableSource.firstColumnWidth,
+        height: CustomDataTableSource.dataRowHeight,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Align(alignment: Alignment.centerLeft, child: title),
+        ),
+      );
+    } else {
+      return GestureDetector(
+        onTap: () => callBack(),
+        child: SizedBox(
+          width: CustomDataTableSource.firstColumnWidth,
+          height: CustomDataTableSource.dataRowHeight,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Align(alignment: Alignment.centerLeft, child: title),
+          ),
+        ),
+      );
+    }
   }
 
   static DataCell createTableCell(String value) {
@@ -83,9 +110,7 @@ abstract class CustomDataTableSource {
   }
 
   static DataCell createTableCellWidget(Widget value) {
-    return DataCell(
-      value
-    );
+    return DataCell(value);
   }
 }
 
@@ -102,7 +127,6 @@ class CustomDataTable extends StatefulWidget {
 class _CustomDataTableState extends State<CustomDataTable> {
   int _sortColumn = 0;
   bool _ascending = true;
-
 
   @override
   void initState() {

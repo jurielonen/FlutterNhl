@@ -12,9 +12,13 @@ class AppStateMiddleware extends MiddlewareClass<AppState> {
   Future<Null> call(Store<AppState> store, action, next) async {
     next(action);
     if (action is InitAction) {
-      await api.fetchSeason();
-      await api.fetchTeams();
-      next(SeasonConfigReceived());
+      try {
+        await api.fetchSeason();
+        await api.fetchTeams();
+        next(SeasonConfigReceived());
+      } catch (error) {
+        next(ErrorAction(error));
+      }
     }
   }
 }

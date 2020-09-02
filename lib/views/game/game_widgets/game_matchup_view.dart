@@ -26,8 +26,7 @@ class GameMatchUpView extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-            child: PlayerBioTab.createHeaderDivider('Players to watch')
-          ),
+              child: PlayerBioTab.createHeaderDivider('Players to watch')),
         ),
         SliverFixedExtentList(
           itemExtent: 100,
@@ -36,16 +35,19 @@ class GameMatchUpView extends StatelessWidget {
             if (lastFivePlayersWidgets.length > index)
               return lastFivePlayersWidgets.elementAt(index);
             else
-              return ErrorView(UIUnknownStateException('game_matchup_view build 1'));
+              return ErrorView(
+                  UIUnknownStateException('game_matchup_view build 1'));
           }, childCount: lastFivePlayersWidgets.length),
         ),
         SliverToBoxAdapter(
-          child: PlayerBioTab.createHeaderDividerWidget(Column(
-            children: <Widget>[
-              Styles.buildTeamSvgImage(home),
-              Text('Last 5 record', style: Styles.infoTableHeaderText),
-            ],
-          ),),
+          child: PlayerBioTab.createHeaderDividerWidget(
+            Column(
+              children: <Widget>[
+                Styles.buildTeamSvgImage(home),
+                Text('Last 5 record', style: Styles.infoTableHeaderText),
+              ],
+            ),
+          ),
         ),
         SliverFixedExtentList(
           itemExtent: 50,
@@ -54,26 +56,29 @@ class GameMatchUpView extends StatelessWidget {
             if (lastFiveGamesHomeWidgets.length > index)
               return lastFiveGamesHomeWidgets.elementAt(index);
             else
-              return ErrorView(UIUnknownStateException('game_matchup_view build 2'));
+              return ErrorView(
+                  UIUnknownStateException('game_matchup_view build 2'));
           }, childCount: lastFiveGamesHomeWidgets.length),
         ),
         SliverToBoxAdapter(
-          child: PlayerBioTab.createHeaderDividerWidget(Column(
-            children: <Widget>[
-              Styles.buildTeamSvgImage(away),
-              Text('Last 5 record', style: Styles.infoTableHeaderText),
-            ],
-          ),),
-
+          child: PlayerBioTab.createHeaderDividerWidget(
+            Column(
+              children: <Widget>[
+                Styles.buildTeamSvgImage(away),
+                Text('Last 5 record', style: Styles.infoTableHeaderText),
+              ],
+            ),
+          ),
         ),
         SliverFixedExtentList(
           itemExtent: 50,
           delegate:
-          SliverChildBuilderDelegate((BuildContext context, int index) {
+              SliverChildBuilderDelegate((BuildContext context, int index) {
             if (lastFiveGamesAwayWidgets.length > index)
               return lastFiveGamesAwayWidgets.elementAt(index);
             else
-              return ErrorView(UIUnknownStateException('game_matchup_view build 3'));
+              return ErrorView(
+                  UIUnknownStateException('game_matchup_view build 3'));
           }, childCount: lastFiveGamesAwayWidgets.length),
         ),
       ],
@@ -94,75 +99,94 @@ class GameMatchUpView extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-            child: Styles.buildPlayerCircleIcon(home),
-          ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.only(left: 8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(home.shortName),
-                Text('#${home.number} - ${home.position.positionString}')
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
+                  child: Styles.buildPlayerCircleIcon(home, size: 50),
+                ),
+                Text(home.shortName, style: Styles.infoTableHeaderText),
+                Text(
+                  '#${home.number} - ${home.position.positionString}',
+                  style: Styles.infoTableValueText,
+                )
               ],
             ),
           ),
         ),
         Expanded(
-          child: Center(
-            child: RichText(
-              text: TextSpan(
-                style: Styles.scaffoldGameLoserText,
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '${home.value}',
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(getColumnTooltip(stat),
+                  style:
+                      Styles.scaffoldGameVsText.copyWith(color: Colors.white)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(home.value.toString(),
                       style: Styles.scaffoldGameWinnerText),
-                  TextSpan(text: ' ${getColumnAbb(stat)} ', style: Styles.scaffoldGameVsText),
-                  TextSpan(
-                      text: '${away.value}',
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: 2,
+                      height: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(away.value.toString(),
                       style: Styles.scaffoldGameWinnerText),
                 ],
               ),
-            ),
+            ],
           ),
         ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.only(right: 8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(away.shortName),
-                Text('#${away.number} - ${away.position.positionString}')
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
+                  child: Styles.buildPlayerCircleIcon(away, size: 50),
+                ),
+                Text(away.shortName, style: Styles.infoTableHeaderText),
+                Text(
+                  '#${away.number} - ${away.position.positionString}',
+                  style: Styles.infoTableValueText,
+                ),
               ],
             ),
           ),
         ),
-    Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 8.0, 0),
-            child: Styles.buildPlayerCircleIcon(away),
-          ),
       ],
     );
   }
 
-  Iterable<Widget> get lastFiveGamesHomeWidgets sync*{
-    for(Game game in home.previousGames){
+  Iterable<Widget> get lastFiveGamesHomeWidgets sync* {
+    for (Game game in home.previousGames) {
       yield lastFiveGame(game, home);
     }
   }
 
-  Iterable<Widget> get lastFiveGamesAwayWidgets sync*{
-    for(Game game in away.previousGames){
+  Iterable<Widget> get lastFiveGamesAwayWidgets sync* {
+    for (Game game in away.previousGames) {
       yield lastFiveGame(game, away);
     }
   }
 
-  static Widget lastFiveGame(Game teamGame, Team team){
-    return GameLogRow(date: teamGame.dateTime, opponent: teamGame.getOpponent(team), result: teamGame.getResult(team));
+  static Widget lastFiveGame(Game teamGame, Team team) {
+    return GameLogRow(
+        date: teamGame.dateTime,
+        opponent: teamGame.getOpponent(team),
+        result: teamGame.getResult(team));
   }
 }

@@ -40,14 +40,13 @@ class AppViewModel {
           runtimeType == other.runtimeType &&
           loadingStatus == other.loadingStatus &&
           error == other.error &&
-          currentPage == other.currentPage;
+          currentPage == other.currentPage &&
+          showSnackBar == other.showSnackBar;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       error.hashCode ^
       currentPage.hashCode ^
-      pageChanged.hashCode ^
-      showSnackBar.hashCode ^
-      onSnackBarShowed.hashCode;
+      showSnackBar.hashCode;
 }

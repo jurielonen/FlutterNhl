@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
@@ -138,6 +139,8 @@ class PlayerGame extends Player {
       statsTemp = getJsonObject(['stats', 'goalieStats'], json);
     } else if (posTemp.isPlayer()) {
       statsTemp = getJsonObject(['stats', 'skaterStats'], json);
+      statsTemp['points'] =
+          getJsonInt('goals', statsTemp) + getJsonInt('assists', statsTemp);
     }
 
     return PlayerGame(
@@ -156,6 +159,44 @@ class PlayerGame extends Player {
       stats: getJsonObject(['person', 'stats', 0, 'splits', 0, 'stat'], json),
     );
   }
+
+  RichText get statText {
+    List<TextSpan> temp = [];
+    if (position.isPlayer()) {
+      skaterStats.forEach((stat) {
+        temp.add(TextSpan(
+            text: '${getColumnTooltip(stat)}: ',
+            style: Styles.decisionStatAbbText));
+        temp.add(TextSpan(
+            text: '${getStatFromMap(stat, stats)} ',
+            style: Styles.decisionStatText));
+      });
+    }
+    else if (position.isGoalie()) {
+      goalieStats.forEach((stat) {
+        temp.add(TextSpan(
+            text: '${getColumnTooltip(stat)}: ',
+            style: Styles.decisionStatAbbText));
+        temp.add(TextSpan(
+            text: '${getStatFromMap(stat, stats)} ',
+            style: Styles.decisionStatText));
+      });
+    }
+    return RichText(text: TextSpan(children: temp));
+  }
+
+  static const List<String> skaterStats = [
+    'goals',
+    'assists',
+    'shots',
+    'hits',
+  ];
+
+  static const List<String> goalieStats = [
+    'shots',
+    'saves',
+    'savePercentage',
+  ];
 }
 
 class PersonPosition {
@@ -436,10 +477,18 @@ class GoaliePageAllTimeStats implements PlayerAllTimeStats {
             child: Text(regular.gamesPlayed.toString(),
                 style: Styles.infoTableValueText),
           ),
-          Center(child: Text(regular.wins.toString(), style: Styles.infoTableValueText)),
-          Center(child: Text(regular.losses.toString(), style: Styles.infoTableValueText)),
-          Center(child: Text(regular.otLosses.toString(), style: Styles.infoTableValueText)),
-          Center(child: Text(regular.shutouts.toString(), style: Styles.infoTableValueText))
+          Center(
+              child: Text(regular.wins.toString(),
+                  style: Styles.infoTableValueText)),
+          Center(
+              child: Text(regular.losses.toString(),
+                  style: Styles.infoTableValueText)),
+          Center(
+              child: Text(regular.otLosses.toString(),
+                  style: Styles.infoTableValueText)),
+          Center(
+              child: Text(regular.shutouts.toString(),
+                  style: Styles.infoTableValueText))
         ]),
       ],
     );
@@ -471,7 +520,7 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
 
   @override
   Iterable<Widget> get getStatsWidget sync* {
-    if(regular.gamesPlayed > 0) {
+    if (regular.gamesPlayed > 0) {
       yield Table(
         children: [
           TableRow(children: [
@@ -485,23 +534,30 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
               child: Text(regular.gamesPlayed.toString(),
                   style: Styles.infoTableValueText),
             ),
-            Center(child: Text(
-                regular.goals.toString(), style: Styles.infoTableValueText)),
-            Center(child: Text(
-                regular.assists.toString(), style: Styles.infoTableValueText)),
-            Center(child: Text(
-                regular.points.toString(), style: Styles.infoTableValueText))
+            Center(
+                child: Text(regular.goals.toString(),
+                    style: Styles.infoTableValueText)),
+            Center(
+                child: Text(regular.assists.toString(),
+                    style: Styles.infoTableValueText)),
+            Center(
+                child: Text(regular.points.toString(),
+                    style: Styles.infoTableValueText))
           ]),
         ],
       );
     } else {
       yield Table(
         children: [
-          TableRow(children: [Center(child: Text('Player hasnt played regular season games'),)])
+          TableRow(children: [
+            Center(
+              child: Text('Player hasnt played regular season games'),
+            )
+          ])
         ],
       );
     }
-    if(playoff.gamesPlayed > 0) {
+    if (playoff.gamesPlayed > 0) {
       yield Table(
         children: [
           TableRow(children: [
@@ -515,19 +571,26 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
               child: Text(playoff.gamesPlayed.toString(),
                   style: Styles.infoTableValueText),
             ),
-            Center(child: Text(
-                playoff.goals.toString(), style: Styles.infoTableValueText)),
-            Center(child: Text(
-                playoff.assists.toString(), style: Styles.infoTableValueText)),
-            Center(child: Text(
-                playoff.points.toString(), style: Styles.infoTableValueText))
+            Center(
+                child: Text(playoff.goals.toString(),
+                    style: Styles.infoTableValueText)),
+            Center(
+                child: Text(playoff.assists.toString(),
+                    style: Styles.infoTableValueText)),
+            Center(
+                child: Text(playoff.points.toString(),
+                    style: Styles.infoTableValueText))
           ]),
         ],
       );
-    } else{
+    } else {
       yield Table(
         children: [
-          TableRow(children: [Center(child: Text('Player hasnt played playoff games'),)])
+          TableRow(children: [
+            Center(
+              child: Text('Player hasnt played playoff games'),
+            )
+          ])
         ],
       );
     }

@@ -48,18 +48,23 @@ AppState appReducer(AppState state, dynamic action) {
     return state.copyWith(draftState: draftReducer(state.draftState, action));
   } else if (action is AwardAction) {
     return state.copyWith(awardState: awardReducer(state.awardState, action));
-  } else if(action is GameAction){
+  } else if (action is GameAction) {
     return state.copyWith(gameState: gameReducer(state.gameState, action));
-  } else if(action is ShowSnackBar){
+  } else if (action is ShowSnackBar) {
     return state.copyWith(showSnackBar: action.snackBarNotification);
-  } else if(action is CloseSnackBar){
+  } else if (action is CloseSnackBar) {
     SnackBarNotification s = state.showSnackBar;
     s.show = false;
     return state.copyWith(showSnackBar: s);
-  } else if(action is StandingsAction){
-    return state.copyWith(standingsState: standingsReducer(state.standingsState, action));
-  } else if(action is SearchAction){
-    return state.copyWith(searchState: searchReducer(state.searchState, action));
+  } else if (action is StandingsAction) {
+    return state.copyWith(
+        standingsState: standingsReducer(state.standingsState, action));
+  } else if (action is SearchAction) {
+    return state.copyWith(
+        searchState: searchReducer(state.searchState, action));
+  } else if (action is ErrorAction) {
+    return state.copyWith(
+        loadingStatus: LoadingStatus.ERROR, error: action.error);
   }
   return state;
 }

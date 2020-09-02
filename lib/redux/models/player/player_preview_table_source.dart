@@ -8,9 +8,10 @@ import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class PlayerPreviewTableSource extends CustomDataTableSource {
+class PlayerGameTableSource extends CustomDataTableSource {
   List<PlayerGame> players;
   final StatType type;
+  final bool preview;
   DataColumnSortCallback _dataColumnSortCallback =
       (int columnIndex, bool ascending) =>
           print('Pressed $columnIndex $ascending');
@@ -22,7 +23,8 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   List<DataRow> _rows = [];
   List<Widget> _firstColumn = [];
 
-  PlayerPreviewTableSource({@required this.type, @required this.players}) {
+  PlayerGameTableSource(
+      {@required this.type, @required this.players, this.preview = true}) {
     _setRows();
     _setColumns();
   }
@@ -40,21 +42,8 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
     _column = [];
     _column.addAll(_keys
         .map(
-          (key) => DataColumn(
-            label: Container(
-              decoration: BoxDecoration(
-                  border:
-                      Border(bottom: BorderSide(color: Colors.grey, width: 3))),
-              child: Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: Text(
-                  getColumnAbb(key),
-                  style: CustomDataTableSource.headerRowStyle,
-                ),
-              ),
-            ),
-            onSort: (c, a) => _dataColumnSortCallback(c, a),
-          ),
+          (key) => CustomDataTableSource.createTableColumn(
+              getColumnAbb(key), getColumnTooltip(key)),
         )
         .toList());
   }
@@ -85,29 +74,18 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
 
   DataRow _getRow(PlayerGame player) {
     _firstColumn.add(
-      GestureDetector(
-        onTap: () =>
-            _dataRowTapCallBack(PlayerArguments(player, type), Routes.player),
-        child: SizedBox(
-          width: CustomDataTableSource.firstColumnWidth,
-          height: CustomDataTableSource.dataRowHeight,
-          child: Center(
-            child: Text(
-              Player.tableName(player.fullname),
-              style: CustomDataTableSource.firstColumnStyle,
-            ),
+      CustomDataTableSource.createTableFirstColumn(
+          Text(
+            Player.tableName(player.fullname),
+            style: CustomDataTableSource.firstColumnStyle,
           ),
-        ),
-      ),
+          callBack: () => _dataRowTapCallBack(
+              PlayerArguments(player, type), Routes.player)),
     );
     List<DataCell> cells = _keys
         .map(
-          (key) => DataCell(
-            Text(
-              getStatFromMap(key, player.stats),
-              style: CustomDataTableSource.cellRowStyle,
-            ),
-          ),
+          (key) => CustomDataTableSource.createTableCell(
+              getStatFromMap(key, player.stats)),
         )
         .toList();
     return DataRow(
@@ -123,27 +101,16 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
 
   @override
   Widget get tableCorner {
-    return SizedBox(
-      width: CustomDataTableSource.firstColumnWidth,
-      height: CustomDataTableSource.headerRowHeight,
-      child: Center(
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey, width: 3))),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 3.0, 8.0, 3.0),
-            child: Text(type == StatType.PLAYER ? 'Player' : 'Goalie',
-                style: CustomDataTableSource.firstColumnStyle),
-          ),
-        ),
-      ),
-    );
+    return CustomDataTableSource.createTableCorner(
+        type == StatType.PLAYER ? 'Player' : 'Goalie');
   }
 
   @override
   void callback(int columnIndex, bool ascending) {}
 
-  List<String> get _keys => type == StatType.PLAYER ? playerKeys : goalieKeys;
+  List<String> get _keys => preview
+      ? (type == StatType.PLAYER ? playerKeysPreview : goalieKeysPreview)
+      : (type == StatType.PLAYER ? playerKeysFinal : goalieKeysFinal);
 
   @override
   set setColumnSortCallBack(dataColumnSortCallback) {
@@ -156,10 +123,42 @@ class PlayerPreviewTableSource extends CustomDataTableSource {
   }
 }
 
-const List<String> playerKeys = [
+const List<String> playerKeysPreview = [
   'timeOnIce',
-  'assists',
   'goals',
+  'assists',
+  'points',
+  'pim',
+  'shots',
+  'games',
+  'hits',
+  'powerPlayGoals',
+  'powerPlayPoints',
+  'powerPlayTimeOnIce',
+  'evenTimeOnIce',
+  'penaltyMinutes',
+  'faceOffPct',
+  'shotPct',
+  'gameWinningGoals',
+  'overTimeGoals',
+  'shortHandedGoals',
+  'shortHandedPoints',
+  'shortHandedTimeOnIce',
+  'blocked',
+  'plusMinus',
+  'points',
+  'shifts',
+  'timeOnIcePerGame',
+  'evenTimeOnIcePerGame',
+  'shortHandedTimeOnIcePerGame',
+  'powerPlayTimeOnIcePerGame'
+];
+
+const List<String> playerKeysFinal = [
+  'timeOnIce',
+  'goals',
+  'assists',
+  'points',
   'shots',
   'hits',
   'powerPlayGoals',
@@ -176,21 +175,45 @@ const List<String> playerKeys = [
   'plusMinus',
   'evenTimeOnIce',
   'powerPlayTimeOnIce',
-  'shortHandedTimeOnIce',
+  'shortHandedTimeOnIce'
 ];
 
-const List<String> goalieKeys = [
-  'timeOnIce',
+const List<String> goalieKeysFinal = [
+  'timeOnIce'
+      'pim',
   'shots',
   'saves',
   'savePercentage',
-  'shortHandedSaves',
   'shortHandedShotsAgainst',
-  'powerPlaySaves',
+  'shortHandedSaves',
   'powerPlayShotsAgainst',
+  'powerPlaySaves',
   'powerPlaySavePercentage',
   'evenSaves',
   'evenShotsAgainst',
   'evenStrengthSavePercentage',
-  'decision',
+];
+
+const List<String> goalieKeysPreview = [
+  'games',
+  'gamesStarted',
+  'wins',
+  'losses',
+  'ot',
+  'shutouts',
+  'shotsAgainst',
+  'saves',
+  'savePercentage',
+  'goalsAgainst',
+  'goalAgainstAverage',
+  'powerPlaySaves',
+  'powerPlayShots',
+  'powerPlaySavePercentage',
+  'shortHandedSaves',
+  'shortHandedShots',
+  'shortHandedSavePercentage',
+  'evenSaves',
+  'evenShots',
+  'evenStrengthSavePercentage',
+  'timeOnIcePerGame',
 ];

@@ -6,8 +6,8 @@ import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 
 class GamePlayerView extends StatelessWidget {
-  final PlayerPreviewTableSource players;
-  final PlayerPreviewTableSource goalies;
+  final PlayerGameTableSource players;
+  final PlayerGameTableSource goalies;
 
   const GamePlayerView(
       {Key key, @required this.players, @required this.goalies})
@@ -43,7 +43,8 @@ class GamePlayerView extends StatelessWidget {
         dataTableSource: players,
       );
     } else {
-      return ErrorView(UINoDataDownloadedException('game_player_view getPlayerTable'));
+      return ErrorView(
+          UINoDataDownloadedException('game_player_view getPlayerTable'));
     }
   }
 
@@ -53,7 +54,8 @@ class GamePlayerView extends StatelessWidget {
         dataTableSource: goalies,
       );
     } else {
-      return ErrorView(UINoDataDownloadedException('game_player_view getGoalieTable'));
+      return ErrorView(
+          UINoDataDownloadedException('game_player_view getGoalieTable'));
     }
   }
 }

@@ -25,7 +25,7 @@ class PlayerBioTab extends StatelessWidget {
     );
     yield createTextCard('Draft', playerDraftTable);
     int index = 0;
-    for (Widget table in player.allTimeStats.getStatsWidget){
+    for (Widget table in player.allTimeStats.getStatsWidget) {
       String header = index == 0 ? 'Regular season stats' : 'Playoffs stats';
       yield createTextCard(header, table);
       index++;
@@ -34,14 +34,11 @@ class PlayerBioTab extends StatelessWidget {
 
   static Widget createTextCard(String title, Widget value) {
     return Column(
-      children: <Widget>[
-        createHeaderDivider(title),
-        value
-      ],
+      children: <Widget>[createHeaderDivider(title), value],
     );
   }
 
-  static createHeaderDividerWidget(Widget title){
+  static createHeaderDividerWidget(Widget title) {
     return Row(
       children: <Widget>[
         Expanded(
@@ -63,7 +60,31 @@ class PlayerBioTab extends StatelessWidget {
     );
   }
 
-  static createHeaderDivider(String title){
+  static createSecondaryHeaderDivider(String title) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Divider(
+            thickness: 1,
+            endIndent: 8,
+            indent: 8,
+            color: Colors.grey,
+          ),
+        ),
+        Text(title.toUpperCase(), style: Styles.infoTableSecondaryHeaderText),
+        Expanded(
+          child: Divider(
+            thickness: 1,
+            indent: 8,
+            endIndent: 8,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    );
+  }
+
+  static createHeaderDivider(String title) {
     return Row(
       children: <Widget>[
         Expanded(

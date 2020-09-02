@@ -26,7 +26,6 @@ class Game {
   GameStateEnum state;
   Content content;
   LineScore lineScore;
-  
 
   Game({
     @required this.id,
@@ -55,8 +54,10 @@ class Game {
   factory Game.fromJson(Map<String, dynamic> json) {
     PlayoffSeriesSummary seriesSummary;
     final dateTime = getJsonDateTime('gameDate', json);
-    if(Config().selectedSeason != null && Config().selectedSeason.isPlayoffs(dateTime)){
-      seriesSummary = PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
+    if (Config().selectedSeason != null &&
+        Config().selectedSeason.isPlayoffs(dateTime)) {
+      seriesSummary =
+          PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
     }
     return Game(
       id: getJsonInt('gamePk', json),
@@ -203,18 +204,18 @@ class Game {
   }
 
   Text get gameStateText {
-    if(isPreview){
+    if (isPreview) {
       return Text(
         gameStateToString(state).toUpperCase(),
         style: Styles.gameStateText,
       );
-    } else if(isLive){
+    } else if (isLive) {
       return Text(
         gameStateToString(state).toUpperCase(),
         style: Styles.gameStateText.copyWith(color: Colors.green),
       );
-    } else if(isFinal){
-      if(lineScore.period > 3){
+    } else if (isFinal) {
+      if (lineScore.period > 3) {
         return Text(
           '${gameStateToString(state).toUpperCase()} ${lineScore.periodString}',
           style: Styles.gameStateText,
@@ -232,13 +233,18 @@ class PlayoffSeriesSummary {
   final int gameNumber;
   final String gameLabel;
   final String seriesStatus;
-  
-  PlayoffSeriesSummary({@required this.gameNumber, @required this.gameLabel, @required this.seriesStatus});
-  
-  factory PlayoffSeriesSummary.fromJson(Map<String, dynamic> json){
-    if(json == null || json.isEmpty)
-      return null;
-    return PlayoffSeriesSummary(gameNumber: getJsonInt('gameNumber', json), gameLabel: getJsonString('gameLabel', json), seriesStatus: getJsonString('seriesStatusShort', json));
+
+  PlayoffSeriesSummary(
+      {@required this.gameNumber,
+      @required this.gameLabel,
+      @required this.seriesStatus});
+
+  factory PlayoffSeriesSummary.fromJson(Map<String, dynamic> json) {
+    if (json == null || json.isEmpty) return null;
+    return PlayoffSeriesSummary(
+        gameNumber: getJsonInt('gameNumber', json),
+        gameLabel: getJsonString('gameLabel', json),
+        seriesStatus: getJsonString('seriesStatusShort', json));
   }
 }
 
@@ -273,8 +279,10 @@ class GameFinal extends Game {
   final TeamFinal home;
   final TeamFinal away;
   final Map<String, Player> decisions;
+  Map<String, PlayerGame> _decisions = {};
 
-  GameFinal({@required Game game, this.plays, this.home, this.away, this.decisions})
+  GameFinal(
+      {@required Game game, this.plays, this.home, this.away, this.decisions})
       : super.clone(game);
 
   factory GameFinal.fromJson(Game game, Map<String, dynamic> json) {
@@ -291,10 +299,25 @@ class GameFinal extends Game {
           getJsonObject(['liveData', 'boxscore', 'teams', 'home'], json)),
       away: TeamFinal.fromJson(
           getJsonObject(['liveData', 'boxscore', 'teams', 'away'], json)),
-      decisions: getJsonObject(['liveData', 'decisions'], json).map((key, value) {
+      decisions:
+          getJsonObject(['liveData', 'decisions'], json).map((key, value) {
         return MapEntry(key, Player.fromJson(value));
       }),
     );
+  }
+
+  Map<String, PlayerGame> get decisionPlayers {
+    if (_decisions != null && _decisions.isNotEmpty) return _decisions;
+
+    decisions.forEach((key, value) {
+      PlayerGame tempPlayer = home.getPlayer(value);
+      if (tempPlayer == null) tempPlayer = away.getPlayer(value);
+      if (tempPlayer != null) {
+        _decisions[key] = tempPlayer;
+      }
+    });
+
+    return _decisions;
   }
 
   @override
@@ -312,8 +335,8 @@ class GameFinal extends Game {
       '${lineScore.periodString} ${lineScore.timeRemaining}';
 
   Iterable<Play> get scoringPlays sync* {
-    for(Play play in plays){
-      if(play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START)
+    for (Play play in plays) {
+      if (play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START)
         yield play;
     }
   }
@@ -393,7 +416,10 @@ class LineScoreStats {
             children: texts),
       );
     }
-    return Text('$shots SOG', style: Styles.cardTeamWinnerMinorText,);
+    return Text(
+      '$shots SOG',
+      style: Styles.cardTeamWinnerMinorText,
+    );
   }
 }
 
@@ -408,11 +434,11 @@ class Period {
 
   factory Period.fromJson(Map<String, dynamic> json) {
     return Period(
-        periodType: getJsonString('periodType', json),
-        num: getJsonInt('num', json),
-        home: getJsonObject(['home'], json),
-        away: getJsonObject(['away'], json),
-        ordinalNum: getJsonString('ordinalNum', json),
+      periodType: getJsonString('periodType', json),
+      num: getJsonInt('num', json),
+      home: getJsonObject(['home'], json),
+      away: getJsonObject(['away'], json),
+      ordinalNum: getJsonString('ordinalNum', json),
     );
   }
 }

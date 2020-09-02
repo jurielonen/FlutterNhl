@@ -73,7 +73,7 @@ class Team {
     }
   }
 
-  static getTeamLogoUrl(String abb){
+  static getTeamLogoUrl(String abb) {
     return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
   }
 
@@ -93,7 +93,10 @@ class Team {
 
   String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
   String get logoSvg => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
-  static String logoSvgUrl(String abb) { return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';}
+  static String logoSvgUrl(String abb) {
+    return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
+  }
+
   Color get teamColor => getTeamColor(name);
 
   static parsePlayerStats(List<PlayerGame> players, List<PlayerGame> skaters,
@@ -157,8 +160,8 @@ class TeamSchedule extends Team {
 class TeamPreview extends Team {
   final List<Game> previousGames;
   final Map<String, dynamic> teamStats;
-  final PlayerPreviewTableSource playerTableSource;
-  final PlayerPreviewTableSource goalieTableSource;
+  final PlayerGameTableSource playerTableSource;
+  final PlayerGameTableSource goalieTableSource;
   final Map<String, PlayerLastFive> leadersLastFive;
 
   static final Map<int, TeamPreview> _cache = <int, TeamPreview>{};
@@ -203,10 +206,10 @@ class TeamPreview extends Team {
       List<PlayerGame> skaters = [], goalies = [];
       Team.parsePlayerStats(players, skaters, goalies);
 
-      List<Game> games = List<Game>.from(getJsonList(
-          ['previousSchedule', 'dates'], json)
-          .map((date) => Game.fromJson(getJsonObject(['games', 0], date))));
-      games.sort((a,b) {
+      List<Game> games = List<Game>.from(
+          getJsonList(['previousSchedule', 'dates'], json)
+              .map((date) => Game.fromJson(getJsonObject(['games', 0], date))));
+      games.sort((a, b) {
         return -a.dateTime.compareTo(b.dateTime);
       });
 
@@ -214,9 +217,9 @@ class TeamPreview extends Team {
         team: Team.fromJson(json),
         teamStats: getJsonObject(['teamStats', 0, 'splits', 0, 'stat'], json),
         playerTableSource:
-            PlayerPreviewTableSource(type: StatType.PLAYER, players: skaters),
+            PlayerGameTableSource(type: StatType.PLAYER, players: skaters),
         goalieTableSource:
-            PlayerPreviewTableSource(type: StatType.GOALIE, players: goalies),
+            PlayerGameTableSource(type: StatType.GOALIE, players: goalies),
         leadersLastFive: leadersLastFive,
         previousGames: games,
       );
@@ -226,8 +229,8 @@ class TeamPreview extends Team {
 
 class TeamFinal extends Team {
   Map<String, dynamic> teamStats;
-  PlayerPreviewTableSource playerTableSource;
-  PlayerPreviewTableSource goalieTableSource;
+  PlayerGameTableSource playerTableSource;
+  PlayerGameTableSource goalieTableSource;
 
   TeamFinal(
       {Team team,
@@ -247,11 +250,22 @@ class TeamFinal extends Team {
     return TeamFinal(
       team: Team.fromJson(getJsonObject(['team'], json)),
       teamStats: getJsonObject(['teamStats', 'teamSkaterStats'], json),
-      playerTableSource:
-          PlayerPreviewTableSource(type: StatType.PLAYER, players: skaters),
-      goalieTableSource:
-          PlayerPreviewTableSource(type: StatType.GOALIE, players: goalies),
+      playerTableSource: PlayerGameTableSource(
+          type: StatType.PLAYER, players: skaters, preview: false),
+      goalieTableSource: PlayerGameTableSource(
+          type: StatType.GOALIE, players: goalies, preview: false),
     );
+  }
+
+  PlayerGame getPlayer(Player player) {
+    PlayerGame temp = playerTableSource.players.firstWhere(
+        (playerGame) => playerGame.id == player.id,
+        orElse: () => null);
+    if (temp == null)
+      temp = goalieTableSource.players.firstWhere(
+          (playerGame) => playerGame.id == player.id,
+          orElse: () => null);
+    return temp;
   }
 }
 
@@ -264,8 +278,8 @@ class TeamPage extends Team {
   final List<Game> nextGame;
   final Map<String, dynamic> currentStats;
 
-  PlayerPreviewTableSource playerTableSource;
-  PlayerPreviewTableSource goalieTableSource;
+  PlayerGameTableSource playerTableSource;
+  PlayerGameTableSource goalieTableSource;
   Map<GameLogParams, List<Game>> gameLog = {};
   Map<String, PlayerSeasonTableSource> stats = {};
 
@@ -320,9 +334,9 @@ class TeamPage extends Team {
     List<PlayerGame> goalie = [];
     Team.parsePlayerStats(skaters, player, goalie);
     playerTableSource =
-        PlayerPreviewTableSource(type: StatType.PLAYER, players: player);
+        PlayerGameTableSource(type: StatType.PLAYER, players: player);
     goalieTableSource =
-        PlayerPreviewTableSource(type: StatType.GOALIE, players: goalie);
+        PlayerGameTableSource(type: StatType.GOALIE, players: goalie);
   }
 
   bool containsRosterStats() {
