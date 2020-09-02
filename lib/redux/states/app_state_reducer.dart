@@ -6,6 +6,7 @@ import 'package:FlutterNhl/redux/states/award/award_reducer.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_reducer.dart';
 import 'package:FlutterNhl/redux/states/game/game_reducer.dart';
 import 'package:FlutterNhl/redux/states/player/player_reducer.dart';
+import 'package:FlutterNhl/redux/states/playoffs/playoffs_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
 import 'package:FlutterNhl/redux/states/search/search_reducer.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_reducer.dart';
@@ -27,6 +28,7 @@ AppState appReducer(AppState state, dynamic action) {
         scheduleState: scheduleReducer(state.scheduleState, action),
         //TODO: add statsState to handle getting current season
         draftState: draftReducer(state.draftState, action),
+        playoffsState: playoffsReducer(state.playoffsState, action),
         config: Config());
   } else if (action is PageChangedAction) {
     return state.copyWith(currentPage: action.page);
@@ -65,6 +67,8 @@ AppState appReducer(AppState state, dynamic action) {
   } else if (action is ErrorAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.ERROR, error: action.error);
+  } else if(action is PlayoffsAction){
+    return state.copyWith(playoffsState: playoffsReducer(state.playoffsState, action));
   }
   return state;
 }

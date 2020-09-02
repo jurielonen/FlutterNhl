@@ -8,6 +8,7 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
+import 'package:FlutterNhl/redux/models/playoffs/playoffs.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/models/standings/standings.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
@@ -260,6 +261,22 @@ class StatsApi {
       } catch (error) {
         throw NetworkParseException(
             'Failed to parse data.\nCall: fetchStandings.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+      }
+    });
+  }
+
+  Future<Playoff> fetchPlayoff(String season) async {
+    final searchUri = Uri.https(baseUrl, 'api/v1/tournaments/playoffs', {
+      'expand': 'round.series,schedule.game.seriesSummary',
+      'season': season
+    });
+    print('$printMsg fetchPlayoff: $searchUri');
+    return await fetch(searchUri, client).then((value) {
+      try {
+        return Playoff.fromJson(value);
+      } catch (error) {
+        throw NetworkParseException(
+            'Failed to parse data.\nCall: fetchPlayoff.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
       }
     });
   }

@@ -26,4 +26,5 @@ enum DrawerPages {
   AWARDS,
   DRAFT,
   STATS,
+  PLAYOFFS,
 }

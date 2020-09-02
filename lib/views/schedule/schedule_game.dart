@@ -3,7 +3,6 @@ import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
-import 'package:FlutterNhl/redux/models/game/game_enums.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
@@ -24,7 +23,6 @@ class ScheduleGameCard extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: PressableCard(
         onPressed: () {
-          print('Pressed');
           Navigator.pushNamed(context, Routes.game,
               arguments: GameArgument(_game));
         },

@@ -54,6 +54,8 @@ abstract class StandingsAction {}
 
 abstract class SearchAction {}
 
+abstract class PlayoffsAction {}
+
 class ScheduleEntered extends ScheduleAction {}
 
 class StatsEntered extends StatsAction {}
@@ -77,3 +79,5 @@ class GameEntered extends GameAction {
   final Game game;
   GameEntered(this.game);
 }
+
+class PlayoffsEntered extends PlayoffsAction {}

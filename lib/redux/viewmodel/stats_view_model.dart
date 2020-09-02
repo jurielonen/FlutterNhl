@@ -28,7 +28,9 @@ class StatsAppBarViewModel {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is StatsAppBarViewModel && runtimeType == other.runtimeType && type == other.type;
+      other is StatsAppBarViewModel &&
+          runtimeType == other.runtimeType &&
+          type == other.type;
 }
 
 class StatFilterBarViewModel {
@@ -67,7 +69,7 @@ class StatFilterBarViewModel {
   @override
   bool operator ==(Object other) {
     print('this $selectedParams');
-    if(other is StatFilterBarViewModel)
+    if (other is StatFilterBarViewModel)
       print('other: ${other.selectedParams}');
     return identical(this, other) ||
         other is StatFilterBarViewModel &&
@@ -75,7 +77,6 @@ class StatFilterBarViewModel {
             selectedParams == other.selectedParams &&
             statTypes == other.statTypes;
   }
-
 }
 
 class StatsBodyViewModel {

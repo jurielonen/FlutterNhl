@@ -37,6 +37,22 @@ bool getJsonBoolean(String key, Map<String, dynamic> json) {
   return null;
 }
 
+bool getJsonBoolean2(List<dynamic> keys, dynamic json) {
+  if (keys.length < 1 || json == null) return null;
+
+  dynamic lastKey = keys.removeLast();
+  dynamic obj = _getJsonItem(keys, json);
+
+  if (obj is Map<String, dynamic>) {
+    if (obj.containsKey(lastKey)) {
+      obj = obj[lastKey];
+      if (obj is bool) return obj;
+    }
+  }
+
+  return null;
+}
+
 int getJsonInt(String key, Map<String, dynamic> json) {
   if (json != null) {
     if (json.containsKey(key)) {

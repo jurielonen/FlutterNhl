@@ -28,20 +28,24 @@ class GameSummary extends StatelessWidget {
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          padding: const EdgeInsets.all(8.0),
           sliver: SliverToBoxAdapter(
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 20.0),
               height: CustomDataTableSource.headerRowHeight +
                   CustomDataTableSource.dataRowHeight * 2 +
-                  10,
+                  5,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   firstColumn,
                   Expanded(
-                    child: ListView(
+                    child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      children: scoringRows.toList(),
+                      itemCount: scoringRows.length,
+                      itemBuilder: (_, row){
+                        return scoringRows.elementAt(row);
+                      },
                     ),
                   ),
                 ],
@@ -56,20 +60,22 @@ class GameSummary extends StatelessWidget {
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          padding: const EdgeInsets.all(8.0),
           sliver: SliverToBoxAdapter(
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 20.0),
               height: CustomDataTableSource.headerRowHeight +
                   CustomDataTableSource.dataRowHeight * 2 +
-                  10,
+                  5,
               child: Row(
                 children: [
                   firstColumn,
                   Expanded(
-                    child: ListView(
+                    child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      children: shotsRows.toList(),
+                      itemCount: shotsRows.length,
+                      itemBuilder: (_, row){
+                        return shotsRows.elementAt(row);
+                      },
                     ),
                   ),
                 ],

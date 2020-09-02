@@ -33,6 +33,10 @@ class AppDrawer extends StatelessWidget {
               icon: Icons.account_balance_wallet,
               text: 'Awards',
               onTap: () => _tilePressed(context, DrawerPages.AWARDS)),
+          _createDrawerItem(
+              icon: Icons.timer,
+              text: 'Playoffs',
+              onTap: () => _tilePressed(context, DrawerPages.PLAYOFFS)),
           Divider(),
         ],
       ),
