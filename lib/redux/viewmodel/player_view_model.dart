@@ -48,17 +48,11 @@ class PlayerViewModel {
               runtimeType == other.runtimeType &&
               loadingStatus == other.loadingStatus &&
               error == other.error &&
-              selectedParams == other.selectedParams &&
-              displayItems == other.displayItems &&
-              selectedStat == other.selectedStat &&
-              player == other.player;
+              player.id == other.player.id;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       error.hashCode ^
-      selectedParams.hashCode ^
-      selectedStat.hashCode ^
-      displayItems.hashCode ^
-      player.hashCode;
+      player.id.hashCode;
 }

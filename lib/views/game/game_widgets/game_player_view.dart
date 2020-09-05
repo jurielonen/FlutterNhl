@@ -1,4 +1,3 @@
-import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/player/player_preview_table_source.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';

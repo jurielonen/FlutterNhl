@@ -1,11 +1,8 @@
-import 'package:FlutterNhl/constants/colors.dart';
 import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
-import 'package:FlutterNhl/widgets/content_card.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
-import 'package:FlutterNhl/widgets/game_log_item.dart';
 import 'package:flutter/material.dart';
 
 class PlayerGameLogView extends StatelessWidget {

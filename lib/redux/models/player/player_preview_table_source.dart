@@ -96,9 +96,6 @@ class PlayerGameTableSource extends CustomDataTableSource {
   @override
   bool get sortAscending => _sortAscending;
 
-  //@override
-  //int get sortColumn => _sortColumn;
-
   @override
   Widget get tableCorner {
     return CustomDataTableSource.createTableCorner(
@@ -179,8 +176,7 @@ const List<String> playerKeysFinal = [
 ];
 
 const List<String> goalieKeysFinal = [
-  'timeOnIce'
-      'pim',
+  'timeOnIce',
   'shots',
   'saves',
   'savePercentage',

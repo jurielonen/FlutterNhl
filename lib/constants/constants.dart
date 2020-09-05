@@ -1,19 +1,31 @@
 import 'dart:ui';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 String getColumnAbb(String value) {
   if (constantColumns.containsKey(value)) {
     return constantColumns[value];
   }
+  _sendEvent('abb_not_found', {
+    'abb': value
+  });
   print('abb $value');
-  return 'EMPTY';
+  return 'UNK';
 }
 
 String getColumnTooltip(String value) {
   if (constantTooltips.containsKey(value)) {
     return constantTooltips[value];
   }
+  _sendEvent('tooltip_not_found', {
+    'tooltip': value
+  });
   print('tooltip: $value');
-  return 'EMPTY';
+  return 'UNK';
+}
+
+Future<Null> _sendEvent(String name, Map<String, String> params) async {
+  await FirebaseAnalytics().logEvent(name: name, parameters: params);
 }
 
 const Map<String, String> constantColumns = {
