@@ -9,8 +9,11 @@ class InfoButton extends StatelessWidget {
   const InfoButton({Key key, @required this.award}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return IconButton(icon: Icon(Icons.info_outline), onPressed: () => _showInfoDialog(award, context));
+    return IconButton(
+        icon: Icon(Icons.info_outline),
+        onPressed: () => _showInfoDialog(award, context));
   }
+
   Future<void> _showInfoDialog(Award award, BuildContext context) async {
     return showDialog<void>(
       context: context,
@@ -21,14 +24,23 @@ class InfoButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-            Padding(padding: EdgeInsets.all(8.0), child: Styles.buildNetworkCircleIcon(award.imageUrl, size: 40.0)),
-            Expanded(child: Text(award.name, overflow: TextOverflow.ellipsis))
-          ],),
+              Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Styles.buildNetworkCircleIcon(award.imageUrl,
+                      size: 40.0)),
+              Expanded(child: Text(award.name, overflow: TextOverflow.ellipsis))
+            ],
+          ),
           content: Container(
             decoration: BoxDecoration(color: Colors.grey),
             child: SingleChildScrollView(
-                child: Html(data: award.description, style: {"p": Style.fromTextStyle(Styles.infoTableValueText.copyWith(color: Colors.black)),},)
-            ),
+                child: Html(
+              data: award.description,
+              style: {
+                "p": Style.fromTextStyle(
+                    Styles.infoTableValueText.copyWith(color: Colors.black)),
+              },
+            )),
           ),
           contentPadding: const EdgeInsets.only(),
           titlePadding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
@@ -46,4 +58,3 @@ class InfoButton extends StatelessWidget {
     );
   }
 }
-

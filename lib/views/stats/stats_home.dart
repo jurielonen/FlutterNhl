@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/stats_view_model.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
+import 'package:FlutterNhl/views/search/search_home.dart';
 import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
@@ -13,9 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
-
 class StatsHome extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, StatsAppBarViewModel>(
@@ -34,6 +33,16 @@ class StatsHome extends StatelessWidget {
                   title: const Text('Stats'),
                   pinned: true,
                   forceElevated: innerBoxIsScrolled,
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      tooltip: 'Search for a player',
+                      onPressed: () {
+                        Navigator.pushNamed(context, SearchHome.routeName,
+                            arguments: SearchArguments(true));
+                      },
+                    ),
+                  ],
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(50.0),
                     child: Container(
@@ -45,7 +54,7 @@ class StatsHome extends StatelessWidget {
                                 child: GestureDetector(
                                   onTap: () {
                                     if (appBarVM.type != type) {
-                                        appBarVM.typeChanged(type);
+                                      appBarVM.typeChanged(type);
                                     }
                                   },
                                   child: Container(
@@ -146,46 +155,47 @@ class StatsHome extends StatelessWidget {
 
   Widget _buildFilterBar() {
     return StoreConnector<AppState, StatFilterBarViewModel>(
-        distinct: true,
-        converter: (store) => StatFilterBarViewModel.fromStore(store),
-        builder: (ctx, filterVM) {
-          print('BUILDINGFILTER');
-          return SliverToBoxAdapter(
-            child: Container(
-              decoration: BoxDecoration(color: Colors.black),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.navigate_before),
-                    tooltip: 'Previous page',
-                    onPressed: filterVM.selectedParams.isThereLastPage
-                        ? () => filterVM.previousPage()
-                        : null,
-                  ),
-                  CustomDropdownButton(
-                    selectedValue: filterVM.selectedParams.paramType.stat,
-                    values: filterVM.statTypes,
-                    onValueChanged: filterVM.statChanged,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.navigate_next),
-                    tooltip: 'Next page',
-                    onPressed: filterVM.selectedParams.isThereNextPage
-                        ? () => filterVM.nextPage()
-                        : null,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.sort),
-                    tooltip: 'Set filters',
-                    onPressed: () => setFilters(ctx,
-                        filterVM.selectedParams, filterVM.paramsChanged),
-                  ),
-                ],
-              ),
+      distinct: true,
+      converter: (store) => StatFilterBarViewModel.fromStore(store),
+      builder: (ctx, filterVM) {
+        print('BUILDINGFILTER');
+        return SliverToBoxAdapter(
+          child: Container(
+            decoration: BoxDecoration(color: Colors.black),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.navigate_before),
+                  tooltip: 'Previous page',
+                  onPressed: filterVM.selectedParams.isThereLastPage
+                      ? () => filterVM.previousPage()
+                      : null,
+                ),
+                CustomDropdownButton(
+                  selectedValue: filterVM.selectedParams.paramType.stat,
+                  values: filterVM.statTypes,
+                  onValueChanged: filterVM.statChanged,
+                ),
+                IconButton(
+                  icon: Icon(Icons.navigate_next),
+                  tooltip: 'Next page',
+                  onPressed: filterVM.selectedParams.isThereNextPage
+                      ? () => filterVM.nextPage()
+                      : null,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.sort),
+                  tooltip: 'Set filters',
+                  onPressed: () => setFilters(
+                      ctx, filterVM.selectedParams, filterVM.paramsChanged),
+                ),
+              ],
             ),
-          );
-        },);
+          ),
+        );
+      },
+    );
   }
 }

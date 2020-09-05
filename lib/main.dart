@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/store.dart';
+import 'package:FlutterNhl/views/auth_page.dart';
 import 'package:FlutterNhl/views/award/recipient/recipient_home.dart';
 import 'package:FlutterNhl/views/game/game_home.dart';
 import 'package:FlutterNhl/views/home_page.dart';
@@ -16,7 +17,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:http/http.dart';
 import 'package:redux/redux.dart';
 
-void main() {
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final Store store = createStore(Client());
   runApp(NHLApp(store));
 }
@@ -33,7 +35,7 @@ class _NHLAppState extends State<NHLApp> {
   @override
   void initState() {
     super.initState();
-    widget.store.dispatch(InitAction());
+    //widget.store.dispatch(InitAction());
   }
 
   @override
@@ -72,7 +74,7 @@ class _NHLAppState extends State<NHLApp> {
                 arguments: ModalRoute.of(context).settings.arguments,
               ),
         },
-        home: HomePage(),
+        home: AuthPage(),
         debugShowCheckedModeBanner: false,
       ),
     );

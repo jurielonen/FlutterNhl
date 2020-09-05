@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/award/award_reducer.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_reducer.dart';
+import 'package:FlutterNhl/redux/states/firebase/firebase_reducer.dart';
 import 'package:FlutterNhl/redux/states/game/game_reducer.dart';
 import 'package:FlutterNhl/redux/states/player/player_reducer.dart';
 import 'package:FlutterNhl/redux/states/playoffs/playoffs_reducer.dart';
@@ -67,8 +68,12 @@ AppState appReducer(AppState state, dynamic action) {
   } else if (action is ErrorAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.ERROR, error: action.error);
-  } else if(action is PlayoffsAction){
-    return state.copyWith(playoffsState: playoffsReducer(state.playoffsState, action));
+  } else if (action is PlayoffsAction) {
+    return state.copyWith(
+        playoffsState: playoffsReducer(state.playoffsState, action));
+  } else if (action is FirebaseAction) {
+    return state.copyWith(
+        firebaseState: firebaseReducer(state.firebaseState, action));
   }
   return state;
 }

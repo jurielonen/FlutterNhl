@@ -47,8 +47,6 @@ class _SearchHomeState extends State<SearchHome> {
         print('store text ${store.state.searchState.searchQuery}');
         if (store.state.searchState.searchQuery != null &&
             store.state.searchState.searchQuery.isNotEmpty) {
-          print('store text ${store.state.searchState.searchQuery}');
-          //_text = store.state.searchState.searchQuery;
           _controller.text = store.state.searchState.searchQuery;
         }
       },
@@ -57,7 +55,6 @@ class _SearchHomeState extends State<SearchHome> {
         store.dispatch(SearchFilterAction(_controller.text));
       },
       builder: (context, viewModel) {
-        print('search rebuild');
         return Scaffold(
           appBar: AppBar(
             title: TextField(

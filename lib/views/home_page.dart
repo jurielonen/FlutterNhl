@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
+import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/app_view_model.dart';
 import 'package:FlutterNhl/views/award/award_home.dart';
 import 'package:FlutterNhl/views/draft/draft_home.dart';
@@ -14,7 +15,6 @@ import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
-
 class HomePage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   static const String routeName = '/homepage';
@@ -22,10 +22,14 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, AppViewModel>(
       distinct: true,
+      onInit: (store) => store.dispatch(InitAction()),
       converter: (store) => AppViewModel.fromStore(store),
-      onDidChange: (viewModel){
-        if(viewModel.showSnackBar != null && viewModel.showSnackBar.show){
-          _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(viewModel.showSnackBar.msg), duration: viewModel.showSnackBar.duration,));
+      onDidChange: (viewModel) {
+        if (viewModel.showSnackBar != null && viewModel.showSnackBar.show) {
+          _scaffoldKey.currentState.showSnackBar(SnackBar(
+            content: Text(viewModel.showSnackBar.msg),
+            duration: viewModel.showSnackBar.duration,
+          ));
           viewModel.onSnackBarShowed();
         }
       },
@@ -34,12 +38,14 @@ class HomePage extends StatelessWidget {
         drawer: AppDrawer(
           onTilePressed: (DrawerPages page) => viewModel.pageChanged(page),
         ),
-        body: _getBody(viewModel.loadingStatus, viewModel.currentPage, viewModel.error),
+        body: _getBody(
+            viewModel.loadingStatus, viewModel.currentPage, viewModel.error),
       ),
     );
   }
 
-  Widget _getBody(LoadingStatus loadingStatus, DrawerPages page, Exception error){
+  Widget _getBody(
+      LoadingStatus loadingStatus, DrawerPages page, Exception error) {
     switch (loadingStatus) {
       case LoadingStatus.IDLE:
       case LoadingStatus.LOADING:
@@ -51,7 +57,7 @@ class HomePage extends StatelessWidget {
       case LoadingStatus.SUCCESS:
         return _getPage(page);
       default:
-        return  ErrorView(UIUnknownStateException('Unknown state'));
+        return ErrorView(UIUnknownStateException('Unknown state'));
     }
   }
 

@@ -25,7 +25,7 @@ class PlayoffsHome extends StatelessWidget {
         return NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             int selectedYear;
-            if(seasonVM.selectedSeason == null)
+            if (seasonVM.selectedSeason == null)
               selectedYear = int.parse(Config.getCurrentSeason);
             else
               selectedYear = int.parse(seasonVM.selectedSeason);
@@ -117,7 +117,9 @@ class PlayoffsHome extends StatelessWidget {
                 return SliverFillRemaining(
                   hasScrollBody: true,
                   fillOverscroll: true,
-                  child: PlayoffsTabView(playoff: playoffVM.playoff,),
+                  child: PlayoffsTabView(
+                    playoff: playoffVM.playoff,
+                  ),
                 );
               }
               break;
@@ -147,7 +149,7 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
     _tabController = new TabController(
         length: widget.playoff.tabs.length,
         vsync: this,
-        initialIndex: 0);//widget.playoff.defaultRound);
+        initialIndex: 0); //widget.playoff.defaultRound);
     _pageController = new PageController(initialPage: _tabController.index);
   }
 
@@ -155,7 +157,7 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
   void didUpdateWidget(PlayoffsTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
     setState(() {
-      _tabController.index = 0;//widget.playoff.defaultRound;
+      _tabController.index = 0; //widget.playoff.defaultRound;
     });
   }
 
@@ -198,9 +200,10 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
                     return ListView.builder(
                       itemBuilder: (BuildContext ctx, int index) {
                         Series series = round.series[index];
-                        if(series.teams == null || series.teams.isEmpty)
+                        if (series.teams == null || series.teams.isEmpty)
                           return Text('Team not decided yet');
-                        return PressableCard(child: Column(
+                        return PressableCard(
+                            child: Column(
                           children: [
                             buildTeamRow(series.teams.first),
                             buildTeamRow(series.teams.last),
@@ -219,10 +222,9 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
     );
   }
 
-  Widget buildTeamRow(SeriesTeam team){
-    return Row(children: [
-      Styles.buildTeamSvgImage(team, size: 50),
-      Text(team.abb)
-    ],);
+  Widget buildTeamRow(SeriesTeam team) {
+    return Row(
+      children: [Styles.buildTeamSvgImage(team, size: 50), Text(team.abb)],
+    );
   }
 }

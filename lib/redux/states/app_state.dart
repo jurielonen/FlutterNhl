@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/award/award_state.dart';
 import 'package:FlutterNhl/redux/states/draft/draft_state.dart';
+import 'package:FlutterNhl/redux/states/firebase/firebase_state.dart';
 import 'package:FlutterNhl/redux/states/game/game_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/playoffs/playoffs_state.dart';
@@ -13,13 +14,13 @@ import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 import 'package:FlutterNhl/redux/states/team/team_state.dart';
 import 'package:meta/meta.dart';
 
-
 @immutable
 class AppState {
   final SnackBarNotification showSnackBar;
   final LoadingStatus loadingStatus;
   final Exception error;
   final DrawerPages currentPage;
+  final FirebaseState firebaseState;
   final ScheduleState scheduleState;
   final StatsState statsState;
   final PlayerState playerState;
@@ -37,6 +38,7 @@ class AppState {
     @required this.loadingStatus,
     @required this.error,
     @required this.currentPage,
+    @required this.firebaseState,
     @required this.scheduleState,
     @required this.statsState,
     @required this.playerState,
@@ -56,6 +58,7 @@ class AppState {
       loadingStatus: LoadingStatus.IDLE,
       error: null,
       currentPage: DrawerPages.SCHEDULE,
+      firebaseState: FirebaseState.initial(),
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),
       playerState: PlayerState.initial(),
@@ -75,6 +78,7 @@ class AppState {
     LoadingStatus loadingStatus,
     Exception error,
     DrawerPages currentPage,
+    FirebaseState firebaseState,
     ScheduleState scheduleState,
     StatsState statsState,
     PlayerState playerState,
@@ -92,6 +96,7 @@ class AppState {
       loadingStatus: loadingStatus ?? this.loadingStatus,
       error: error ?? this.error,
       currentPage: currentPage ?? this.currentPage,
+      firebaseState: firebaseState ?? this.firebaseState,
       scheduleState: scheduleState ?? this.scheduleState,
       statsState: statsState ?? this.statsState,
       playerState: playerState ?? this.playerState,
@@ -106,7 +111,6 @@ class AppState {
     );
   }
 }
-
 
 class SnackBarNotification {
   final String msg;

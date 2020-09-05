@@ -36,6 +36,8 @@ class CloseSnackBar {}
 Other states abstract classes
  */
 
+abstract class FirebaseAction {}
+
 abstract class ScheduleAction {}
 
 abstract class StatsAction {}
