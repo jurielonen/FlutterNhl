@@ -5,6 +5,7 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/firebase/firebase_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/firebase_view_model.dart';
 import 'package:FlutterNhl/views/home_page.dart';
+import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -51,25 +52,27 @@ class AuthPage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: ProgressView('Setting up'));
         }
+        List<Widget> widgets = [_buildHeader(viewModel),
+          const SizedBox(height: 8),
+          SignInButton(
+            text: 'Sign in',
+            color: Theme.of(context).primaryColor,
+            textColor: Colors.white,
+            onPressed: viewModel.loadingStatus == LoadingStatus.LOADING
+                ? null
+                : () => viewModel.signIn(),
+            loading: viewModel.loadingStatus == LoadingStatus.LOADING,
+          ),];
+        if(viewModel.error != null){
+          widgets.add(ErrorView(viewModel.error));
+        }
         return Container(
           width: min(constraints.maxWidth, 600),
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _buildHeader(viewModel),
-              const SizedBox(height: 8),
-              SignInButton(
-                text: 'Sign in',
-                color: Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                onPressed: viewModel.loadingStatus == LoadingStatus.LOADING
-                    ? null
-                    : () => viewModel.signIn(),
-                loading: viewModel.loadingStatus == LoadingStatus.LOADING,
-              ),
-            ],
+            children: widgets,
           ),
         );
       }),

@@ -15,23 +15,29 @@ class FirebaseMiddleware extends MiddlewareClass<AppState> {
       try {
         FirebaseApp app = await Firebase.initializeApp();
         next(FirebaseInitializedAction(app));
-        next(FirebaseRequestingAction());
         Crashlytics.instance.enableInDevMode = true;
         FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
-        //FirebaseAuth.instance.signOut();
-        FirebaseAuth.instance.authStateChanges().listen((event) {
-          print('Auth: $event');
-        });
+      } catch (error) {
+        next(FirebaseInitializationErrorAction(error));
+      }
+
+      try {
+        next(FirebaseRequestingAction());
         User user = FirebaseAuth.instance.currentUser;
+        print(user);
         if (user == null) {
           next(FirebaseNotSignedInAction());
         } else {
-          next(FirebaseSignInSucceededAction(user));
+          await user.reload();
+          if(user == null)
+            next(FirebaseNotSignedInAction());
+          else
+            next(FirebaseSignInSucceededAction(user));
         }
-      } catch (error, stack) {
-        //Crashlytics.instance.recordError(error, stack);
-        next(FirebaseInitializationErrorAction(error));
+      } catch(error){
+        print(error);
+        next(FirebaseSignInErrorAction(error));
       }
     } else if (action is FirebaseAnonymousSignInAction) {
       try {
