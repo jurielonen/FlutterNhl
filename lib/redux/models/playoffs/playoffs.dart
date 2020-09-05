@@ -1,32 +1,39 @@
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
+import 'package:FlutterNhl/redux/models/standings/standings.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
+import 'package:FlutterNhl/views/playoffs/widgets/series_card.dart';
+import 'package:FlutterNhl/widgets/content_card.dart';
 import 'package:flutter/cupertino.dart';
 
 class Playoff {
   final String season;
-  final int defaultRound;
+  final int _defaultRound;
   final List<PlayoffRound> rounds;
 
-  Playoff(
-      {@required this.season,
-      @required this.defaultRound,
-      @required this.rounds});
+  Playoff(this._defaultRound, {@required this.season, @required this.rounds});
 
   factory Playoff.fromJson(Map<String, dynamic> json) {
     return Playoff(
+        getJsonInt('defaultRound', json),
         season: getJsonString('season', json),
-        defaultRound: getJsonInt('defaultRound', json),
         rounds: List<PlayoffRound>.from(getJsonList(['rounds'], json)
             .map((round) => PlayoffRound.fromJson(round))));
   }
 
   Iterable<String> get tabs sync* {
-    for(PlayoffRound round in rounds)
-      yield round.name;
+    for (PlayoffRound round in rounds) yield round.name;
   }
 
-  PlayoffRound getPlayoffRound(String name){
+  PlayoffRound getPlayoffRound(String name) {
     return rounds.firstWhere((round) => round.name == name, orElse: () => null);
+  }
+
+  int get defaultRound {
+    if(_defaultRound < rounds.length)
+      return _defaultRound;
+    else
+      return rounds.length -1;
   }
 }
 
@@ -36,48 +43,110 @@ class PlayoffRound {
   final int numberOfGames;
   final int numberOfWins;
   final List<Series> series;
+  final List<Conference> conferences;
 
   PlayoffRound(
       {@required this.number,
       @required this.name,
       @required this.numberOfGames,
       @required this.numberOfWins,
-      @required this.series});
+      @required this.series,
+      @required this.conferences});
 
   factory PlayoffRound.fromJson(Map<String, dynamic> json) {
+    int tGames = getJsonInt2(['format', 'numberOfGames'], json);
+    int tWins = getJsonInt2(['format', 'numberOfWins'], json);
+    List<Conference> conferences = [];
+    List<Series> series = List<Series>.from(getJsonList(['series'], json)
+        .map((series) => Series.fromJson(series, tGames, tWins)));
+    series.forEach((serie) {
+      if (!conferences.contains(serie.conference))
+        conferences.add(serie.conference);
+    });
     return PlayoffRound(
-        number: getJsonInt('number', json),
-        name: getJsonString2(['names', 'name'], json),
-        numberOfGames: getJsonInt2(['format', 'numberOfGames'], json),
-        numberOfWins: getJsonInt2(['format', 'numberOfWins'], json),
-        series: List<Series>.from(getJsonList(['series'], json)
-            .map((series) => Series.fromJson(series))));
+      number: getJsonInt('number', json),
+      name: getJsonString2(['names', 'name'], json),
+      numberOfGames: tGames,
+      numberOfWins: tWins,
+      series: series,
+      conferences: conferences,
+    );
+  }
+
+  List<Widget> get gridItems {
+    List<Widget> widgets = [];
+    if (conferences != null && conferences.length == 2) {
+      List<Series> first = series
+          .where((element) =>
+              element.conference.conferenceId == conferences.first.conferenceId)
+          .toList();
+      List<Series> last = series
+          .where((element) =>
+              element.conference.conferenceId == conferences.last.conferenceId)
+          .toList();
+      if (first.length == last.length) {
+        widgets.addAll([
+          PressableCard(
+            child: Center(child: Text(conferences.first.conferenceName.toUpperCase(), style: Styles.scaffoldGameWinnerText,)),
+          ),
+          PressableCard(
+            child: Center(child: Text(conferences.last.conferenceName.toUpperCase(), style: Styles.scaffoldGameWinnerText)),
+          )
+        ]);
+        for (int x = 0; x < first.length; x++) {
+          widgets.add(SeriesCard(series: first[x]));
+          widgets.add(SeriesCard(series: last[x]));
+        }
+        return widgets;
+      }
+    }
+    return series
+        .map((e) => SeriesCard(
+              series: e,
+            ))
+        .toList();
   }
 }
 
 class Series {
   final int seriesNumber;
   final SeriesCurrentGame seriesCurrentGame;
-  final int conferenceId;
-  final String conferenceName;
+  final Conference conference;
   final List<SeriesTeam> teams;
+  final int numberOfGames;
+  final int numberOfWins;
 
-  Series(
-      {@required this.seriesNumber,
-      @required this.seriesCurrentGame,
-      @required this.conferenceId,
-      @required this.conferenceName,
-      @required this.teams});
+  Series({
+    @required this.seriesNumber,
+    @required this.seriesCurrentGame,
+    @required this.conference,
+    @required this.teams,
+    @required this.numberOfGames,
+    @required this.numberOfWins,
+  });
 
-  factory Series.fromJson(Map<String, dynamic> json) {
+  factory Series.fromJson(Map<String, dynamic> json, int games, int wins) {
     return Series(
-        seriesNumber: getJsonInt('seriesNumber', json),
-        seriesCurrentGame: SeriesCurrentGame.fromJson(
-            getJsonObject(['currentGame', 'seriesSummary'], json)),
-        conferenceId: getJsonInt2(['conference', 'id'], json),
-        conferenceName: getJsonString2(['conference', 'name'], json),
-        teams: List<SeriesTeam>.from(getJsonList(['matchupTeams'], json)
-            .map((team) => SeriesTeam.fromJson(team))));
+      seriesNumber: getJsonInt('seriesNumber', json),
+      seriesCurrentGame: SeriesCurrentGame.fromJson(
+          getJsonObject(['currentGame', 'seriesSummary'], json)),
+      conference: Conference.fromJson(getJsonObject(['conference'], json)),
+      teams: List<SeriesTeam>.from(getJsonList(['matchupTeams'], json)
+          .map((team) => SeriesTeam.fromJson(team))),
+      numberOfGames: games,
+      numberOfWins: wins,
+    );
+  }
+
+  int get hasATeamWon {
+    if (numberOfWins != null) {
+      if (numberOfWins <= seriesCurrentGame.gameNumber) {
+        SeriesTeam team = teams.firstWhere((team) => team.wins == numberOfWins,
+            orElse: () => null);
+        if (team != null) return team.id;
+      }
+    }
+    return null;
   }
 }
 

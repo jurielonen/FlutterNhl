@@ -101,7 +101,6 @@ class _StandingsTabViewState extends State<StandingsTabView>
   @override
   void initState() {
     super.initState();
-    print('INITSTATE: ${widget.source.tabs.length} ${widget.source.season}');
     _tabController = new TabController(
         length: widget.source.tabs.length, vsync: this, initialIndex: widget.source.selectedType.index);
     _pageController = new PageController(initialPage: _tabController.index);
@@ -110,22 +109,18 @@ class _StandingsTabViewState extends State<StandingsTabView>
   @override
   void didUpdateWidget(StandingsTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('didUpdateWidget');
-    //if (oldWidget.source.tabs.length != widget.source.tabs.length) {
       setState(() {
-        print(widget.source.selectedType);
-        print(widget.source.selectedType.index);
         _tabController.index = widget.source.selectedType.index;
-        /*_tabController.dispose();
+        if (oldWidget.source.tabs.length != widget.source.tabs.length) {
+          _tabController.dispose();
         _tabController = new TabController(
-            length: widget.source.tabs.length, vsync: this, initialIndex: widget.source.selectedType.index);*/
+            length: widget.source.tabs.length, vsync: this, initialIndex: widget.source.selectedType.index);
+        }
       });
-    //}
   }
 
   @override
   void dispose() {
-    print('dispose');
     _tabController.dispose();
     _pageController.dispose();
     super.dispose();
@@ -158,7 +153,6 @@ class _StandingsTabViewState extends State<StandingsTabView>
                   physics: NeverScrollableScrollPhysics(),
                   controller: _pageController,
                   itemBuilder: (context, position) {
-                    print('StandingsTabView: $type');
                     return SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: Column(

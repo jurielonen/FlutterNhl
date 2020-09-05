@@ -5,6 +5,7 @@ import 'package:FlutterNhl/redux/models/playoffs/playoffs.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/playoffs_view_model.dart';
+import 'package:FlutterNhl/views/playoffs/widgets/series_card.dart';
 import 'package:FlutterNhl/widgets/content_card.dart';
 import 'package:FlutterNhl/widgets/custom_year_select.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
@@ -116,7 +117,6 @@ class PlayoffsHome extends StatelessWidget {
               } else {
                 return SliverFillRemaining(
                   hasScrollBody: true,
-                  fillOverscroll: true,
                   child: PlayoffsTabView(
                     playoff: playoffVM.playoff,
                   ),
@@ -149,7 +149,7 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
     _tabController = new TabController(
         length: widget.playoff.tabs.length,
         vsync: this,
-        initialIndex: 0); //widget.playoff.defaultRound);
+        initialIndex: widget.playoff.defaultRound);
     _pageController = new PageController(initialPage: _tabController.index);
   }
 
@@ -157,7 +157,14 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
   void didUpdateWidget(PlayoffsTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
     setState(() {
-      _tabController.index = 0; //widget.playoff.defaultRound;
+      _tabController.index = widget.playoff.defaultRound;
+      if (oldWidget.playoff.rounds.length != widget.playoff.rounds.length) {
+        _tabController.dispose();
+        _tabController = new TabController(
+            length: widget.playoff.tabs.length,
+            vsync: this,
+            initialIndex: widget.playoff.defaultRound);
+      }
     });
   }
 
@@ -196,21 +203,17 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
                   physics: NeverScrollableScrollPhysics(),
                   controller: _pageController,
                   itemBuilder: (context, position) {
-                    PlayoffRound round = widget.playoff.getPlayoffRound(name);
-                    return ListView.builder(
-                      itemBuilder: (BuildContext ctx, int index) {
-                        Series series = round.series[index];
-                        if (series.teams == null || series.teams.isEmpty)
-                          return Text('Team not decided yet');
-                        return PressableCard(
-                            child: Column(
-                          children: [
-                            buildTeamRow(series.teams.first),
-                            buildTeamRow(series.teams.last),
-                          ],
-                        ));
-                      },
-                      itemCount: round.series.length,
+                    //PlayoffRound round = widget.playoff.getPlayoffRound(name);
+                    List<Widget> items = widget.playoff.getPlayoffRound(name).gridItems;
+                    if(items.length == 1){
+                      return Center(child: Container(height: 100, width: MediaQuery.of(context).size.width/2, child: items.first),);
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                      child: GridView.count(crossAxisCount: 2,
+                        childAspectRatio: 2.0,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10, children: items,),
                     );
                   },
                 ),
@@ -219,12 +222,6 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
           ),
         ),
       ],
-    );
-  }
-
-  Widget buildTeamRow(SeriesTeam team) {
-    return Row(
-      children: [Styles.buildTeamSvgImage(team, size: 50), Text(team.abb)],
     );
   }
 }
