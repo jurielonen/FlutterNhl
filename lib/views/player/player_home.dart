@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
@@ -270,7 +271,7 @@ class _PlayerHomeState extends State<PlayerHome> {
                 onSelected: (int year) => viewModel.getGameLogs(
                     viewModel.selectedParams.copyWith(year: year.toString())),
                 maxValue: int.parse(StatParameters.getCurrentSeason()),
-                minValue: viewModel.player.firstSeason,
+                minValue: viewModel.player != null ? viewModel.player.firstSeason : int.parse(Config.getCurrentSeason),
                 reducer: 10001,
               ),
               CustomDropdownButton(

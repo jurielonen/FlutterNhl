@@ -158,14 +158,14 @@ class StatParameters {
   }
 
   StatParameters nextStats() {
-    return copyWith(start: start += limit);
+    return copyWith(start: start + limit);
   }
 
   StatParameters previousStats() {
     if (start < limit) {
       return copyWith(start: 0);
     }
-    return copyWith(start: start -= limit);
+    return copyWith(start: start - limit);
   }
 
   resetFilters() {
@@ -284,9 +284,4 @@ class StatParameters {
               position == other.position &&
               franchiseId == other.franchiseId &&
               total == other.total;
-
-  @override
-  String toString() {
-    return 'params: $total, $start';
-  }
 }

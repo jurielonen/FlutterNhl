@@ -22,7 +22,6 @@ class StatsHome extends StatelessWidget {
       onInit: (store) => store.dispatch(StatsEntered()),
       converter: (store) => StatsAppBarViewModel.fromStore(store),
       builder: (ctx, appBarVM) {
-        print('BUILDINGHEADER');
         return NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -103,7 +102,6 @@ class StatsHome extends StatelessWidget {
       distinct: true,
       converter: (store) => StatsBodyViewModel.fromStore(store),
       builder: (ctx, bodyVM) {
-        print('BUILDINGBODY');
         switch (bodyVM.loadingStatus) {
           case LoadingStatus.IDLE:
           case LoadingStatus.LOADING:
@@ -158,7 +156,6 @@ class StatsHome extends StatelessWidget {
       distinct: true,
       converter: (store) => StatFilterBarViewModel.fromStore(store),
       builder: (ctx, filterVM) {
-        print('BUILDINGFILTER');
         return SliverToBoxAdapter(
           child: Container(
             decoration: BoxDecoration(color: Colors.black),

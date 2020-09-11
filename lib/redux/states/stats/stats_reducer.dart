@@ -6,7 +6,6 @@ import 'package:FlutterNhl/redux/states/stats/stats_action.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 
 StatsState statsReducer(StatsState state, dynamic action) {
-  print('STATSREDUCER: ${action.runtimeType} ${state.loadingStatus}');
   if (action is StatsParametersChangedAction) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE, selectedParams: action.param.copyWith(start: 0));
@@ -18,9 +17,9 @@ StatsState statsReducer(StatsState state, dynamic action) {
   } else if (action is StatsRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is StatsNextAction) {
-    return state.copyWith(selectedParams: state.selectedParams.nextStats(), loadingStatus: LoadingStatus.IDLE);
+    return state.copyWith(loadingStatus: LoadingStatus.IDLE, selectedParams: state.selectedParams.nextStats());
   } else if (action is StatsPreviousAction) {
-    return state.copyWith(selectedParams: state.selectedParams.previousStats(), loadingStatus: LoadingStatus.IDLE);
+    return state.copyWith(loadingStatus: LoadingStatus.IDLE, selectedParams: state.selectedParams.previousStats());
   } else if (action is StatsReceived) {
     if(state.selectedParams.paramType.type == action.stats.type) {
       return state.copyWith(

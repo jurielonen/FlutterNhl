@@ -65,3 +65,14 @@ class UINoDataDownloadedException implements Exception {
     return '$errorHeader\n$msg';
   }
 }
+
+class NoDataException implements Exception {
+  static const errorHeader = 'No data to show';
+  final String msg;
+  NoDataException(this.msg);
+
+  @override
+  String toString() {
+    return '$errorHeader\n$msg';
+  }
+}

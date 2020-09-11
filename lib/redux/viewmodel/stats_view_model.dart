@@ -67,16 +67,12 @@ class StatFilterBarViewModel {
   int get hashCode => selectedParams.hashCode ^ statTypes.hashCode;
 
   @override
-  bool operator ==(Object other) {
-    print('this $selectedParams');
-    if (other is StatFilterBarViewModel)
-      print('other: ${other.selectedParams}');
-    return identical(this, other) ||
-        other is StatFilterBarViewModel &&
-            runtimeType == other.runtimeType &&
-            selectedParams == other.selectedParams &&
-            statTypes == other.statTypes;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StatFilterBarViewModel &&
+          runtimeType == other.runtimeType &&
+          selectedParams == other.selectedParams &&
+          statTypes == other.statTypes;
 }
 
 class StatsBodyViewModel {

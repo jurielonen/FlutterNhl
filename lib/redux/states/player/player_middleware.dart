@@ -30,13 +30,19 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
       ///TODO: add check to see if player already downloaded
       await _getBio(store, next);
     } else if (action is PlayerStatsChangedAction || action is PlayerStatsTabChangedAction) {
-      if (!selectedPlayerSelector(store.state).containsStat(store.state.playerState.selectedStat/*action.stat*/)) {
+      PlayerPage page = selectedPlayerSelector(store.state);
+      if(page == null){
+        next(PlayerErrorAction(NoDataException('Player data not found')));
+      } else if (!page.containsStat(store.state.playerState.selectedStat)) {
         await _getStat(store, next);
       } else {
         next(PlayerStatsAlreadyDownloaded());
       }
     } else if (action is PlayerGetGameLogsAction || action is PlayerGameLogTabChangedAction) {
-      if (!selectedPlayerSelector(store.state).containsGameLogs(store.state.playerState.gameLogParams/*action.params*/)) {
+      PlayerPage page = selectedPlayerSelector(store.state);
+      if(page == null){
+        next(PlayerErrorAction(NoDataException('Player data not found')));
+      } else if (!page.containsGameLogs(store.state.playerState.gameLogParams)) {
         await _getGameLogs(store, next);
       } else {
         next(PlayerGameLogsAlreadyDownloaded());

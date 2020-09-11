@@ -199,7 +199,6 @@ class StatTableSource extends CustomDataTableSource {
 
   @override
   bool get sortAscending {
-    print('ascending: $_ascending');
     return _ascending;
   }
 
