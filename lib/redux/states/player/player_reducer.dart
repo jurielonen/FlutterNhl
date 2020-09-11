@@ -12,8 +12,8 @@ PlayerState playerReducer(PlayerState state, dynamic action) {
     return state.copyWith(
         playerId: action.playerId,
         playerType: action.statType,
-        gameLogParams: GameLogParams(Config.getCurrentSeason, !Config.isPlayoffsCurrent()),
-        selectedStat: PlayerStatParams('summary', !Config.isPlayoffsCurrent()));
+        gameLogParams: PageGameLogParams(Config.getCurrentSeason, !Config.isPlayoffsCurrent()),
+        selectedStat: PageStatParams('summary', !Config.isPlayoffsCurrent()));
   } else if (action is PlayerRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is PlayerReceivedBioAction) {

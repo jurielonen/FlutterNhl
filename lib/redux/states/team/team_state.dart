@@ -16,8 +16,8 @@ class TeamState {
 
   final LoadingStatus loadingStatus;
   final int teamId;
-  final String selectedStat;
-  final GameLogParams selectedParams;
+  final PageStatParams selectedStat;
+  final PageGameLogParams selectedParams;
   final KtMap<int, TeamPage> teams;
   final Exception error;
 
@@ -25,7 +25,7 @@ class TeamState {
     return TeamState(
         loadingStatus: LoadingStatus.IDLE,
         teamId: 0,
-        selectedStat: 'summary',
+        selectedStat: null,
         selectedParams: null,
         teams: emptyMap(),
         error: null);
@@ -34,8 +34,8 @@ class TeamState {
   TeamState copyWith(
       {LoadingStatus loadingStatus,
       int teamId,
-      String selectedStat,
-      GameLogParams selectedParams,
+      PageStatParams selectedStat,
+      PageGameLogParams selectedParams,
       KtMap<int, TeamPage> teams,
       Exception error}) {
     return TeamState(

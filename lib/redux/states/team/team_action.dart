@@ -15,7 +15,7 @@ class TeamReceivedBioAction extends TeamAction {
 }
 
 class TeamStatsChangedAction extends TeamAction {
-  final String stat;
+  final PageStatParams stat;
   TeamStatsChangedAction(this.stat);
 }
 
@@ -27,7 +27,7 @@ class TeamReceivedStatAction extends TeamAction {
 }
 
 class TeamDateChangedAction extends TeamAction {
-  final GameLogParams params;
+  final PageGameLogParams params;
   TeamDateChangedAction(this.params);
 }
 
@@ -51,3 +51,9 @@ class TeamErrorAction extends TeamAction {
   final Exception error;
   TeamErrorAction(this.error);
 }
+
+class TeamStatsTabChangedAction extends TeamAction {}
+
+class TeamRosterTabChangedAction extends TeamAction {}
+
+class TeamGameLogTabChangedAction extends TeamAction {}

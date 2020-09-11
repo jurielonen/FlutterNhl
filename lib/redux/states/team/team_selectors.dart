@@ -8,7 +8,7 @@ import 'package:reselect/reselect.dart';
 
 final selectedTeamIdSelector = (AppState state) => state.teamState.teamId;
 final teamMapSelector = (AppState state) => state.teamState.teams;
-final selectedStatSelector = (AppState state) => state.teamState.selectedStat;
+final selectedStatSelector = (AppState state) => state.teamState.selectedStat.stat;
 
 final selectedTeamSelector =
     createSelector2(selectedTeamIdSelector, teamMapSelector, _getTeam);

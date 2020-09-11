@@ -211,6 +211,7 @@ class StatsApi {
     final searchUri = Uri.https(baseUrl, 'api/v1/schedule', {
       'teamId': teamId.toString(),
       'season': season,
+      'gameType': regular ? 'R' : 'P',
     });
     print('$printMsg fetchTeamGameLog: $searchUri');
 

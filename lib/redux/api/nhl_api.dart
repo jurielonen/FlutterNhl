@@ -73,7 +73,7 @@ class NHLApi {
   }
 
   Future<List<dynamic>> fetchPlayerStat(
-      PlayerStatParams stat, int playerId, StatType type) async {
+      PageStatParams stat, int playerId, StatType type) async {
     final searchUri =
         Uri.https(baseUrl, 'stats/rest/en/${statTypeToParam(type)}/${stat.stat}', {
       'isAggregate': 'false',
@@ -97,12 +97,13 @@ class NHLApi {
     });//.catchError((error) => onFetchError(error));
   }
 
-  Future<List<dynamic>> fetchTeamStat(String stat, int teamId) async {
-    final searchUri = Uri.https(baseUrl, 'stats/rest/en/team/$stat', {
+  Future<List<dynamic>> fetchTeamStat(PageStatParams stat, int teamId) async {
+    final searchUri = Uri.https(baseUrl, 'stats/rest/en/team/${stat.stat}', {
       'isAggregate': 'false',
       'isGame': 'false',
       'sort': '[{\"property\":\"seasonId\", \"direction\":\"DESC\"}]',
-      'factCayenneExp': 'teamId=$teamId'
+      'factCayenneExp': 'teamId=$teamId',
+      'cayenneExp': 'gameTypeId=${stat.gameType ? '2' : '3'}'
     });
 
     print('$printMsg fetchTeamStat: $searchUri');

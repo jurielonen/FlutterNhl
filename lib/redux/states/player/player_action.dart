@@ -12,7 +12,7 @@ class PlayerReceivedBioAction extends PlayerAction {
 }
 
 class PlayerStatsChangedAction extends PlayerAction {
-  final PlayerStatParams stat;
+  final PageStatParams stat;
   PlayerStatsChangedAction(this.stat);
 }
 
@@ -24,7 +24,7 @@ class PlayerReceivedStatAction extends PlayerAction {
 }
 
 class PlayerGetGameLogsAction extends PlayerAction {
-  final GameLogParams params;
+  final PageGameLogParams params;
   PlayerGetGameLogsAction(this.params);
 }
 

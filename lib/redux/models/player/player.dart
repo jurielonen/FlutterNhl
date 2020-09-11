@@ -262,8 +262,8 @@ class PlayerPage extends Player {
   final int weight;
   final int height;
   final PlayerAllTimeStats allTimeStats;
-  Map<PlayerStatParams, PlayerSeasonTableSource> stats = {};
-  Map<GameLogParams, List<GameLogsPlayer>> gameLog = {};
+  Map<PageStatParams, PlayerSeasonTableSource> stats = {};
+  Map<PageGameLogParams, List<GameLogsPlayer>> gameLog = {};
 
   PlayerPage({
     @required Player player,
@@ -386,36 +386,36 @@ class PlayerPage extends Player {
     }
   }
 
-  bool containsStat(PlayerStatParams stat) {
+  bool containsStat(PageStatParams stat) {
     return stats.containsKey(stat);
   }
 
-  PlayerSeasonTableSource getStat(PlayerStatParams stat) {
+  PlayerSeasonTableSource getStat(PageStatParams stat) {
     if (stats.containsKey(stat)) {
       return stats[stat];
     }
     return null;
   }
 
-  void addStat(PlayerStatParams stat, PlayerSeasonTableSource statStats) {
+  void addStat(PageStatParams stat, PlayerSeasonTableSource statStats) {
     if (!stats.containsKey(stat)) {
       stats[stat] = statStats;
     }
   }
 
-  bool containsGameLogs(GameLogParams year) {
+  bool containsGameLogs(PageGameLogParams year) {
     if (gameLog.isEmpty) return false;
     return gameLog.keys.contains(year);
   }
 
-  List<GameLogsPlayer> getGameLog(GameLogParams params) {
+  List<GameLogsPlayer> getGameLog(PageGameLogParams params) {
     if (gameLog.containsKey(params)) {
       return gameLog[params];
     }
     return [];
   }
 
-  void addGameLog(GameLogParams params, List<GameLogsPlayer> logs) {
+  void addGameLog(PageGameLogParams params, List<GameLogsPlayer> logs) {
     gameLog[params] = logs;
   }
 

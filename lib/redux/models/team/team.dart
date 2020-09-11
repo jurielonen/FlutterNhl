@@ -280,8 +280,8 @@ class TeamPage extends Team {
 
   PlayerGameTableSource playerTableSource;
   PlayerGameTableSource goalieTableSource;
-  Map<GameLogParams, List<Game>> gameLog = {};
-  Map<String, PlayerSeasonTableSource> stats = {};
+  Map<PageGameLogParams, List<Game>> gameLog = {};
+  Map<PageStatParams, PlayerSeasonTableSource> stats = {};
 
   TeamPage(
       {@required Team team,
@@ -305,10 +305,16 @@ class TeamPage extends Team {
 
   factory TeamPage.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> team = getJsonObject(['teams', 0], json);
+    String firstYear = getJsonString('firstYearOfPlay', team);
+    if(firstYear != ''){
+      firstYear = '$firstYear${int.parse(firstYear) + 1}';
+    } else {
+      firstYear = '20172018';
+    }
     return TeamPage(
       team: Team.fromJson(team),
       venue: getJsonString2(['venue', 'name'], team),
-      firstYear: getJsonString('firstYearOfPlay', team),
+      firstYear: firstYear,
       division: getJsonString2(['division', 'name'], team),
       conference: getJsonString2(['conference', 'name'], team),
       previousGame: List<Game>.from(
@@ -343,29 +349,29 @@ class TeamPage extends Team {
     return playerTableSource != null && goalieTableSource != null;
   }
 
-  bool containsGameLog(GameLogParams date) {
+  bool containsGameLog(PageGameLogParams date) {
     return gameLog.containsKey(date);
   }
 
-  bool containsStat(String stat) {
+  bool containsStat(PageStatParams stat) {
     return stats.containsKey(stat);
   }
 
-  List<Game> getGames(GameLogParams params) {
+  List<Game> getGames(PageGameLogParams params) {
     if (gameLog.containsKey(params)) return gameLog[params];
     return [];
   }
 
-  PlayerSeasonTableSource getStat(String stat) {
+  PlayerSeasonTableSource getStat(PageStatParams stat) {
     if (stats.containsKey(stat)) return stats[stat];
     return null;
   }
 
-  void addGameLog(GameLogParams params, List<Game> games) {
+  void addGameLog(PageGameLogParams params, List<Game> games) {
     gameLog[params] = games;
   }
 
-  void addStat(String stat, PlayerSeasonTableSource table) {
+  void addStat(PageStatParams stat, PlayerSeasonTableSource table) {
     stats[stat] = table;
   }
 }

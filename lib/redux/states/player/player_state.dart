@@ -19,13 +19,13 @@ class PageParam {
   static bool getGameTypeBoolean(String type) => type == _playoffsString ? false : true;
 }
 
-class PlayerStatParams extends PageParam{
+class PageStatParams extends PageParam{
   String stat;
 
-  PlayerStatParams(this.stat,  bool gameType): super(gameType);
+  PageStatParams(this.stat,  bool gameType): super(gameType);
 
-  PlayerStatParams copyWith({String stat, bool gameType}){
-    return PlayerStatParams(stat ?? this.stat, gameType ?? this.gameType);
+  PageStatParams copyWith({String stat, bool gameType}){
+    return PageStatParams(stat ?? this.stat, gameType ?? this.gameType);
   }
 
   @override
@@ -34,19 +34,19 @@ class PlayerStatParams extends PageParam{
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is PlayerStatParams &&
+          other is PageStatParams &&
               runtimeType == other.runtimeType &&
               stat == other.stat &&
               gameType == other.gameType;
 }
 
-class GameLogParams extends PageParam{
+class PageGameLogParams extends PageParam{
   String year;
 
-  GameLogParams(this.year, bool gameType): super(gameType);
+  PageGameLogParams(this.year, bool gameType): super(gameType);
 
-  GameLogParams copyWith({String year, bool gameType}) {
-    return GameLogParams(year ?? this.year, gameType ?? this.gameType);
+  PageGameLogParams copyWith({String year, bool gameType}) {
+    return PageGameLogParams(year ?? this.year, gameType ?? this.gameType);
   }
 
   @override
@@ -55,7 +55,7 @@ class GameLogParams extends PageParam{
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is GameLogParams &&
+      other is PageGameLogParams &&
           runtimeType == other.runtimeType &&
           year == other.year &&
           gameType == other.gameType;
@@ -76,8 +76,8 @@ class PlayerState {
   final LoadingStatus loadingStatus;
   final int playerId;
   final StatType playerType;
-  final PlayerStatParams selectedStat;
-  final GameLogParams gameLogParams;
+  final PageStatParams selectedStat;
+  final PageGameLogParams gameLogParams;
   final KtMap<int, PlayerPage> players;
   final Exception error;
 
@@ -99,8 +99,8 @@ class PlayerState {
       {LoadingStatus loadingStatus,
       int playerId,
       StatType playerType,
-      PlayerStatParams selectedStat,
-      GameLogParams gameLogParams,
+      PageStatParams selectedStat,
+      PageGameLogParams gameLogParams,
       KtMap<int, PlayerPage> players,
       Exception error}) {
     return PlayerState(

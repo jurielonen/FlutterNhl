@@ -8,16 +8,41 @@ import 'package:FlutterNhl/redux/states/team/team_selectors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:redux/redux.dart';
 
+class TeamAppBarViewModel {
+  final VoidCallback getStats;
+  final VoidCallback getGameLogs;
+  final VoidCallback getPlayers;
+
+  TeamAppBarViewModel(
+      {@required this.getStats,
+      @required this.getGameLogs,
+      @required this.getPlayers});
+
+  static TeamAppBarViewModel fromStore(Store<AppState> store) {
+    return TeamAppBarViewModel(
+        getStats: () => store.dispatch(TeamStatsTabChangedAction()),
+        getGameLogs: () => store.dispatch(TeamGameLogTabChangedAction()),
+        getPlayers: () => store.dispatch(TeamRosterTabChangedAction()));
+  }
+
+  @override
+  bool operator ==(Object other) => true;
+
+  @override
+  int get hashCode =>
+      getStats.hashCode ^ getGameLogs.hashCode ^ getPlayers.hashCode;
+}
+
 class TeamViewModel {
   final LoadingStatus loadingStatus;
   final TeamPage team;
-  final String selectedStat;
-  final GameLogParams selectedParams;
+  final PageStatParams selectedStat;
+  final PageGameLogParams selectedParams;
   final List<String> displayItems;
   final Exception error;
-  final Function(String) getStats;
-  final Function(GameLogParams) getGameLogs;
-  final Function() getPlayers;
+  final Function(PageStatParams) getStats;
+  final Function(PageGameLogParams) getGameLogs;
+  final VoidCallback getPlayers;
 
   TeamViewModel(
       {@required this.loadingStatus,
@@ -30,16 +55,18 @@ class TeamViewModel {
       @required this.getGameLogs,
       @required this.getPlayers});
 
-  static TeamViewModel fromStore(Store<AppState> store){
+  static TeamViewModel fromStore(Store<AppState> store) {
     return TeamViewModel(
       loadingStatus: store.state.teamState.loadingStatus,
       team: selectedTeamSelector(store.state),
-        selectedStat: store.state.teamState.selectedStat,
+      selectedStat: store.state.teamState.selectedStat,
       selectedParams: store.state.teamState.selectedParams,
       displayItems: store.state.config.getStatTypes(StatType.TEAM),
       error: store.state.teamState.error,
-      getStats: (String stat) => store.dispatch(TeamStatsChangedAction(stat)),
-      getGameLogs: (GameLogParams date) => store.dispatch(TeamDateChangedAction(date)),
+      getStats: (PageStatParams stat) =>
+          store.dispatch(TeamStatsChangedAction(stat)),
+      getGameLogs: (PageGameLogParams date) =>
+          store.dispatch(TeamDateChangedAction(date)),
       getPlayers: () => store.dispatch(TeamDownloadRoster()),
     );
   }
@@ -47,14 +74,14 @@ class TeamViewModel {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is TeamViewModel &&
-              runtimeType == other.runtimeType &&
-              loadingStatus == other.loadingStatus &&
-              error == other.error &&
-              selectedParams == other.selectedParams &&
-              selectedStat == other.selectedStat &&
-              displayItems == other.displayItems &&
-              team == other.team;
+      other is TeamViewModel &&
+          runtimeType == other.runtimeType &&
+          loadingStatus == other.loadingStatus &&
+          error == other.error &&
+          selectedParams == other.selectedParams &&
+          selectedStat == other.selectedStat &&
+          displayItems == other.displayItems &&
+          team == other.team;
 
   @override
   int get hashCode =>

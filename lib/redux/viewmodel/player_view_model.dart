@@ -33,12 +33,12 @@ class PlayerAppBarViewModel {
 class PlayerViewModel {
   final LoadingStatus loadingStatus;
   final PlayerPage player;
-  final PlayerStatParams selectedStat;
-  final GameLogParams selectedParams;
+  final PageStatParams selectedStat;
+  final PageGameLogParams selectedParams;
   final List<String> displayItems;
   final Exception error;
-  final Function(PlayerStatParams) getStats;
-  final Function(GameLogParams) getGameLogs;
+  final Function(PageStatParams) getStats;
+  final Function(PageGameLogParams) getGameLogs;
 
   PlayerViewModel(
       {@required this.loadingStatus,
@@ -58,9 +58,9 @@ class PlayerViewModel {
         selectedParams: store.state.playerState.gameLogParams,
         displayItems: statTypes(store.state),
         error: store.state.playerState.error,
-        getStats: (PlayerStatParams stat) =>
+        getStats: (PageStatParams stat) =>
             store.dispatch(PlayerStatsChangedAction(stat)),
-        getGameLogs: (GameLogParams params) =>
+        getGameLogs: (PageGameLogParams params) =>
             store.dispatch(PlayerGetGameLogsAction(params)));
   }
 

@@ -11,8 +11,8 @@ TeamState teamReducer(TeamState state, dynamic action) {
     return state.copyWith(
         loadingStatus: LoadingStatus.IDLE,
         teamId: action.teamId,
-        selectedStat: 'summary',
-        selectedParams: GameLogParams(Config.getCurrentSeason, !Config.isPlayoffsCurrent()));
+        selectedStat: PageStatParams('summary', !Config.isPlayoffsCurrent()),
+        selectedParams: PageGameLogParams(Config.getCurrentSeason, !Config.isPlayoffsCurrent()));
   } else if (action is TeamRequestingAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is TeamReceivedBioAction) {
