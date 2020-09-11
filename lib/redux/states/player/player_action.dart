@@ -12,7 +12,7 @@ class PlayerReceivedBioAction extends PlayerAction {
 }
 
 class PlayerStatsChangedAction extends PlayerAction {
-  final String stat;
+  final PlayerStatParams stat;
   PlayerStatsChangedAction(this.stat);
 }
 
@@ -39,3 +39,7 @@ class PlayerErrorAction extends PlayerAction {
   final Exception error;
   PlayerErrorAction(this.error);
 }
+
+class PlayerStatsTabChangedAction extends PlayerAction {}
+
+class PlayerGameLogTabChangedAction extends PlayerAction {}

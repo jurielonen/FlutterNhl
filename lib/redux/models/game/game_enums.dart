@@ -11,6 +11,16 @@ enum GameType {
   UNKNOWN,
 }
 
+bool acceptableGameType(GameType type){
+  switch(type){
+    case GameType.REGULAR:
+    case GameType.POSTSEASON:
+      return true;
+    default:
+      return false;
+  }
+}
+
 GameType gameTypeFromString(String value){
   switch(value) {
     case "PR": return GameType.PRESEASON;

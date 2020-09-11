@@ -1,35 +1,82 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/models/game/game_enums.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:meta/meta.dart';
 import 'package:kt_dart/collection.dart';
 
-class GameLogParams {
+class PageParam {
+  final bool gameType;
+  static const _regularString = 'Regular';
+  static const _playoffsString = 'Playoffs';
+
+  static const List<String> gameTypes = [_regularString, _playoffsString];
+
+  PageParam(this.gameType);
+
+  String get gameTypeString => gameType ? _regularString : _playoffsString;
+
+  static bool getGameTypeBoolean(String type) => type == _playoffsString ? false : true;
+}
+
+class PlayerStatParams extends PageParam{
+  String stat;
+
+  PlayerStatParams(this.stat,  bool gameType): super(gameType);
+
+  PlayerStatParams copyWith({String stat, bool gameType}){
+    return PlayerStatParams(stat ?? this.stat, gameType ?? this.gameType);
+  }
+
+  @override
+  int get hashCode => stat.hashCode ^ gameType.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is PlayerStatParams &&
+              runtimeType == other.runtimeType &&
+              stat == other.stat &&
+              gameType == other.gameType;
+}
+
+class GameLogParams extends PageParam{
   String year;
-  bool gameType;
 
-  GameLogParams(this.year, this.gameType);
+  GameLogParams(this.year, bool gameType): super(gameType);
 
-  GameLogParams copyWith({ String year, bool gameType}){
+  GameLogParams copyWith({String year, bool gameType}) {
     return GameLogParams(year ?? this.year, gameType ?? this.gameType);
   }
+
+  @override
+  int get hashCode => year.hashCode ^ gameType.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GameLogParams &&
+          runtimeType == other.runtimeType &&
+          year == other.year &&
+          gameType == other.gameType;
 }
 
 @immutable
 class PlayerState {
-  PlayerState(
-      {@required this.loadingStatus,
-      @required this.playerId,
-      @required this.playerType,
-      @required this.selectedStat,
-      @required this.gameLogParams,
-      @required this.players,
-      @required this.error,});
+  PlayerState({
+    @required this.loadingStatus,
+    @required this.playerId,
+    @required this.playerType,
+    @required this.selectedStat,
+    @required this.gameLogParams,
+    @required this.players,
+    @required this.error,
+  });
 
   final LoadingStatus loadingStatus;
   final int playerId;
   final StatType playerType;
-  final String selectedStat;
+  final PlayerStatParams selectedStat;
   final GameLogParams gameLogParams;
   final KtMap<int, PlayerPage> players;
   final Exception error;
@@ -41,7 +88,7 @@ class PlayerState {
 
       ///TODO: Unknown enum to StatType
       playerType: StatType.PLAYER,
-      selectedStat: 'summary',
+      selectedStat: null,
       gameLogParams: null,
       players: emptyMap(),
       error: null,
@@ -52,19 +99,19 @@ class PlayerState {
       {LoadingStatus loadingStatus,
       int playerId,
       StatType playerType,
-      String selectedStat,
+      PlayerStatParams selectedStat,
       GameLogParams gameLogParams,
       KtMap<int, PlayerPage> players,
       Exception error}) {
     return PlayerState(
-        loadingStatus: loadingStatus ?? this.loadingStatus,
-        playerId: playerId ?? this.playerId,
-        playerType: playerType ?? this.playerType,
-        selectedStat: selectedStat ?? this.selectedStat,
-        gameLogParams: gameLogParams ?? this.gameLogParams,
-        players: players ?? this.players,
-        error: error ?? this.error,
-        );
+      loadingStatus: loadingStatus ?? this.loadingStatus,
+      playerId: playerId ?? this.playerId,
+      playerType: playerType ?? this.playerType,
+      selectedStat: selectedStat ?? this.selectedStat,
+      gameLogParams: gameLogParams ?? this.gameLogParams,
+      players: players ?? this.players,
+      error: error ?? this.error,
+    );
   }
 
   @override

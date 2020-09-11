@@ -29,14 +29,14 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
 
       ///TODO: add check to see if player already downloaded
       await _getBio(store, next);
-    } else if (action is PlayerStatsChangedAction) {
-      if (!selectedPlayerSelector(store.state).containsStat(action.stat)) {
+    } else if (action is PlayerStatsChangedAction || action is PlayerStatsTabChangedAction) {
+      if (!selectedPlayerSelector(store.state).containsStat(store.state.playerState.selectedStat/*action.stat*/)) {
         await _getStat(store, next);
       } else {
         next(PlayerStatsAlreadyDownloaded());
       }
-    } else if (action is PlayerGetGameLogsAction) {
-      if (!selectedPlayerSelector(store.state).containsGameLogs(action.params)) {
+    } else if (action is PlayerGetGameLogsAction || action is PlayerGameLogTabChangedAction) {
+      if (!selectedPlayerSelector(store.state).containsGameLogs(store.state.playerState.gameLogParams/*action.params*/)) {
         await _getGameLogs(store, next);
       } else {
         next(PlayerGameLogsAlreadyDownloaded());

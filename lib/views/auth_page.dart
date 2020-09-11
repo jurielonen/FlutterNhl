@@ -33,9 +33,6 @@ class AuthPage extends StatelessWidget {
   }
 
   Widget _buildHeader(FirebaseViewModel viewModel) {
-    if (viewModel.loadingStatus == LoadingStatus.LOADING) {
-      return ProgressView('Singing in');
-    }
     return Text(
       'Sign in Anonymously',
       textAlign: TextAlign.center,
@@ -51,6 +48,11 @@ class AuthPage extends StatelessWidget {
               width: min(constraints.maxWidth, 600),
               padding: const EdgeInsets.all(16.0),
               child: ProgressView('Setting up'));
+        } else if(viewModel.loadingStatus == LoadingStatus.LOADING){
+          return Container(
+              width: min(constraints.maxWidth, 600),
+              padding: const EdgeInsets.all(16.0),
+              child: ProgressView('Checking signing'));
         }
         List<Widget> widgets = [_buildHeader(viewModel),
           const SizedBox(height: 8),

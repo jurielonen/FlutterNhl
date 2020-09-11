@@ -7,14 +7,37 @@ import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:redux/redux.dart';
 
+class PlayerAppBarViewModel {
+  final VoidCallback getStats;
+  final VoidCallback getGameLogs;
+
+  PlayerAppBarViewModel({
+    @required this.getStats,
+    @required this.getGameLogs});
+
+  static PlayerAppBarViewModel fromStore(Store<AppState> store){
+    return PlayerAppBarViewModel(
+        getStats: () =>
+            store.dispatch(PlayerStatsTabChangedAction()),
+        getGameLogs: () =>
+            store.dispatch(PlayerGameLogTabChangedAction()));
+  }
+
+  @override
+  bool operator ==(Object other) => true;
+
+  @override
+  int get hashCode => getStats.hashCode ^ getGameLogs.hashCode;
+}
+
 class PlayerViewModel {
   final LoadingStatus loadingStatus;
   final PlayerPage player;
-  final String selectedStat;
+  final PlayerStatParams selectedStat;
   final GameLogParams selectedParams;
   final List<String> displayItems;
   final Exception error;
-  final Function(String) getStats;
+  final Function(PlayerStatParams) getStats;
   final Function(GameLogParams) getGameLogs;
 
   PlayerViewModel(
@@ -35,7 +58,7 @@ class PlayerViewModel {
         selectedParams: store.state.playerState.gameLogParams,
         displayItems: statTypes(store.state),
         error: store.state.playerState.error,
-        getStats: (String stat) =>
+        getStats: (PlayerStatParams stat) =>
             store.dispatch(PlayerStatsChangedAction(stat)),
         getGameLogs: (GameLogParams params) =>
             store.dispatch(PlayerGetGameLogsAction(params)));
@@ -48,11 +71,13 @@ class PlayerViewModel {
               runtimeType == other.runtimeType &&
               loadingStatus == other.loadingStatus &&
               error == other.error &&
-              player.id == other.player.id;
+              selectedParams == other.selectedParams &&
+              selectedStat == other.selectedStat;
 
   @override
   int get hashCode =>
       loadingStatus.hashCode ^
       error.hashCode ^
-      player.id.hashCode;
+      selectedParams.hashCode ^
+      selectedStat.hashCode;
 }

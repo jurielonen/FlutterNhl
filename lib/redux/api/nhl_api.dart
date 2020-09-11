@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
+import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:http/http.dart';
 
 class NHLApi {
@@ -72,13 +73,14 @@ class NHLApi {
   }
 
   Future<List<dynamic>> fetchPlayerStat(
-      String stat, int playerId, StatType type) async {
+      PlayerStatParams stat, int playerId, StatType type) async {
     final searchUri =
-        Uri.https(baseUrl, 'stats/rest/en/${statTypeToParam(type)}/$stat', {
+        Uri.https(baseUrl, 'stats/rest/en/${statTypeToParam(type)}/${stat.stat}', {
       'isAggregate': 'false',
       'isGame': 'false',
       'sort': '[{\"property\":\"seasonId\", \"direction\":\"DESC\"}]',
-      'factCayenneExp': 'playerId=$playerId'
+      'factCayenneExp': 'playerId=$playerId',
+      'cayenneExp': 'gameTypeId=${stat.gameType ? '2' : '3'}'
     });
 
     print('$printMsg fetchPlayerStat: $searchUri');
