@@ -6,6 +6,7 @@ import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {
@@ -17,19 +18,24 @@ class VideoView extends StatefulWidget {
   _VideoViewState createState() => _VideoViewState();
 }
 
-class _VideoViewState extends State<VideoView> {
+class _VideoViewState extends State<VideoView>
+    with SingleTickerProviderStateMixin {
   VideoPlayerController _controller;
   Future<void> _initializeVideoPlayerFuture;
   Duration _currentPosition = Duration(seconds: 0);
   Duration _videoDuration = Duration(seconds: 0);
   bool _initialized = false;
-  bool _visible = false;
+  //bool _visible = false;
   String _currentPositionString = '00:00';
   String _videoDurationString = '00:00';
+  AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
     _controller = VideoPlayerController.network(
       widget.arguments.url,
     );
@@ -41,7 +47,8 @@ class _VideoViewState extends State<VideoView> {
       if (_controller.value.initialized) {
         if (!_initialized) {
           _initialized = true;
-          _visible = true;
+          if (!_animationController.isAnimating &&
+              _animationController.value < 1.0) _animationController.forward();
           _videoDuration = _controller.value.duration;
           _videoDurationString = _parseDuration(_videoDuration);
         }
@@ -56,6 +63,8 @@ class _VideoViewState extends State<VideoView> {
   @override
   void dispose() {
     _controller.dispose();
+    _animationController.dispose();
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -70,7 +79,8 @@ class _VideoViewState extends State<VideoView> {
             if (snapshot.connectionState == ConnectionState.done) {
               return videoPlayer();
             } else if (snapshot.hasError) {
-              return ErrorView(NetworkException('Error while downloading video: ${snapshot.error.toString()}'));
+              return ErrorView(NetworkException(
+                  'Error while downloading video: ${snapshot.error.toString()}'));
             } else {
               return ProgressView('Downloading video');
             }
@@ -85,9 +95,12 @@ class _VideoViewState extends State<VideoView> {
       children: <Widget>[
         GestureDetector(
           onTap: () {
-            setState(() {
-              _visible = !_visible;
-            });
+            if (!_animationController.isAnimating) {
+              if (_animationController.value > 0.0)
+                _animationController.reverse();
+              else
+                _animationController.forward();
+            }
           },
           child: Center(
             child: AspectRatio(
@@ -97,83 +110,91 @@ class _VideoViewState extends State<VideoView> {
           ),
         ),
         Positioned(
-          bottom: 10.0,
-          left: 10.0,
-          right: 10.0,
-          child: AnimatedOpacity(
+            bottom: 10.0,
+            left: 10.0,
+            right: 10.0,
+            child: SizeTransition(
+              sizeFactor: CurvedAnimation(
+                curve: Curves.fastOutSlowIn,
+                parent: _animationController,
+              ),
+              child: _buildVideoBar(),
+            )
+            /*AnimatedOpacity(
               opacity: _visible ? 1.0 : 0.0,
               duration: Duration(milliseconds: 50),
-              child: Container(
-                decoration:
-                BoxDecoration(color: const Color.fromRGBO(0, 0, 0, 0.5)),
-                child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(Icons.replay_10),
-                          onPressed: () {
-                            setState(() {
-                              if (_currentPosition.inSeconds > 10)
-                                _controller.seekTo(
-                                    _currentPosition - Duration(seconds: 10));
-                              else
-                                _controller.seekTo(Duration(seconds: 0));
-                            });
-                          }),
-                      IconButton(
-                          icon: Icon(_controller.value.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow),
-                          onPressed: () {
-                            setState(() {
-                              if (_controller.value.isPlaying)
-                                _controller.pause();
-                              else
-                                _controller.play();
-                            });
-                          }),
-                      IconButton(
-                          icon: Icon(Icons.forward_10),
-                          onPressed: () {
-                            setState(() {
-                              if ((_videoDuration.inSeconds -
-                                      _currentPosition.inSeconds) >
-                                  10)
-                                _controller.seekTo(
-                                    _currentPosition + Duration(seconds: 10));
-                            });
-                          }),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Slider(
-                          value: _currentPosition.inSeconds.toDouble(),
-                          min: 0.0,
-                          max: _videoDuration.inSeconds.toDouble(),
-                          onChanged: (double value){
-                            setState(() {
-                              _controller
-                                  .seekTo(Duration(seconds: value.toInt()));
-                            });
-                          },
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                            '$_currentPositionString/$_videoDurationString'),
-                      )
-                    ],
-                  )
-                ],
-              ),
+              child: _buildVideoBar(),
+          ),*/
             ),
-          ),
-        ),
       ],
+    );
+  }
+
+  Widget _buildVideoBar() {
+    return Container(
+      decoration: BoxDecoration(color: const Color.fromRGBO(0, 0, 0, 0.5)),
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.replay_10),
+                  onPressed: () {
+                    setState(() {
+                      if (_currentPosition.inSeconds > 10)
+                        _controller
+                            .seekTo(_currentPosition - Duration(seconds: 10));
+                      else
+                        _controller.seekTo(Duration(seconds: 0));
+                    });
+                  }),
+              IconButton(
+                  icon: Icon(_controller.value.isPlaying
+                      ? Icons.pause
+                      : Icons.play_arrow),
+                  onPressed: () {
+                    setState(() {
+                      if (_controller.value.isPlaying)
+                        _controller.pause();
+                      else
+                        _controller.play();
+                    });
+                  }),
+              IconButton(
+                  icon: Icon(Icons.forward_10),
+                  onPressed: () {
+                    setState(() {
+                      if ((_videoDuration.inSeconds -
+                              _currentPosition.inSeconds) >
+                          10)
+                        _controller
+                            .seekTo(_currentPosition + Duration(seconds: 10));
+                    });
+                  }),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Slider(
+                  value: _currentPosition.inSeconds.toDouble(),
+                  min: 0.0,
+                  max: _videoDuration.inSeconds.toDouble(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _controller.seekTo(Duration(seconds: value.toInt()));
+                    });
+                  },
+                ),
+              ),
+              Center(
+                child: Text('$_currentPositionString/$_videoDurationString'),
+              )
+            ],
+          )
+        ],
+      ),
     );
   }
 
