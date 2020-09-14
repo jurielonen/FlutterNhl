@@ -7,6 +7,7 @@ import 'package:FlutterNhl/redux/states/firebase/firebase_state.dart';
 import 'package:FlutterNhl/redux/states/game/game_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/playoffs/playoffs_state.dart';
+import 'package:FlutterNhl/redux/states/playoffs/series/series_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
 import 'package:FlutterNhl/redux/states/search/search_state.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_state.dart';
@@ -31,6 +32,7 @@ class AppState {
   final StandingsState standingsState;
   final SearchState searchState;
   final PlayoffsState playoffsState;
+  final SeriesState seriesState;
   final Config config;
 
   AppState({
@@ -50,6 +52,7 @@ class AppState {
     @required this.searchState,
     @required this.standingsState,
     @required this.playoffsState,
+    @required this.seriesState,
   });
 
   factory AppState.initial() {
@@ -57,7 +60,7 @@ class AppState {
       showSnackBar: null,
       loadingStatus: LoadingStatus.IDLE,
       error: null,
-      currentPage: DrawerPages.SCHEDULE,
+      currentPage: DrawerPages.PLAYOFFS,
       firebaseState: FirebaseState.initial(),
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),
@@ -69,6 +72,7 @@ class AppState {
       standingsState: StandingsState.initial(),
       searchState: SearchState.initial(),
       playoffsState: PlayoffsState.initial(),
+      seriesState: SeriesState.initial(),
       config: Config(),
     );
   }
@@ -89,6 +93,7 @@ class AppState {
     StandingsState standingsState,
     SearchState searchState,
     PlayoffsState playoffsState,
+    SeriesState seriesState,
     Config config,
   }) {
     return AppState(
@@ -107,6 +112,7 @@ class AppState {
       standingsState: standingsState ?? this.standingsState,
       searchState: searchState ?? this.searchState,
       playoffsState: playoffsState ?? this.playoffsState,
+      seriesState: seriesState ?? this.seriesState,
       config: config ?? this.config,
     );
   }

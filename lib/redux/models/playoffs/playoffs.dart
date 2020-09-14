@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/standings/standings.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
@@ -14,8 +15,7 @@ class Playoff {
   Playoff(this._defaultRound, {@required this.season, @required this.rounds});
 
   factory Playoff.fromJson(Map<String, dynamic> json) {
-    return Playoff(
-        getJsonInt('defaultRound', json),
+    return Playoff(getJsonInt('defaultRound', json, defaultValue: 0),
         season: getJsonString('season', json),
         rounds: List<PlayoffRound>.from(getJsonList(['rounds'], json)
             .map((round) => PlayoffRound.fromJson(round))));
@@ -30,10 +30,23 @@ class Playoff {
   }
 
   int get defaultRound {
-    if(_defaultRound < rounds.length)
+    if (_defaultRound < rounds.length && _defaultRound >= 0)
       return _defaultRound;
     else
-      return rounds.length -1;
+      return rounds.length - 1;
+  }
+
+  void setSeriesGame(Series series, List<Game> games) {
+    int index;
+    for (PlayoffRound round in rounds) {
+      print('checking games');
+      index = round.series.indexOf(series);
+      if (index > -1) {
+        print('found series $index');
+        round.series[index].games = games;
+        break;
+      }
+    }
   }
 }
 
@@ -87,10 +100,16 @@ class PlayoffRound {
       if (first.length == last.length) {
         widgets.addAll([
           PressableCard(
-            child: Center(child: Text(conferences.first.conferenceName.toUpperCase(), style: Styles.scaffoldGameWinnerText,)),
+            child: Center(
+                child: Text(
+              conferences.first.conferenceName.toUpperCase(),
+              style: Styles.scaffoldGameWinnerText,
+            )),
           ),
           PressableCard(
-            child: Center(child: Text(conferences.last.conferenceName.toUpperCase(), style: Styles.scaffoldGameWinnerText)),
+            child: Center(
+                child: Text(conferences.last.conferenceName.toUpperCase(),
+                    style: Styles.scaffoldGameWinnerText)),
           )
         ]);
         for (int x = 0; x < first.length; x++) {
@@ -115,6 +134,7 @@ class Series {
   final List<SeriesTeam> teams;
   final int numberOfGames;
   final int numberOfWins;
+  List<Game> games;
 
   Series({
     @required this.seriesNumber,
@@ -148,6 +168,19 @@ class Series {
     }
     return null;
   }
+
+  @override
+  int get hashCode =>
+      seriesNumber.hashCode ^ teams.first.id.hashCode ^ teams.last.id.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Series &&
+          runtimeType == other.runtimeType &&
+          seriesNumber == other.seriesNumber &&
+          teams.first.id == other.teams.first.id &&
+          teams.last.id == other.teams.last.id;
 }
 
 class SeriesCurrentGame {

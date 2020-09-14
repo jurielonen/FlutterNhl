@@ -45,7 +45,7 @@ class PlayoffsViewModel {
     return PlayoffsViewModel(
       loadingStatus: store.state.playoffsState.loadingStatus,
       error: store.state.playoffsState.error,
-      playoff: selectedPlayoffsSelector(store.state),
+      playoff: selectedPlayoffsSelector(store.state.playoffsState),
     );
   }
 

@@ -58,6 +58,8 @@ abstract class SearchAction {}
 
 abstract class PlayoffsAction {}
 
+abstract class SeriesAction {}
+
 class ScheduleEntered extends ScheduleAction {}
 
 class StatsEntered extends StatsAction {}

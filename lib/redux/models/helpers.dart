@@ -2,7 +2,7 @@ import 'package:FlutterNhl/constants/styles.dart';
 import 'package:intl/intl.dart';
 
 ///TODO Testing for functions
-dynamic getJsonDynamic(String key, Map<String, dynamic> json){
+dynamic getJsonDynamic(String key, Map<String, dynamic> json) {
   if (json != null) {
     if (json.containsKey(key)) {
       return json[key];
@@ -53,7 +53,7 @@ bool getJsonBoolean2(List<dynamic> keys, dynamic json) {
   return null;
 }
 
-int getJsonInt(String key, Map<String, dynamic> json) {
+int getJsonInt(String key, Map<String, dynamic> json, {int defaultValue = -1}) {
   if (json != null) {
     if (json.containsKey(key)) {
       if (json[key] is int) {
@@ -61,7 +61,7 @@ int getJsonInt(String key, Map<String, dynamic> json) {
       }
     }
   }
-  return -1;
+  return defaultValue;
 }
 
 int getJsonInt2(List<dynamic> keys, dynamic json) {
@@ -91,7 +91,8 @@ double getJsonDouble(String key, Map<String, dynamic> json) {
   return 0.0;
 }
 
-String getJsonString(String key, Map<String, dynamic> json, {String defaultString = ''}) {
+String getJsonString(String key, Map<String, dynamic> json,
+    {String defaultString = ''}) {
   if (json != null) {
     if (json.containsKey(key)) {
       if (json[key] is String) {
@@ -136,12 +137,12 @@ List<dynamic> getJsonList(List<dynamic> keys, dynamic json) {
   return [];
 }
 
-bool isJsonNull(List<dynamic> keys, dynamic json){
+bool isJsonNull(List<dynamic> keys, dynamic json) {
   if (keys.length < 1 || json == null) return true;
 
   dynamic obj = _getJsonItem(keys, json);
 
-  if(obj == null) return true;
+  if (obj == null) return true;
 
   return false;
 }
@@ -173,37 +174,38 @@ dynamic _getJsonItem(List<dynamic> keys, dynamic json) {
   return obj;
 }
 
-int compareDynamicFromMap(String key, Map<String, dynamic> aJson, Map<String, dynamic>bJson){
+int compareDynamicFromMap(
+    String key, Map<String, dynamic> aJson, Map<String, dynamic> bJson) {
   dynamic aValue = _getJsonItem([key], aJson);
   dynamic bValue = _getJsonItem([key], bJson);
-  if(aValue != null && bValue != null){
-    if(aValue.runtimeType == bValue.runtimeType){
-      if(aValue is num && bValue is num){
+  if (aValue != null && bValue != null) {
+    if (aValue.runtimeType == bValue.runtimeType) {
+      if (aValue is num && bValue is num) {
         return bValue.compareTo(aValue);
-      } else if(aValue is String && bValue is String){
+      } else if (aValue is String && bValue is String) {
         compareStrings(aValue, bValue);
       }
     }
-    if(aValue is num){
+    if (aValue is num) {
       return 1;
     } else {
       return -1;
     }
   } else {
-    if(aValue == null && bValue == null)
+    if (aValue == null && bValue == null)
       return 0;
-    else if(aValue != null)
+    else if (aValue != null)
       return 1;
     else
       return -1;
   }
 }
 
-int compareStrings(String a, String b){
-  if(a.contains(':') || b.contains(':')){
-    if(a.contains(':') && b.contains(':')){
+int compareStrings(String a, String b) {
+  if (a.contains(':') || b.contains(':')) {
+    if (a.contains(':') && b.contains(':')) {
       return DateFormat.Hm().parse(b).compareTo(DateFormat.Hm().parse(a));
-    } else if(a.contains(':')){
+    } else if (a.contains(':')) {
       return 1;
     } else {
       return -1;
@@ -213,10 +215,11 @@ int compareStrings(String a, String b){
   }
 }
 
-String getStatFromMap(String key, Map<String, dynamic> json, {defaultString = '0'}){
-  if(json != null && json.containsKey(key)){
+String getStatFromMap(String key, Map<String, dynamic> json,
+    {defaultString = '0'}) {
+  if (json != null && json.containsKey(key)) {
     dynamic value = json[key];
-    if(value is double)
+    if (value is double)
       return value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 2);
     return value.toString();
   }

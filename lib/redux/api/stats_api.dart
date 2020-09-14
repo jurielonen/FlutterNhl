@@ -281,6 +281,28 @@ class StatsApi {
       }
     });
   }
+
+  Future<List<Game>> fetchPlayoffGames(
+      int teamId, int opponentId, String season) async {
+    final searchUri = Uri.https(baseUrl, 'api/v1/schedule', {
+      'teamId': teamId.toString(),
+      'opponentId': opponentId.toString(),
+      'gameType': 'P',
+      'season': season,
+      'hydrate':
+          'team,linescore,game(content(media(epg)),seriesSummary),decisions,scoringplays,boxscore'
+    });
+    print('$printMsg fetchPlayoffGames: $searchUri');
+    return await fetch(searchUri, client).then((value) {
+      try {
+        return List<Game>.from((getJsonList(['dates'], value))
+            .map((date) => Game.fromJson(getJsonObject(['games', 0], date))));
+      } catch (error) {
+        throw NetworkParseException(
+            'Failed to parse data.\nCall: fetchPlayoffGames.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+      }
+    });
+  }
 }
 
 //https://statsapi.web.nhl.com/api/v1/seasons/current

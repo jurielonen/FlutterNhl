@@ -58,6 +58,9 @@ class Game {
         Config().selectedSeason.isPlayoffs(dateTime)) {
       seriesSummary =
           PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
+    } else if (json.containsKey('seriesSummary')) {
+      seriesSummary =
+          PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
     }
     return Game(
       id: getJsonInt('gamePk', json),

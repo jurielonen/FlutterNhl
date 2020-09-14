@@ -159,7 +159,10 @@ class ScheduleGameCard extends StatelessWidget {
           style: Styles.gameStateText,
         ),
       );
-    } else if (_game.isFinal) {
+    } else if (_game.isFinal &&
+        _game.content != null &&
+        _game.content.videos != null &&
+        _game.content.videos.isNotEmpty) {
       widgets.add(
         IconButton(
           icon: Icon(Icons.videocam),
@@ -187,12 +190,14 @@ class ScheduleGameCard extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
             content: Builder(
               builder: (context) {
-                // Get available height and width of the build area of this widget. Make a choice depending on the size.
                 var height = MediaQuery.of(context).size.height;
                 var width = MediaQuery.of(context).size.width;
 
                 return Container(
-                  height: height - 400,
+                  height:
+                      MediaQuery.of(context).orientation == Orientation.portrait
+                          ? height - 400
+                          : height - 100,
                   width: width - 1,
                   decoration: BoxDecoration(color: Colors.grey),
                   child: SingleChildScrollView(
@@ -209,12 +214,6 @@ class ScheduleGameCard extends StatelessWidget {
             contentPadding: const EdgeInsets.only(),
             titlePadding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
             actionsPadding: const EdgeInsets.only(),
-            /*content: Container(
-              decoration: BoxDecoration(color: Colors.grey),
-              child: SingleChildScrollView(
-                child: ListBody(children: videoTiles.toList()),
-              ),
-            ),*/
             actions: <Widget>[
               FlatButton(
                 child: Text('Close'),
