@@ -94,18 +94,28 @@ class Config {
   List<String> getStatTypes(StatType type) {
     switch (type) {
       case StatType.PLAYER:
-        return playerReportData.keys.toList();
+        return _compareKeys(playerReportData.keys.toList());
         break;
 
       case StatType.GOALIE:
-        return goalieReportData.keys.toList();
+        return _compareKeys(goalieReportData.keys.toList());
         break;
 
       case StatType.TEAM:
-        return teamReportData.keys.toList();
+        return _compareKeys(teamReportData.keys.toList());
         break;
     }
     return ['Unknown'];
+  }
+
+  List<String> _compareKeys(List<String> list){
+    list.sort((a,b) {
+      if(a == 'summary')
+        return -1;
+      else
+        return a.compareTo(b);
+    });
+    return list;
   }
 
   List<String> getFilterItems(StatType type, String stat) {

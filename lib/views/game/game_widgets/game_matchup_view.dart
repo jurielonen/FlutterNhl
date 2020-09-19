@@ -26,7 +26,10 @@ class GameMatchUpView extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-              child: PlayerBioTab.createHeaderDivider('Players to watch')),
+              child: PlayerBioTab.createHeaderDividerWidget(Column(children: [
+                Text('Players to watch'.toUpperCase(), style: Styles.infoTableHeaderText),
+                Text('Last 5 Games'.toUpperCase(), style: Styles.infoTableHeaderText)
+              ],))),
         ),
         SliverFixedExtentList(
           itemExtent: 100,
