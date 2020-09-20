@@ -343,6 +343,13 @@ class GameFinal extends Game {
         yield play;
     }
   }
+
+  Iterable<Play> get shotPlays sync* {
+    for (Play play in plays){
+      if(play.type == PlayEnum.MISSED_SHOT || play.type == PlayEnum.BLOCKED_SHOT || play.type == PlayEnum.SHOT || play.type == PlayEnum.GOAL)
+        yield play;
+    }
+  }
 }
 
 class LineScore {

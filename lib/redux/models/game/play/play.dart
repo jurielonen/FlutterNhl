@@ -13,7 +13,6 @@ class Play {
 
   factory Play.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> result = getJsonObject(['result'], json);
-    PlayEnum type = playEnumFromString(getJsonString('eventTypeId', result));
     Play tPlay = Play(
         type: playEnumFromString(getJsonString('eventTypeId', result)),
         event: getJsonString('event', result),
@@ -26,7 +25,8 @@ class Play {
                   (player) => PlayerPlay.fromJson(player))),
           team: Team.fromJson(getJsonObject(['team'], json)),
           desc: getJsonString2(['result', 'description'], json),
-          strength: getJsonString2(['result', 'strength', 'code'], json)
+          strength: getJsonString2(['result', 'strength', 'code'], json),
+          coordinates: Coordinates.fromJson(getJsonObject(['coordinates'], json)),
       );
     } else {
       return tPlay;
@@ -39,8 +39,10 @@ class PlayWithPlayers extends Play {
   final Team team;
   final String desc;
   final String strength;
+  final Coordinates coordinates;
 
-  PlayWithPlayers({@required Play play,@required  this.players,@required  this.team,@required  this.desc, @required this.strength})
+
+  PlayWithPlayers({@required Play play,@required  this.players,@required  this.team,@required  this.desc, @required this.strength, @required this.coordinates})
       : super(type: play.type, event: play.event, about: play.about);
   
   String get playHeader {
@@ -49,6 +51,20 @@ class PlayWithPlayers extends Play {
 
   String get playDesc {
     return desc;
+  }
+}
+
+class Coordinates {
+  final int x;
+  final int y;
+
+  Coordinates({@required this.x, @required this.y});
+  
+  factory Coordinates.fromJson(Map<String, dynamic> json) {
+    return Coordinates(
+      x: getJsonInt('x', json),
+      y: getJsonInt('y', json),
+    );
   }
 }
 

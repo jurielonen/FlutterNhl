@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_app_bar.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_play_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
+import 'package:FlutterNhl/views/game/game_widgets/game_shot_map.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_summary.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
@@ -27,6 +28,7 @@ class GameFinalView extends StatelessWidget {
       @required this.refreshCallBack})
       : super(key: key);
   static const List<String> _tabs = [
+    'Shot map',
     'Summary',
     'Plays',
     'Home',
@@ -87,6 +89,8 @@ class GameFinalView extends StatelessWidget {
 
   Widget _buildTabContent(String tab) {
     switch (tab) {
+      case 'Shot map':
+        return GameShotMap(plays: game.shotPlays.toList(),);
       case 'Summary':
         return GameSummary(game: game,);
       case 'Plays':
