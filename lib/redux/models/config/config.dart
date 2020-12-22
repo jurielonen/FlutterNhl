@@ -38,6 +38,21 @@ class Config {
     selectedSeason = currentSeason;
   }
 
+  /// Checks that current date is inside current season.
+  /// Returns current date if it is inside current season.
+  /// Returns seasons end date if current date is higher than today's date.
+  /// Returns seasons start date if current date is lower than today's date.
+  DateTime getStartingDate(){
+    int compareValue = DateTime.now().compareTo(currentSeason.seasonEndDate);
+    if(0 < compareValue){
+      return currentSeason.seasonEndDate;
+    } else if(0 > compareValue){
+      return currentSeason.regularSeasonStartDate;
+    } else {
+      return DateTime.now();
+    }
+  }
+
   fromJsonSeason(Map<String, dynamic> json){
     selectedSeason = Season.fromJson(json);
   }
