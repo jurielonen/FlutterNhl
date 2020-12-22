@@ -90,7 +90,7 @@ class GameFinalView extends StatelessWidget {
   Widget _buildTabContent(String tab) {
     switch (tab) {
       case 'Shot map':
-        return GameShotMap(plays: game.shotPlays.toList(),);
+        return GameShotMap(object: game.getShotMapObject,);
       case 'Summary':
         return GameSummary(game: game,);
       case 'Plays':

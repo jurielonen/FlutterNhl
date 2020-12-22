@@ -117,6 +117,11 @@ class PlayerPlay extends Player {
         player: Player.fromJson(getJsonObject(['player'], json)),
         playerType: getJsonString('playerType', json));
   }
+
+  @override
+  String toString() {
+    return 'PlayerPlay{playerType: $playerType}';
+  }
 }
 
 class PlayerGame extends Player {

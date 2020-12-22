@@ -52,19 +52,29 @@ class PlayWithPlayers extends Play {
   String get playDesc {
     return desc;
   }
+
+  @override
+  String toString() {
+    return 'PlayWithPlayers{players: $players, team: $team, desc: $desc, strength: $strength, coordinates: $coordinates}';
+  }
 }
 
 class Coordinates {
-  final int x;
-  final int y;
+  final double x;
+  final double y;
 
   Coordinates({@required this.x, @required this.y});
   
   factory Coordinates.fromJson(Map<String, dynamic> json) {
     return Coordinates(
-      x: getJsonInt('x', json),
-      y: getJsonInt('y', json),
+      x: getJsonDouble('x', json),
+      y: getJsonDouble('y', json),
     );
+  }
+
+  @override
+  String toString() {
+    return 'Coordinates{x: $x, y: $y}';
   }
 }
 

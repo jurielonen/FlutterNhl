@@ -309,6 +309,8 @@ class GameFinal extends Game {
     );
   }
 
+  ShotMapObject get getShotMapObject => ShotMapObject(homeTeam: home, periods: lineScore.periods, shotPlays: shotPlays.toList());
+
   Map<String, PlayerGame> get decisionPlayers {
     if (_decisions != null && _decisions.isNotEmpty) return _decisions;
 
@@ -344,11 +346,27 @@ class GameFinal extends Game {
     }
   }
 
-  Iterable<Play> get shotPlays sync* {
+  Iterable<PlayWithPlayers> get shotPlays sync* {
     for (Play play in plays){
       if(play.type == PlayEnum.MISSED_SHOT || play.type == PlayEnum.BLOCKED_SHOT || play.type == PlayEnum.SHOT || play.type == PlayEnum.GOAL)
         yield play;
     }
+  }
+}
+
+class ShotMapObject {
+  final Team homeTeam;
+  final List<Period> periods;
+  List<PlayWithPlayers> shotPlays;
+  Map<int, List<PlayWithPlayers>> _periodPlays = {};
+
+  ShotMapObject({@required this.homeTeam, @required this.periods, @required this.shotPlays});
+
+  List<PlayWithPlayers> getPeriod(Period period) {
+    if(!_periodPlays.containsKey(period.num)){
+      _periodPlays[period.num] = shotPlays.where((play) => play.about.period == period.num).toList();
+    }
+    return _periodPlays[period.num];
   }
 }
 
