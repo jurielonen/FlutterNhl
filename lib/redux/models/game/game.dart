@@ -309,6 +309,12 @@ class GameFinal extends Game {
     );
   }
 
+  ShotMapObject get getShotMapObject => ShotMapObject(
+      homeTeam: home,
+      awayTeam: away,
+      periods: lineScore.periods,
+      shotPlays: shotPlays.toList());
+
   Map<String, PlayerGame> get decisionPlayers {
     if (_decisions != null && _decisions.isNotEmpty) return _decisions;
 
@@ -342,6 +348,60 @@ class GameFinal extends Game {
       if (play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START)
         yield play;
     }
+  }
+
+  Iterable<ShotPlay> get shotPlays sync* {
+    for (Play play in plays) {
+      if (play is ShotPlay) yield play;
+    }
+  }
+}
+
+class ShotMapObject {
+  final Team homeTeam;
+  final Team awayTeam;
+  final List<Period> periods;
+  List<ShotPlay> shotPlays;
+  Map<int, List<ShotPlay>> _periodPlays = {};
+  Map<int, List<ShotPlay>> _teamPlays = {};
+
+  ShotMapObject(
+      {@required this.homeTeam,
+      @required this.awayTeam,
+      @required this.periods,
+      @required this.shotPlays});
+
+  List<ShotPlay> getPeriod(Period period) {
+    if (!_periodPlays.containsKey(period.num)) {
+      _periodPlays[period.num] =
+          shotPlays.where((play) => play.about.period == period.num).toList();
+    }
+    return _periodPlays[period.num];
+  }
+
+  Iterable<ShotPlay> get getHomeShots sync* {
+    for (ShotPlay play in shotPlays) {
+      if (play.team.id == homeTeam.id) {
+        if (play.about.period == 2) play.coordinates.y *= -1;
+        yield play;
+      }
+    }
+  }
+
+  Iterable<ShotPlay> get getAwayShots sync* {
+    for (ShotPlay play in shotPlays) {
+      if (play.team.id == awayTeam.id) {
+        if (play.about.period != 2) play.coordinates.y *= -1;
+        yield play;
+      }
+    }
+  }
+
+  List<ShotPlay> getTeamShots(Team team) {
+    if (!_teamPlays.containsKey(team.id)) {
+      _teamPlays[team.id] = shotPlays.where((play) => play.team.id == team.id);
+    }
+    return _teamPlays[team.id];
   }
 }
 

@@ -4,12 +4,15 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_app_bar.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_play_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_player_view.dart';
+import 'package:FlutterNhl/views/game/game_widgets/game_shot_map.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_stat_view.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_summary.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_video_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/scaffold_template.dart';
 import 'package:flutter/material.dart';
+
+import 'game_widgets/game_shot_map_team.dart';
 
 class GameFinalView extends StatelessWidget {
   final GameFinal game;
@@ -29,6 +32,7 @@ class GameFinalView extends StatelessWidget {
   static const List<String> _tabs = [
     'Summary',
     'Plays',
+    'Shot map',
     'Home',
     'Away',
     'Videos'
@@ -88,9 +92,13 @@ class GameFinalView extends StatelessWidget {
   Widget _buildTabContent(String tab) {
     switch (tab) {
       case 'Summary':
-        return GameSummary(game: game,);
+        return GameSummary(
+          game: game,
+        );
       case 'Plays':
         return GamePlayView(plays: game.plays, homeId: game.home.id);
+      case 'Shot map':
+        return GameShotMapTeam(object: game.getShotMapObject);
       case 'Home':
         return CustomScrollView(
           slivers: <Widget>[
