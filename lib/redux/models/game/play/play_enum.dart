@@ -135,3 +135,61 @@ String playEnumToString(PlayEnum value) {
       return 'UNKNOWN';
   }
 }
+
+enum ShotTypeEnum {
+  SNAP,
+  WRIST,
+  SLAP,
+  TIP,
+  BACKHAND,
+  WRAP,
+  MISSED,
+  BLOCKED,
+  UNK,
+}
+
+ShotTypeEnum shotTypeEnumFromString(String type) {
+  switch (type) {
+    case "Wrist Shot":
+      return ShotTypeEnum.WRIST;
+    case "Snap Shot":
+      return ShotTypeEnum.SNAP;
+    case "Slap Shot":
+      return ShotTypeEnum.SLAP;
+    case "Deflected":
+      return ShotTypeEnum.TIP;
+    case "Backhand":
+      return ShotTypeEnum.BACKHAND;
+    case "Wrap-around":
+      return ShotTypeEnum.WRAP;
+    case "MISSED SHOT":
+      return ShotTypeEnum.MISSED;
+    case "BLOCKED SHOT":
+      return ShotTypeEnum.BLOCKED;
+    default:
+      return ShotTypeEnum.UNK;
+  }
+}
+
+String shotTypeEnumToString(ShotTypeEnum type) {
+  switch (type) {
+    case ShotTypeEnum.WRIST:
+      return "Wrist Shot";
+    case ShotTypeEnum.SNAP:
+      return "Snap Shot";
+    case ShotTypeEnum.SLAP:
+      return "Slap Shot";
+    case ShotTypeEnum.TIP:
+      return "Deflected";
+    case ShotTypeEnum.BACKHAND:
+      return "Backhand";
+    case ShotTypeEnum.WRAP:
+      return "Wrap-around";
+    case ShotTypeEnum.MISSED:
+      return "Missed Shot";
+    case ShotTypeEnum.BLOCKED:
+      return "Blocked Shot";
+    default:
+      return 'Unknown';
+  }
+}

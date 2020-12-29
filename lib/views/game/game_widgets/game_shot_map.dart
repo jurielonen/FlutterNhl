@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
+import 'package:FlutterNhl/views/game/game_widgets/play_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:touchable/touchable.dart';
@@ -17,6 +18,7 @@ class _GameShotMapState extends State<GameShotMap>
     with TickerProviderStateMixin {
   TabController _tabController;
   PageController _pageController;
+  int _selectedShot = 0;
 
   @override
   void initState() {
@@ -30,6 +32,7 @@ class _GameShotMapState extends State<GameShotMap>
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         TabBar(
           controller: _tabController,
@@ -42,6 +45,10 @@ class _GameShotMapState extends State<GameShotMap>
                   ))
               .toList(),
         ),
+        getPlayCardSummary(
+            widget.object.getPeriod(
+                widget.object.periods[_tabController.index])[_selectedShot],
+            1),
         Expanded(
           child: TabBarView(
             controller: _tabController,
@@ -72,7 +79,12 @@ class _GameShotMapState extends State<GameShotMap>
         builder: (context) => CustomPaint(
           size: Size(MediaQuery.of(context).size.width,
               MediaQuery.of(context).size.height),
-          painter: Rink(context, plays),
+          painter: Rink(context, plays, _selectedShot, (play, index) {
+            print('$index');
+            setState(() {
+              _selectedShot = index;
+            });
+          }),
         ),
       ),
     );
@@ -87,26 +99,31 @@ class _GameShotMapState extends State<GameShotMap>
 }
 
 class Rink extends CustomPainter {
-  final List<PlayWithPlayers> plays;
+  final List<ShotPlay> plays;
   final BuildContext context;
-  static const double xMax = 200;
-  static const double xOffSet = 100;
-  static const double yMax = 80;
-  static const double yOffSet = 40;
 
-  Rink(this.context, this.plays);
+  final int selectedShot;
+  final Function(ShotPlay play, int index) onPress;
+
+  Rink(this.context, this.plays, this.selectedShot, this.onPress);
 
   @override
   void paint(Canvas canvas, Size size) {
+    double height = size.height;
+    double width = height * (25.9 / 60.96);
+    if (width > size.width) {
+      width = size.width;
+      height = width * (60.96 / 25.9);
+    }
     TouchyCanvas myCanvas = TouchyCanvas(context, canvas);
-    double borderRadius = (size.height * 0.2238) / 2;
-    double goalLine = size.height * 0.055;
-    double blueLine = size.height * 0.32 + goalLine;
-    double redLine = size.height * 0.125 + blueLine;
-    double otherBlueLine = size.height * 0.125 + redLine;
-    double otherGoalLine = size.height * 0.32 + otherBlueLine;
+    double goalLine = height * (goalLineLength / rinkLength);
+    double blueLine = height * (blueLineLength / rinkLength) + goalLine;
+    double redLine = height * (redLineLength / rinkLength) + blueLine;
+    double otherBlueLine = height * (blueLineLength / rinkLength) + redLine;
+    double otherGoalLine =
+        height * (goalLineLength / rinkLength) + otherBlueLine;
     RRect rect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(Offset.zero.dx, Offset.zero.dy, size.width, size.height),
+      Rect.fromLTWH(Offset.zero.dx, Offset.zero.dy, width, height),
       Radius.circular(goalLine),
     );
 
@@ -146,30 +163,16 @@ class Rink extends CustomPainter {
           ..color = Colors.red
           ..strokeWidth = 2.0
           ..strokeCap = StrokeCap.square);
-    /*coords.forEach((element) {
-      myCanvas.drawCircle(
-          Offset(
-              (-26 + yOffSet) / yMax * size.width,
-              (((-55 + xOffSet) / xMax * size.height) - size.height)
-                  .abs()),
-          15.0,
-          Paint()..color = Colors.black, onTapDown: (tapDetail) {
-        print('touched: ${tapDetail.localPosition}');
+
+    plays.asMap().forEach((index, shot) {
+      myCanvas.drawPath(
+          shot.getPath(height, width),
+          Paint()
+            ..color = selectedShot == index ? Color(0xFFFF0000) : shot.typeColor
+            ..strokeWidth = 4
+            ..style = PaintingStyle.fill, onTapDown: (tapDetail) {
+        onPress(shot, index);
       });
-    });*/
-    plays.forEach((shot) {
-        myCanvas.drawCircle(
-            Offset(
-                ((shot.coordinates.y * -1) + yOffSet) / yMax * (size.width),
-                (((shot.coordinates.x + xOffSet) / xMax * size.height) -
-                        (size.height))
-                    .abs()),
-            10.0,
-            Paint()..color = getTeamColor(shot.team.name),
-            onTapDown: (tapDetail) {
-          print(
-              'touched: ${shot.desc} ${shot.about.eventIdx} ${shot.coordinates} ${tapDetail.localPosition}');
-        });
     });
   }
 
@@ -192,65 +195,14 @@ class Rink extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(Rink oldDelegate) => false;
+  bool shouldRepaint(Rink oldDelegate) =>
+      oldDelegate.selectedShot != selectedShot;
+
   @override
   bool shouldRebuildSemantics(Rink oldDelegate) => false;
-}
 
-final List<Coordinates> coords = [
-  Coordinates(x: 0, y: 0),
-  Coordinates(x: 100, y: 40),
-  Coordinates(x: 100, y: 30),
-  Coordinates(x: 100, y: 20),
-  Coordinates(x: 100, y: 10),
-  Coordinates(x: -100, y: 0),
-  Coordinates(x: -100, y: -10),
-  Coordinates(x: -100, y: -20),
-  Coordinates(x: -100, y: -30),
-  Coordinates(x: -100, y: -40),
-  Coordinates(x: 80, y: 40),
-  Coordinates(x: 80, y: 30),
-  Coordinates(x: 80, y: 20),
-  Coordinates(x: 80, y: 10),
-  Coordinates(x: 80, y: 0),
-  Coordinates(x: -80, y: -10),
-  Coordinates(x: -80, y: -20),
-  Coordinates(x: -80, y: -30),
-  Coordinates(x: -80, y: -40),
-  Coordinates(x: 60, y: 40),
-  Coordinates(x: 60, y: 30),
-  Coordinates(x: 60, y: 20),
-  Coordinates(x: 60, y: 10),
-  Coordinates(x: 60, y: 0),
-  Coordinates(x: -60, y: -10),
-  Coordinates(x: -60, y: -20),
-  Coordinates(x: -55, y: -26),
-  Coordinates(x: -60, y: -40),
-  Coordinates(x: 40, y: 40),
-  Coordinates(x: 40, y: 30),
-  Coordinates(x: 40, y: 20),
-  Coordinates(x: 40, y: 10),
-  Coordinates(x: 40, y: 0),
-  Coordinates(x: -40, y: -10),
-  Coordinates(x: -40, y: -20),
-  Coordinates(x: -40, y: -30),
-  Coordinates(x: -40, y: -40),
-  Coordinates(x: 20, y: 40),
-  Coordinates(x: 20, y: 30),
-  Coordinates(x: 20, y: 20),
-  Coordinates(x: 20, y: 10),
-  Coordinates(x: 20, y: 0),
-  Coordinates(x: -20, y: -10),
-  Coordinates(x: -20, y: -20),
-  Coordinates(x: -20, y: -30),
-  Coordinates(x: -20, y: -40),
-  Coordinates(x: 0, y: 20),
-  Coordinates(x: 0, y: 30),
-  Coordinates(x: 0, y: 20),
-  Coordinates(x: 0, y: 10),
-  Coordinates(x: 0, y: 0),
-  Coordinates(x: 0, y: -10),
-  Coordinates(x: 0, y: -20),
-  Coordinates(x: 0, y: -30),
-  Coordinates(x: 0, y: -40),
-];
+  void displaySnackBar(ShotPlay shot) {
+    Scaffold.of(context).showSnackBar(
+        SnackBar(content: Text('${shot.desc} ${shot.coordinates}')));
+  }
+}
