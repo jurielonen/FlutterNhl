@@ -29,7 +29,6 @@ class Play {
       String desc = getJsonString2(['result', 'description'], json);
       String strength = getJsonString2(['result', 'strength', 'code'], json);
       if (tPlay.type == PlayEnum.GOAL ||
-          /*tPlay.type == PlayEnum.BLOCKED_SHOT ||*/
           tPlay.type == PlayEnum.MISSED_SHOT ||
           tPlay.type == PlayEnum.SHOT) {
         ShotTypeEnum shotType = shotTypeEnumFromString(
@@ -53,7 +52,6 @@ class Play {
         team: team,
         desc: desc,
         strength: strength,
-        //coordinates: Coordinates.fromJson(getJsonObject(['coordinates'], json)),
       );
     } else {
       return tPlay;
@@ -66,15 +64,14 @@ class PlayWithPlayers extends Play {
   final Team team;
   final String desc;
   final String strength;
-  //final Coordinates coordinates;
 
-  PlayWithPlayers(
-      {@required Play play,
-      @required this.players,
-      @required this.team,
-      @required this.desc,
-      @required this.strength /*, @required this.coordinates*/})
-      : super(type: play.type, event: play.event, about: play.about);
+  PlayWithPlayers({
+    @required Play play,
+    @required this.players,
+    @required this.team,
+    @required this.desc,
+    @required this.strength,
+  }) : super(type: play.type, event: play.event, about: play.about);
 
   String get playHeader {
     return '${about.periodTime}-${playEnumToString(type)} $strength';

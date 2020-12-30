@@ -10,6 +10,7 @@ import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/playoffs/playoffs.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
+import 'package:FlutterNhl/redux/models/season/season.dart';
 import 'package:FlutterNhl/redux/models/standings/standings.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:http/http.dart';
@@ -38,40 +39,71 @@ class StatsApi {
     }); //.catchError((error) => throw Exception(error.toString()));
   }
 
-  Future<Null> fetchSeason({String season}) async {
+  Future<Null> fetchCurrentSeason() async {
+    String path = 'api/v1/seasons/current';
+    Uri searchUri = Uri.https(baseUrl, path);
+
+    print('$printMsg fetchCurrentSeason: $searchUri');
+
+    Map<String, dynamic> value = await fetch(searchUri, client);
+    try {
+      for (dynamic obj in getJsonList(['seasons'], value)) {
+        if (obj is Map<String, dynamic>) Season.fromJson(obj);
+      }
+    } catch (error) {
+      throw NetworkParseException(
+          'Failed to parse data.\nCall: fetchCurrentSeason.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+    }
+
+    if (!Config().checkForCurrentSeason()) {
+      Map<String, dynamic> value =
+          await fetchSeason(Season.currentSeasonString());
+      try {
+        for (dynamic obj in getJsonList(['seasons'], value)) {
+          if (obj is Map<String, dynamic>) Season.fromJson(obj);
+        }
+      } catch (error) {
+        throw NetworkParseException(
+            'Failed to parse data.\nCall: fetchCurrentSeason.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+      }
+    }
+
+    if (!Config().checkForCurrentSeason()) Config().setMaxSeasonToCurrent();
+  }
+
+  Future<Null> fetchSeason(String season) async {
     Uri searchUri;
     String path = 'api/v1/seasons';
+    searchUri = Uri.https(baseUrl, path, {
+      'season': season,
+    });
     if (season == null) {
       path += '/current';
       searchUri = Uri.https(baseUrl, path);
-    } else {
-      searchUri = Uri.https(baseUrl, path, {
-        'season': season,
-      });
-    }
+    } else {}
 
     print('$printMsg fetchSeason: $searchUri');
     await fetch(searchUri, client).then((value) {
       try {
-        if (season == null)
-          return Config().fromJsonSeasonCurrent(value);
-        else {
-          for (dynamic obj in getJsonList(['seasons'], value)) {
-            if (obj is Map<String, dynamic>) Config().fromJsonSeason(obj);
+        for (dynamic obj in getJsonList(['seasons'], value)) {
+          if (obj is Map<String, dynamic>) {
+            Season parsedSeason = Season.fromJson(obj);
+            if (parsedSeason.season == season)
+              Config().setCurrentSeason(parsedSeason);
           }
         }
       } catch (error) {
         throw NetworkParseException(
             'Failed to parse data.\nCall: fetchSeason.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
       }
-    }); //.catchError((error) => throw Exception(error.toString()));
+    });
   }
 
   Future<Schedule> fetchSchedule(String date) async {
     if (!Config().isSeasonDownloaded(date)) {
       DateTime dateTime = Styles.apiDateFormat.parse(date);
       int year = dateTime.year;
-      await fetchSeason(season: Season.getSeasonString(year));
+      await fetchSeason(Season.getSeasonString(year));
       Config().setSelectedSeason(dateTime);
       date = Config().validDate(dateTime);
     }

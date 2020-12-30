@@ -1,5 +1,5 @@
 import 'package:FlutterNhl/constants/styles.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
+import 'package:FlutterNhl/redux/models/season/season.dart';
 import 'package:flutter/material.dart';
 
 class CustomDatePickerConfig {

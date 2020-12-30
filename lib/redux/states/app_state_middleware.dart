@@ -13,7 +13,7 @@ class AppStateMiddleware extends MiddlewareClass<AppState> {
     next(action);
     if (action is InitAction) {
       try {
-        await api.fetchSeason();
+        await api.fetchCurrentSeason();
         await api.fetchTeams();
         next(SeasonConfigReceived());
       } catch (error) {

@@ -61,7 +61,7 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
       next(ReceivedScheduleAction(sDate, schedule));
     } catch (e) {
       print(e.toString());
-      next(ErrorScheduleAction(e));
+      next(ErrorScheduleAction(Exception(e.toString())));
     }
   }
 
