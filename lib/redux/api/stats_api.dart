@@ -101,9 +101,12 @@ class StatsApi {
 
   Future<Schedule> fetchSchedule(String date) async {
     String seasonString = Season.getApiCallSeasonString(date);
+    DateTime dateTime = Styles.apiDateFormat.parse(date);
     if (seasonString != null) {
-      DateTime dateTime = Styles.apiDateFormat.parse(date);
-      await fetchSeason(Season.getApiCallSeasonString(seasonString));
+      await fetchSeason(seasonString);
+    }
+
+    if(!Config().selectedSeason.fitsCurrentSeason(dateTime)){
       Config().setSelectedSeason(dateTime);
       date = Config().validDate(dateTime);
     }
