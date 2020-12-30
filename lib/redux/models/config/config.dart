@@ -29,11 +29,11 @@ class Config {
         .map((k, v) => MapEntry<String, Advanced>(k, Advanced.fromJson(v)));
   }
 
+  ///sets current season if it is found in Season classes cache.
+  ///if season is found returns true else false.
   bool checkForCurrentSeason() {
     Season temp = Season.getCurrentSeason(DateTime.now());
     if(temp == null)
-      return false;
-    if(0 < DateTime.now().compareTo(temp.seasonEndDate))
       return false;
     currentSeason = temp;
     selectedSeason = currentSeason;
