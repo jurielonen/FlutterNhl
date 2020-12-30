@@ -221,7 +221,7 @@ class Config {
     return '$year${year+1}';
   }
 
-  bool isSeasonDownloaded(String date){
+  /*bool isSeasonDownloaded(String date){
     DateTime temp = Styles.apiDateFormat.parse(date);
     if(selectedSeason.fitsCurrentSeason(temp))
       return true;
@@ -231,7 +231,7 @@ class Config {
       return true;
     }
     return false;
-  }
+  }*/
 
   void setSelectedSeason(DateTime date){
     final temp = Season.getCurrentSeason(date);

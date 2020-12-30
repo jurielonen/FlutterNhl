@@ -3,6 +3,7 @@ import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/game/play/play.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
+import 'package:FlutterNhl/redux/models/season/season.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -97,10 +98,10 @@ checkTeamFinal(TeamFinal actual, TeamFinal expected) {
   expect(actual.id, expected.id);
   expect(actual.abb, expected.abb);
   expect(actual.teamStats, expected.teamStats);
-  expect(actual.playerTableSource.length, expected.playerTableSource.length);
+  /*expect(actual.playerTableSource.length, expected.playerTableSource.length);
   actual.playerTableSource.asMap().forEach((key, value) {
     checkPlayerGame(value, expected.playerTableSource[key]);
-  });
+  });*/
 }
 
 checkTeamPreview(TeamPreview actual, TeamPreview expected) {
@@ -108,10 +109,10 @@ checkTeamPreview(TeamPreview actual, TeamPreview expected) {
   expect(actual.id, expected.id);
   expect(actual.abb, expected.abb);
   expect(actual.teamStats, expected.teamStats);
-  expect(actual.playerTableSource.length, expected.playerTableSource.length);
+  /*expect(actual.playerTableSource.length, expected.playerTableSource.length);
   actual.playerTableSource.asMap().forEach((key, value) {
     checkPlayerGame(value, expected.playerTableSource[key]);
-  });
+  });*/
 }
 
 ///Game classes unit tests
@@ -166,4 +167,16 @@ checkScheduleGame(ScheduleGames actual, ScheduleGames expected){
   actual.games.asMap().forEach((key, value) {
     checkGame(value, expected.games[key]);
   });
+}
+
+///Season classes unit tests
+checkSeason(Season actual, Season expected){
+  expect(actual.season, expected.season);
+  expect(actual.regularSeasonStartDate, expected.regularSeasonStartDate);
+  expect(actual.regularSeasonEndDate, expected.regularSeasonEndDate);
+  expect(actual.checkStartDate, expected.checkStartDate);
+  expect(actual.checkPlayoffs, expected.checkPlayoffs);
+  expect(actual.checkEndDate, expected.checkEndDate);
+  expect(actual.seasonEndDate, expected.seasonEndDate);
+  expect(actual.tiesInUse, expected.tiesInUse);
 }
