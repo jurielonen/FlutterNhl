@@ -60,6 +60,8 @@ abstract class PlayoffsAction {}
 
 abstract class SeriesAction {}
 
+abstract class StarredAction {}
+
 class ScheduleEntered extends ScheduleAction {}
 
 class StatsEntered extends StatsAction {}
@@ -85,3 +87,5 @@ class GameEntered extends GameAction {
 }
 
 class PlayoffsEntered extends PlayoffsAction {}
+
+class StarredEntered extends StarredAction {}

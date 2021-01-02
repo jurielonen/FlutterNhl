@@ -12,6 +12,7 @@ import 'package:FlutterNhl/redux/states/playoffs/series/series_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
 import 'package:FlutterNhl/redux/states/search/search_reducer.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_reducer.dart';
+import 'package:FlutterNhl/redux/states/starred/starred_reducer.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_reducer.dart';
 import 'package:FlutterNhl/redux/states/team/team_reducer.dart';
 
@@ -78,6 +79,9 @@ AppState appReducer(AppState state, dynamic action) {
   } else if (action is SeriesAction) {
     return state.copyWith(
         seriesState: seriesReducer(state.seriesState, action));
+  } else if (action is StarredAction) {
+    return state.copyWith(
+        starredState: starredReducer(state.starredState, action));
   }
   return state;
 }

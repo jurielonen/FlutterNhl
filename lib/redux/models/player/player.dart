@@ -12,17 +12,32 @@ import 'package:flutter/material.dart';
 class Player {
   final int id;
   final String fullname;
+  bool starred;
 
   Player({
     @required this.id,
     @required this.fullname,
+    this.starred = false,
   });
 
   static final Map<int, Player> _cache = <int, Player>{};
 
-  Player.clone(Player clone) : this(id: clone.id, fullname: clone.fullname);
+  Player.clone(Player clone)
+      : this(id: clone.id, fullname: clone.fullname, starred: clone.starred);
 
-  factory Player.fromJson(Map<String, dynamic> json) {
+  ///Turns player object to a map.
+  ///Used for Database.
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'fullname': fullname,
+    };
+  }
+
+  static List<Player> fromDatabase(List<Map<String, dynamic>> players) =>
+      players.map((e) => Player.fromJson(e, starred: true)).toList();
+
+  factory Player.fromJson(Map<String, dynamic> json, {bool starred = false}) {
     int tId = getJsonInt('id', json);
     if (tId == -1) {
       tId = getJsonInt('playerId', json);
@@ -45,7 +60,7 @@ class Player {
         if (tName == '') {
           tName = getJsonString('goalieFullName', json);
         }
-        final temp = Player(id: tId, fullname: tName);
+        final temp = Player(id: tId, fullname: tName, starred: starred);
         _cache[tId] = temp;
         return temp;
       }
@@ -60,7 +75,7 @@ class Player {
   }
 
   String get headShotUrl =>
-      'https://nhl.bamcontent.com/images/headshots/current/168x168/$id.jpg';
+      'https://cms.nhl.bamgrid.com/images/headshots/current/168x168/$id.jpg';
 
   static String tableName(String fName) {
     List<String> names = fName.split(' ');
@@ -176,8 +191,7 @@ class PlayerGame extends Player {
             text: '${getStatFromMap(stat, stats)} ',
             style: Styles.decisionStatText));
       });
-    }
-    else if (position.isGoalie()) {
+    } else if (position.isGoalie()) {
       goalieStats.forEach((stat) {
         temp.add(TextSpan(
             text: '${getColumnTooltip(stat)}: ',

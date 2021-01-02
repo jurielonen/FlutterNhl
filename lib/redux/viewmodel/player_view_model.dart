@@ -4,23 +4,31 @@ import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_action.dart';
 import 'package:FlutterNhl/redux/states/player/player_selectors.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
+import 'package:FlutterNhl/redux/states/starred/starred_action.dart';
 import 'package:flutter/foundation.dart';
 import 'package:redux/redux.dart';
 
 class PlayerAppBarViewModel {
   final VoidCallback getStats;
   final VoidCallback getGameLogs;
+  final Function(Player) starredPlayer;
+  final Function(Player) unstarredPlayer;
 
-  PlayerAppBarViewModel({
-    @required this.getStats,
-    @required this.getGameLogs});
+  PlayerAppBarViewModel(
+      {@required this.getStats,
+      @required this.getGameLogs,
+      @required this.starredPlayer,
+      @required this.unstarredPlayer});
 
-  static PlayerAppBarViewModel fromStore(Store<AppState> store){
+  static PlayerAppBarViewModel fromStore(Store<AppState> store) {
     return PlayerAppBarViewModel(
-        getStats: () =>
-            store.dispatch(PlayerStatsTabChangedAction()),
-        getGameLogs: () =>
-            store.dispatch(PlayerGameLogTabChangedAction()));
+      getStats: () => store.dispatch(PlayerStatsTabChangedAction()),
+      getGameLogs: () => store.dispatch(PlayerGameLogTabChangedAction()),
+      starredPlayer: (Player player) =>
+          store.dispatch(StarredAddPlayerAction(player)),
+      unstarredPlayer: (Player player) =>
+          store.dispatch(StarredDeletePlayerAction(player)),
+    );
   }
 
   @override
@@ -67,12 +75,12 @@ class PlayerViewModel {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is PlayerViewModel &&
-              runtimeType == other.runtimeType &&
-              loadingStatus == other.loadingStatus &&
-              error == other.error &&
-              selectedParams == other.selectedParams &&
-              selectedStat == other.selectedStat;
+      other is PlayerViewModel &&
+          runtimeType == other.runtimeType &&
+          loadingStatus == other.loadingStatus &&
+          error == other.error &&
+          selectedParams == other.selectedParams &&
+          selectedStat == other.selectedStat;
 
   @override
   int get hashCode =>

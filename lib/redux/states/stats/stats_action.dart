@@ -1,5 +1,4 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_table_source.dart';
 

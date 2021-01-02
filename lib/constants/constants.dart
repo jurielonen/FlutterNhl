@@ -2,6 +2,12 @@ import 'dart:ui';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 
+//Database
+const String DB_PATH = 'players.db';
+const String DB_TABLE = 'players';
+const String DB_KEY_PLAYER_ID = 'id';
+const String DB_KEY_PLAYER_NAME = 'fullname';
+
 //Rink coordinates dimensions
 const double xMax = 200;
 const double yMax = 85;

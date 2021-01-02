@@ -11,6 +11,7 @@ import 'package:FlutterNhl/redux/states/playoffs/series/series_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
 import 'package:FlutterNhl/redux/states/search/search_state.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_state.dart';
+import 'package:FlutterNhl/redux/states/starred/starred_state.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
 import 'package:FlutterNhl/redux/states/team/team_state.dart';
 import 'package:meta/meta.dart';
@@ -33,6 +34,7 @@ class AppState {
   final SearchState searchState;
   final PlayoffsState playoffsState;
   final SeriesState seriesState;
+  final StarredState starredState;
   final Config config;
 
   AppState({
@@ -52,6 +54,7 @@ class AppState {
     @required this.searchState,
     @required this.standingsState,
     @required this.playoffsState,
+    @required this.starredState,
     @required this.seriesState,
   });
 
@@ -73,6 +76,7 @@ class AppState {
       searchState: SearchState.initial(),
       playoffsState: PlayoffsState.initial(),
       seriesState: SeriesState.initial(),
+      starredState: StarredState.initial(),
       config: Config(),
     );
   }
@@ -94,6 +98,7 @@ class AppState {
     SearchState searchState,
     PlayoffsState playoffsState,
     SeriesState seriesState,
+    StarredState starredState,
     Config config,
   }) {
     return AppState(
@@ -113,6 +118,7 @@ class AppState {
       searchState: searchState ?? this.searchState,
       playoffsState: playoffsState ?? this.playoffsState,
       seriesState: seriesState ?? this.seriesState,
+      starredState: starredState ?? this.starredState,
       config: config ?? this.config,
     );
   }

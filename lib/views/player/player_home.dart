@@ -77,6 +77,15 @@ class _PlayerHomeState extends State<PlayerHome> {
                   ),
                 ],
               ),
+              actions: [
+                IconButton(
+                    icon: widget.playerArgs.player.starred
+                        ? const Icon(Icons.star)
+                        : const Icon(Icons.star_border),
+                    onPressed: () => widget.playerArgs.player.starred
+                        ? viewModel.unstarredPlayer(widget.playerArgs.player)
+                        : viewModel.starredPlayer(widget.playerArgs.player))
+              ],
               bottom: PreferredSize(
                 preferredSize: Size.fromHeight(50.0),
                 child: Container(
@@ -222,18 +231,18 @@ class _PlayerHomeState extends State<PlayerHome> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CustomDropdownButton(
-                  selectedValue: viewModel.selectedStat.stat,
-                  values: viewModel.displayItems,
-                  onValueChanged: (String stat) => viewModel
-                      .getStats(viewModel.selectedStat.copyWith(stat: stat)),
+                selectedValue: viewModel.selectedStat.stat,
+                values: viewModel.displayItems,
+                onValueChanged: (String stat) => viewModel
+                    .getStats(viewModel.selectedStat.copyWith(stat: stat)),
               ),
               CustomDropdownButton(
-                  selectedValue: viewModel.selectedStat.gameTypeString,
-                  values: PageParam.gameTypes,
-                  onValueChanged: (String type) => viewModel.getStats(
-                      viewModel.selectedStat.copyWith(
-                          gameType: PageParam.getGameTypeBoolean(type))),
-                ),
+                selectedValue: viewModel.selectedStat.gameTypeString,
+                values: PageParam.gameTypes,
+                onValueChanged: (String type) => viewModel.getStats(viewModel
+                    .selectedStat
+                    .copyWith(gameType: PageParam.getGameTypeBoolean(type))),
+              ),
             ],
           ),
         ),
@@ -271,15 +280,17 @@ class _PlayerHomeState extends State<PlayerHome> {
                 onSelected: (int year) => viewModel.getGameLogs(
                     viewModel.selectedParams.copyWith(year: year.toString())),
                 maxValue: int.parse(StatParameters.getCurrentSeason()),
-                minValue: viewModel.player != null ? viewModel.player.firstSeason : int.parse(Config.getCurrentSeason),
+                minValue: viewModel.player != null
+                    ? viewModel.player.firstSeason
+                    : int.parse(Config.getCurrentSeason),
                 reducer: 10001,
               ),
               CustomDropdownButton(
                 selectedValue: viewModel.selectedParams.gameTypeString,
                 values: PageParam.gameTypes,
-                onValueChanged: (String type) => viewModel.getGameLogs(
-                    viewModel.selectedParams.copyWith(
-                        gameType: PageParam.getGameTypeBoolean(type))),
+                onValueChanged: (String type) => viewModel.getGameLogs(viewModel
+                    .selectedParams
+                    .copyWith(gameType: PageParam.getGameTypeBoolean(type))),
               ),
             ],
           ),

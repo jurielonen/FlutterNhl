@@ -37,13 +37,18 @@ class AppDrawer extends StatelessWidget {
               icon: Icons.timer,
               text: 'Playoffs',
               onTap: () => _tilePressed(context, DrawerPages.PLAYOFFS)),
+          _createDrawerItem(
+            icon: Icons.person,
+            text: 'Starred players',
+            onTap: () => _tilePressed(context, DrawerPages.STARRED),
+          ),
           Divider(),
         ],
       ),
     );
   }
 
-  void _tilePressed(BuildContext context, DrawerPages page){
+  void _tilePressed(BuildContext context, DrawerPages page) {
     onTilePressed(page);
     Navigator.pop(context);
   }

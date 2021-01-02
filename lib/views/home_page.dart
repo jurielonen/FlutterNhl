@@ -8,6 +8,7 @@ import 'package:FlutterNhl/views/draft/draft_home.dart';
 import 'package:FlutterNhl/views/playoffs/playoffs_home.dart';
 import 'package:FlutterNhl/views/schedule/schedule_home.dart';
 import 'package:FlutterNhl/views/standing/standing_home.dart';
+import 'package:FlutterNhl/views/starred/starred_home.dart';
 import 'package:FlutterNhl/views/stats/stats_home.dart';
 import 'package:FlutterNhl/widgets/drawer.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
@@ -86,6 +87,10 @@ class HomePage extends StatelessWidget {
       case DrawerPages.PLAYOFFS:
         {
           return PlayoffsHome();
+        }
+      case DrawerPages.STARRED:
+        {
+          return StarredHome();
         }
       default:
         {
