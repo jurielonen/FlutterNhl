@@ -1,10 +1,12 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/starred_view_model.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
+import 'package:FlutterNhl/views/player/player_home.dart';
 import 'package:FlutterNhl/views/search/search_home.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/idle_view.dart';
@@ -41,23 +43,27 @@ class StarredHome extends StatelessWidget {
     return SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
           Player player = players[index];
-          return Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: Theme.of(context).hintColor))),
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Styles.buildPlayerCircleIcon(player, size: 30.0),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(player.fullname),
+          return GestureDetector(
+            onTap: () => Navigator.pushNamed(context, PlayerHome.routeName,
+                arguments: PlayerArguments(player, StatType.PLAYER)),
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(color: Theme.of(context).hintColor))),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Styles.buildPlayerCircleIcon(player, size: 30.0),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(player.fullname),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }, childCount: players.length),

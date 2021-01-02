@@ -29,8 +29,8 @@ class Player {
   ///Used for Database.
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'fullname': fullname,
+      DB_KEY_PLAYER_ID: id,
+      DB_KEY_PLAYER_NAME: fullname,
     };
   }
 
