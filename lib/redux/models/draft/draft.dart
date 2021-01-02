@@ -14,7 +14,7 @@ class DraftDataTableSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    if(index >= rowCount){
+    if (index >= rowCount) {
       return null;
     }
     Pick pick = draft.getPick(index + 1);
@@ -26,8 +26,10 @@ class DraftDataTableSource extends DataTableSource {
       //DataCell(Text(pick.round)),
       DataCell(Text(pick.pickRound.toString())),
       DataCell(Text(pick.pickOverall.toString())),
-      DataCell(Text(pick.prospect.nameString),
-          onTap: () => onRowPressed(pick.prospect.id)),
+      DataCell(Text(pick.prospect.nameString), onTap: () {
+        if (pick.prospect is ProspectWithFullDetails)
+          onRowPressed(pick.prospect.id);
+      }),
       DataCell(Text(pick.team.abb)),
       DataCell(Text(pick.prospect.positionString)),
       DataCell(Text(pick.prospect.birthCountryString)),
@@ -81,18 +83,21 @@ class Draft {
     return Draft(year: 0, rounds: []);
   }
 
-  Pick getPick(int overallPick){
+  Pick getPick(int overallPick) {
     Pick pick;
     rounds.forEach((round) {
-      if(round.picks.first.pickOverall <= overallPick && round.picks.last.pickOverall >= overallPick){
-        pick = round.picks.firstWhere((element) => element.pickOverall == overallPick);
+      if (round.picks.first.pickOverall <= overallPick &&
+          round.picks.last.pickOverall >= overallPick) {
+        pick = round.picks
+            .firstWhere((element) => element.pickOverall == overallPick);
       }
     });
     return pick;
   }
 
-  DraftRound getRound(int round){
-    return rounds.firstWhere((dRound) => dRound.round == round, orElse: () => null);
+  DraftRound getRound(int round) {
+    return rounds.firstWhere((dRound) => dRound.round == round,
+        orElse: () => null);
   }
 }
 
@@ -136,9 +141,7 @@ class Pick {
   }
 }
 
-class Prospect extends Player {
-
-  Prospect.clone(Player player) : super.clone(player);
+class Prospect {
   Prospect();
 
   String get nameString => 'UNK';
@@ -146,9 +149,10 @@ class Prospect extends Player {
   String get birthCountryString => 'UNK';
   String get amateurLeagueString => 'UNK';
   String get amateurTeamString => 'UNK';
+  int get id => -1;
 
-  factory Prospect.fromJson(Map<String, dynamic> json){
-    if(json.length > 2){
+  factory Prospect.fromJson(Map<String, dynamic> json) {
+    if (json.length > 2) {
       return ProspectWithFullDetails.fromJson(json);
     } else {
       return ProspectWithJustName(getJsonString('fullName', json));
@@ -162,23 +166,24 @@ class ProspectWithJustName extends Prospect {
   @override
   String get nameString => name;
   ProspectWithJustName(this.name);
-
-
 }
 
 class ProspectWithFullDetails extends Prospect {
+  final String fullname;
+  final int nhlId;
   final String nationality;
   final String birthCity;
   final String birthCountry;
   final DateTime birthDate;
   final String handness;
-  final Position position;
+  final PersonPosition position;
   final String prospectCategory;
   final String amateurTeam;
   final String amateurLeague;
 
   ProspectWithFullDetails(
-      {@required Player player,
+      {@required this.fullname,
+      @required this.nhlId,
       @required this.nationality,
       @required this.birthCity,
       @required this.birthCountry,
@@ -187,31 +192,30 @@ class ProspectWithFullDetails extends Prospect {
       @required this.position,
       @required this.prospectCategory,
       @required this.amateurTeam,
-      @required this.amateurLeague})
-      : super.clone(player);
+      @required this.amateurLeague});
 
   factory ProspectWithFullDetails.fromJson(Map<String, dynamic> json) {
     return ProspectWithFullDetails(
-      player: Player.fromJson(json),
+      fullname: getJsonString('fullName', json),
+      nhlId: getJsonInt('nhlPlayerId', json),
       nationality: getJsonString('nationality', json),
       birthCity: getJsonString('birthCity', json),
       birthCountry: getJsonString('birthCountry', json),
       birthDate: getJsonDateTime('birthDate', json),
       handness: getJsonString('shootsCatches', json),
       position:
-          positionFromString(getJsonString2(['primaryPosition', 'code'], json)),
+          PersonPosition.fromJson(getJsonObject(['primaryPosition'], json)),
       prospectCategory: getJsonString2(['prospectCategory', 'shortName'], json),
       amateurTeam: getJsonString2(['amateurTeam', 'name'], json),
       amateurLeague: getJsonString2(['amateurLeague', 'name'], json),
     );
   }
 
-
   @override
   String get nameString => fullname;
 
   @override
-  String get positionString => positionToAbbString(position);
+  String get positionString => positionToAbbString(position.code);
 
   @override
   String get birthCountryString => birthCountry;
@@ -221,4 +225,7 @@ class ProspectWithFullDetails extends Prospect {
 
   @override
   String get amateurTeamString => amateurTeam;
+
+  @override
+  int get id => nhlId;
 }

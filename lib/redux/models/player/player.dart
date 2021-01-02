@@ -3,8 +3,10 @@ import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
+import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/redux/states/player/player_state.dart';
 import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
+import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 import 'package:flutter/material.dart';
@@ -12,18 +14,31 @@ import 'package:flutter/material.dart';
 class Player {
   final int id;
   final String fullname;
+  final String currentTeam;
+  final PersonPosition position;
+  final bool active;
   bool starred;
 
   Player({
     @required this.id,
     @required this.fullname,
+    @required this.currentTeam,
+    @required this.position,
+    @required this.active,
     this.starred = false,
   });
 
   static final Map<int, Player> _cache = <int, Player>{};
 
   Player.clone(Player clone)
-      : this(id: clone.id, fullname: clone.fullname, starred: clone.starred);
+      : this(
+          id: clone.id,
+          fullname: clone.fullname,
+          currentTeam: clone.currentTeam,
+          position: clone.position,
+          active: clone.active,
+          starred: clone.starred,
+        );
 
   ///Turns player object to a map.
   ///Used for Database.
@@ -31,46 +46,98 @@ class Player {
     return {
       DB_KEY_PLAYER_ID: id,
       DB_KEY_PLAYER_NAME: fullname,
+      DB_KEY_PLAYER_TEAM: currentTeam,
+      DB_KEY_PLAYER_POSITION: positionToAbbString(position.code),
+      DB_KEY_PLAYER_ACTIVE: active ? 1 : 0,
     };
   }
 
   static List<Player> fromDatabase(List<Map<String, dynamic>> players) =>
-      players.map((e) => Player.fromJson(e, starred: true)).toList();
+      players.map((e) {
+        Player temp = Player(
+            id: getJsonInt(DB_KEY_PLAYER_ID, e),
+            fullname: getJsonString(DB_KEY_PLAYER_NAME, e),
+            currentTeam: getJsonString(DB_KEY_PLAYER_TEAM, e),
+            position: PersonPosition.fromDatabase(
+                e), //positionFromString(getJsonString(DB_KEY_PLAYER_TEAM, e)),
+            active: getJsonBoolean(DB_KEY_PLAYER_TEAM, e),
+            starred: true);
+        _cache[temp.id] = temp;
+        return temp;
+      }).toList();
 
-  factory Player.fromJson(Map<String, dynamic> json, {bool starred = false}) {
+  static Player _checkIfFoundInCache(int id) {
+    if (_cache.containsKey(id)) {
+      return _cache[id];
+    }
+    return null;
+  }
+
+  factory Player.fromJsonStatsApi(Map<String, dynamic> json) {
     int tId = getJsonInt('id', json);
-    if (tId == -1) {
-      tId = getJsonInt('playerId', json);
-    }
-    if (tId == -1) {
-      tId = getJsonInt('nhlPlayerId', json);
-    }
-    if (_cache.containsKey(tId)) {
+    Player temp = _checkIfFoundInCache(tId);
+    if (temp != null) {
       return _cache[tId];
-    } else {
-      if (tId == -1) {
-        final temp = Player.empty();
-        _cache[tId] = temp;
-        return temp;
-      } else {
-        String tName = getJsonString('fullName', json);
-        if (tName == '') {
-          tName = getJsonString('skaterFullName', json);
-        }
-        if (tName == '') {
-          tName = getJsonString('goalieFullName', json);
-        }
-        final temp = Player(id: tId, fullname: tName, starred: starred);
-        _cache[tId] = temp;
-        return temp;
-      }
     }
+
+    temp = Player(
+      id: tId,
+      fullname: getJsonString('fullName', json),
+      currentTeam: Team.getTeamAbb(getJsonInt2(['currentTeam', 'id'], json)),
+      position: PersonPosition.fromJson(getJsonObject([
+        'primaryPosition'
+      ], json)), //positionFromString(getJsonString2(['primaryPosition', 'code'], json)),
+      active: getJsonBoolean('active', json),
+    );
+    _cache[temp.id] = temp;
+    return temp;
+  }
+
+  factory Player.fromJsonSearchApi(List<String> values) {
+    int tId = int.parse(values[0]);
+    Player temp = _checkIfFoundInCache(tId);
+    if (temp != null) {
+      return _cache[tId];
+    }
+
+    temp = Player(
+        id: tId,
+        fullname: '${values[2]} ${values[1]}',
+        currentTeam: values[11],
+        position: PersonPosition(
+            code: positionFromString(values[12]), name: values[12]),
+        active: int.parse(values[3]) == 1);
+
+    _cache[temp.id] = temp;
+    return temp;
+  }
+
+  factory Player.fromJsonLastFive(Map<String, dynamic> json, int teamId) {
+    int tId = getJsonInt('id', json);
+    Player temp = _checkIfFoundInCache(tId);
+    if (temp != null) {
+      return _cache[tId];
+    }
+
+    temp = Player(
+      id: tId,
+      fullname: getJsonString('fullName', json),
+      currentTeam: Team.getTeamAbb(teamId),
+      position:
+          PersonPosition.fromJson(getJsonObject(['primaryPosition'], json)),
+      active: true,
+    );
+    _cache[temp.id] = temp;
+    return temp;
   }
 
   factory Player.empty() {
     return Player(
       id: -1,
       fullname: '',
+      currentTeam: '',
+      active: false,
+      position: PersonPosition(code: Position.N_A, name: ''),
     );
   }
 
@@ -90,6 +157,14 @@ class Player {
     });
     return name;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Player && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode ^ fullname.hashCode;
 }
 
 class PlayerLastFive extends Player {
@@ -97,7 +172,6 @@ class PlayerLastFive extends Player {
   final dynamic value;
   final String shortName;
   final String number;
-  final PersonPosition position;
 
   PlayerLastFive({
     @required Player player,
@@ -105,19 +179,17 @@ class PlayerLastFive extends Player {
     @required this.value,
     @required this.shortName,
     @required this.number,
-    @required this.position,
   }) : super.clone(player);
 
-  factory PlayerLastFive.fromJson(String stat, Map<String, dynamic> json) {
+  factory PlayerLastFive.fromJson(
+      int teamId, String stat, Map<String, dynamic> json) {
     Map<String, dynamic> player = getJsonObject(['players', 0], json);
     return PlayerLastFive(
-      player: Player.fromJson(player),
+      player: Player.fromJsonLastFive(json, teamId),
       stat: stat,
       value: getJsonDynamic('statValue', json),
       shortName: getJsonString('shortName', player),
       number: getJsonString('primaryNumber', player),
-      position:
-          PersonPosition.fromJson(getJsonObject(['primaryPosition'], player)),
     );
   }
 }
@@ -129,7 +201,8 @@ class PlayerPlay extends Player {
 
   factory PlayerPlay.fromJson(Map<String, dynamic> json) {
     return PlayerPlay(
-        player: Player.fromJson(getJsonObject(['player'], json)),
+        player:
+            Player._checkIfFoundInCache(getJsonInt2(['player', 'id'], json)),
         playerType: getJsonString('playerType', json));
   }
 
@@ -141,13 +214,11 @@ class PlayerPlay extends Player {
 
 class PlayerGame extends Player {
   String jerseyNumber;
-  PersonPosition position;
   Map<String, dynamic> stats;
 
   PlayerGame({
     @required Player player,
     this.jerseyNumber,
-    this.position,
     this.stats,
   }) : super.clone(player);
 
@@ -164,18 +235,16 @@ class PlayerGame extends Player {
     }
 
     return PlayerGame(
-      player: Player.fromJson(getJsonObject(['person'], json)),
+      player: Player._checkIfFoundInCache(getJsonInt2(['person', 'id'], json)),
       jerseyNumber: getJsonString('jerseyNumber', json),
-      position: posTemp,
       stats: statsTemp,
     );
   }
 
   factory PlayerGame.fromJsonPreview(Map<String, dynamic> json) {
     return PlayerGame(
-      player: Player.fromJson(getJsonObject(['person'], json)),
+      player: Player.fromJsonStatsApi(getJsonObject(['person'], json)),
       jerseyNumber: getJsonString('jerseyNumber', json),
-      position: PersonPosition.fromJson(getJsonObject(['position'], json)),
       stats: getJsonObject(['person', 'stats', 0, 'splits', 0, 'stat'], json),
     );
   }
@@ -227,10 +296,19 @@ class PersonPosition {
     this.name,
   });
 
-  factory PersonPosition.fromJson(Map<String, dynamic> json) => PersonPosition(
-        code: positionFromString(getJsonString('code', json)),
-        name: getJsonString('name', json),
-      );
+  factory PersonPosition.fromDatabase(Map<String, dynamic> json) {
+    Position pos =
+        positionFromString(getJsonString(DB_KEY_PLAYER_POSITION, json));
+    return PersonPosition(code: pos, name: positionToFullString(pos));
+  }
+
+  factory PersonPosition.fromJson(Map<String, dynamic> json) {
+    Position pos = positionFromString(getJsonString('code', json));
+    return PersonPosition(
+      code: pos,
+      name: positionToFullString(pos),
+    );
+  }
 
   bool isGoalie() {
     if (code == Position.G) return true;
@@ -270,19 +348,14 @@ class PlayerPage extends Player {
   final String birthCity;
   final String birthCountry;
   final DateTime birthDate;
-  final int draftNum;
-  final int draftRound;
-  final int draftYear;
-  final int firstSeason;
-  final int firstSeasonPlayoffs;
-  final Position position;
   final String handness;
-  final String currentTeam;
   final int weight;
-  final int height;
-  final PlayerAllTimeStats allTimeStats;
+  final String height;
+  final List<PlayerStat> playerStats;
+  PlayerDraft draft;
   Map<PageStatParams, PlayerSeasonTableSource> stats = {};
   Map<PageGameLogParams, List<GameLogsPlayer>> gameLog = {};
+  String _firstSeason;
 
   PlayerPage({
     @required Player player,
@@ -290,104 +363,43 @@ class PlayerPage extends Player {
     this.birthCity,
     this.birthCountry,
     this.birthDate,
-    this.draftNum,
-    this.draftRound,
-    this.draftYear,
-    this.firstSeason,
-    this.firstSeasonPlayoffs,
-    this.position,
     this.handness,
-    this.currentTeam,
-    this.allTimeStats,
     this.weight,
     this.height,
+    this.playerStats,
   }) : super.clone(player);
 
   PlayerPage.empty()
       : this(
-            player: Player.empty(),
-            nationality: '',
-            birthCity: '',
-            birthCountry: '',
-            handness: '',
-            birthDate: DateTime.now(),
-            draftNum: -1,
-            draftRound: -1,
-            draftYear: -1,
-            firstSeason: -1,
-            firstSeasonPlayoffs: -1,
-            position: Position.N_A,
-            currentTeam: '',
-            height: 0,
-            weight: 0,
-            allTimeStats: PlayerPageAllTimeStats.fromJson({}));
+          player: Player.empty(),
+          nationality: '',
+          birthCity: '',
+          birthCountry: '',
+          handness: '',
+          birthDate: DateTime.now(),
+          height: '',
+          weight: 0,
+          playerStats: [],
+        );
 
-  factory PlayerPage.fromJsonPlayer(Map<String, dynamic> json) {
-    Map<String, dynamic> regular = getJsonObject(['data', 0], json);
-    Map<String, dynamic> playoffs = getJsonObject(['data', 1], json);
+  factory PlayerPage.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> statsJson = getJsonList(['people'], json).first;
+    Player temp = Player.fromJsonStatsApi(statsJson);
     return PlayerPage(
-        player: Player.fromJson(regular),
-        nationality: getJsonString('nationalityCode', regular),
-        birthCity: getJsonString('birthCity', regular),
-        birthCountry: getJsonString('birthCountryCode', regular),
-        handness: getJsonString('shootsCatches', regular),
-        birthDate: getJsonDateTime('birthDate', regular),
-        draftNum: getJsonInt('draftOverall', regular),
-        draftRound: getJsonInt('draftRound', regular),
-        draftYear: getJsonInt('draftYear', regular),
-        firstSeason: getJsonInt('firstSeasonForGameType', regular),
-        firstSeasonPlayoffs: getJsonInt('firstSeasonForGameType', playoffs),
-        position: positionFromString(getJsonString('positionCode', regular)),
-        height: getJsonInt('height', regular),
-        weight: getJsonInt('weight', regular),
-        currentTeam: getJsonString('currentTeamName', regular),
-        allTimeStats: PlayerPageAllTimeStats.fromJson(json));
+      player: temp,
+      nationality: getJsonString('nationality', statsJson),
+      birthCity: getJsonString('birthCity', statsJson),
+      birthCountry: getJsonString('birthCountry', statsJson),
+      handness: getJsonString('shootsCatches', statsJson),
+      birthDate: getJsonDateTime('birthDate', statsJson),
+      height: getJsonString('height', statsJson),
+      weight: getJsonInt('weight', statsJson),
+      playerStats: List<PlayerStat>.of(getJsonList(['stats'], statsJson)
+          .map((e) => PlayerStat.fromJson(e, temp.position.isPlayer()))),
+    );
   }
 
-  factory PlayerPage.fromJsonGoalie(Map<String, dynamic> json) {
-    Map<String, dynamic> regular = getJsonObject(['data', 0], json);
-    Map<String, dynamic> playoffs = getJsonObject(['data', 1], json);
-    return PlayerPage(
-        player: Player.fromJson(regular),
-        nationality: getJsonString('nationalityCode', regular),
-        birthCity: getJsonString('birthCity', regular),
-        birthCountry: getJsonString('birthCountryCode', regular),
-        handness: getJsonString('shootsCatches', regular),
-        birthDate: getJsonDateTime('birthDate', regular),
-        draftNum: getJsonInt('draftOverall', regular),
-        draftRound: getJsonInt('draftRound', regular),
-        draftYear: getJsonInt('draftYear', regular),
-        firstSeason: getJsonInt('firstSeasonForGameType', regular),
-        firstSeasonPlayoffs: getJsonInt('firstSeasonForGameType', playoffs),
-        position: Position.G,
-        currentTeam: getJsonString('currentTeamAbbrev', regular),
-        allTimeStats: GoaliePageAllTimeStats.fromJson(json));
-  }
-
-  String get playerPositionString {
-    switch (position) {
-      case Position.D:
-        return 'Defenseman';
-        break;
-      case Position.C:
-        return 'Center';
-        break;
-      case Position.R:
-        return 'Right wing';
-        break;
-      case Position.L:
-        return 'Left wing';
-        break;
-      case Position.G:
-        return 'Goalie';
-        break;
-
-      ///TODO: add unknown to StatType enums
-      default:
-        return 'Unknown';
-        break;
-    }
-  }
+  String get playerPositionString => positionToFullString(position.code);
 
   String get playerHandessString {
     switch (handness) {
@@ -439,7 +451,7 @@ class PlayerPage extends Player {
   }
 
   StatType getStatType() {
-    switch (position) {
+    switch (position.code) {
       case Position.D:
       case Position.C:
       case Position.R:
@@ -456,182 +468,220 @@ class PlayerPage extends Player {
         break;
     }
   }
+
+  String get firstSeason {
+    if (_firstSeason == null) {
+      playerStats.forEach((stat) {
+        if (stat is PlayerYearByYearStats && stat.regularSeason) {
+          _firstSeason = stat.firstSeason;
+        }
+      });
+    }
+    return _firstSeason;
+  }
 }
 
-abstract class PlayerAllTimeStats {
-  Iterable<Widget> get getStatsWidget sync* {}
+abstract class PlayerStat {
+  factory PlayerStat.fromJson(Map<String, dynamic> json, bool skater) {
+    String type = getJsonString2(['type', 'displayName'], json);
+    switch (type) {
+      case 'careerRegularSeason':
+        return PlayerAllTimeStat.fromJson(
+            getJsonList(['splits'], json), true, skater);
+      case 'careerPlayoffs':
+        return PlayerAllTimeStat.fromJson(
+            getJsonList(['splits'], json), false, skater);
+      case 'yearByYear':
+        return PlayerYearByYearStats.fromJson(
+            getJsonList(['splits'], json), true, skater);
+      case 'yearByYearPlayoffs':
+        return PlayerYearByYearStats.fromJson(
+            getJsonList(['splits'], json), false, skater);
+      default:
+        return null;
+    }
+  }
+
+  String get header;
+
+  Widget get statTable;
+
+  static List<String> playerStats = [
+    "games",
+    "goals",
+    "assists",
+    "points",
+    "plusMinus",
+    "shots",
+    "hits",
+    "pim",
+    "blocked",
+    "gameWinningGoals",
+    "overTimeGoals",
+    "faceOffPct",
+    "shotPct",
+    "powerPlayGoals",
+    "powerPlayPoints",
+    "powerPlayTimeOnIce",
+    "shortHandedGoals",
+    "shortHandedPoints",
+    "shortHandedTimeOnIce",
+  ];
+
+  static List<String> goalieStats = [
+    "games",
+    "gamesStarted",
+    "wins",
+    "losses",
+    "ot",
+    "shutouts",
+    "savePercentage",
+    "saves",
+    "shotsAgainst",
+    "goalsAgainst",
+    "goalAgainstAverage",
+    "powerPlaySavePercentage",
+    "shortHandedSavePercentage",
+    "evenStrengthSavePercentage",
+  ];
 }
 
-class GoaliePageAllTimeStats implements PlayerAllTimeStats {
-  final GoalieAllTimeStat regular;
+class PlayerAllTimeStat implements PlayerStat {
+  final bool skater;
+  final bool regularSeason;
+  final Map<String, dynamic> stat;
 
-  GoaliePageAllTimeStats({this.regular});
+  PlayerAllTimeStat(
+      {@required this.stat,
+      @required this.regularSeason,
+      @required this.skater});
 
-  factory GoaliePageAllTimeStats.fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic> regular = getJsonObject(['data', 0], json);
-    print(regular);
-    return GoaliePageAllTimeStats(
-      regular: GoalieAllTimeStat(
-          gamesPlayed: getJsonInt('gamesPlayed', regular),
-          wins: getJsonInt('wins', regular),
-          losses: getJsonInt('losses', regular),
-          otLosses: getJsonInt('otLosses', regular),
-          shutouts: getJsonInt('shutouts', regular)),
+  factory PlayerAllTimeStat.fromJson(
+      List<dynamic> json, bool regularSeason, bool skater) {
+    return PlayerAllTimeStat(
+        stat: getJsonObject(['stat'], json.first),
+        regularSeason: regularSeason,
+        skater: skater);
+  }
+
+  @override
+  Widget get statTable {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: skater
+            ? PlayerStat.playerStats
+                .map((statName) => CustomDataTableSource.createSizedCell(
+                    getJsonDynamic(statName, stat).toString()))
+                .toList()
+            : PlayerStat.goalieStats
+                .map((statName) => CustomDataTableSource.createSizedCell(
+                    getJsonDynamic(statName, stat).toString()))
+                .toList(),
+      ),
     );
   }
 
   @override
-  Iterable<Widget> get getStatsWidget sync* {
-    yield Table(
-      children: [
-        TableRow(children: [
-          Center(child: Text('GP', style: Styles.infoTableHeaderText)),
-          Center(child: Text('W', style: Styles.infoTableHeaderText)),
-          Center(child: Text('L', style: Styles.infoTableHeaderText)),
-          Center(child: Text('OTL', style: Styles.infoTableHeaderText)),
-          Center(child: Text('SO', style: Styles.infoTableHeaderText))
-        ]),
-        TableRow(children: [
-          Center(
-            child: Text(regular.gamesPlayed.toString(),
-                style: Styles.infoTableValueText),
-          ),
-          Center(
-              child: Text(regular.wins.toString(),
-                  style: Styles.infoTableValueText)),
-          Center(
-              child: Text(regular.losses.toString(),
-                  style: Styles.infoTableValueText)),
-          Center(
-              child: Text(regular.otLosses.toString(),
-                  style: Styles.infoTableValueText)),
-          Center(
-              child: Text(regular.shutouts.toString(),
-                  style: Styles.infoTableValueText))
-        ]),
-      ],
-    );
-  }
+  String get header => regularSeason ? 'Career' : 'Career Playoffs';
+
+
 }
 
-class PlayerPageAllTimeStats implements PlayerAllTimeStats {
-  final PlayerAllTimeStat regular;
-  final PlayerAllTimeStat playoff;
+class PlayerYearByYearStats implements PlayerStat {
+  final bool regularSeason;
+  final List<PlayerYearByYearStatsSeason> seasons;
+  final bool skater;
+  String _firstSeason;
+  PlayerYearByYearStats(
+      {@required this.regularSeason,
+      @required this.seasons,
+      @required this.skater});
 
-  PlayerPageAllTimeStats({this.regular, this.playoff});
+  factory PlayerYearByYearStats.fromJson(
+      List<dynamic> json, bool regularSeason, bool skater) {
+    List<PlayerYearByYearStatsSeason> seasons = [];
+    json.forEach((value) {
+      int leagueId = getJsonInt2(['league', 'id'], value);
+      if (leagueId == 133)
+        seasons.add(PlayerYearByYearStatsSeason.fromJson(value));
+    });
+    return PlayerYearByYearStats(
+        regularSeason: regularSeason, seasons: seasons, skater: skater);
+  }
 
-  factory PlayerPageAllTimeStats.fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic> regular = getJsonObject(['data', 0], json);
-    Map<String, dynamic> playoffs = getJsonObject(['data', 1], json);
-    return PlayerPageAllTimeStats(
-      regular: PlayerAllTimeStat(
-          gamesPlayed: getJsonInt('gamesPlayed', regular),
-          goals: getJsonInt('goals', regular),
-          assists: getJsonInt('assists', regular),
-          points: getJsonInt('points', regular)),
-      playoff: PlayerAllTimeStat(
-          gamesPlayed: getJsonInt('gamesPlayed', playoffs),
-          goals: getJsonInt('goals', playoffs),
-          assists: getJsonInt('assists', playoffs),
-          points: getJsonInt('points', playoffs)),
+  String get firstSeason {
+    if (_firstSeason == null) {
+      seasons.forEach((season) {
+        if (_firstSeason == null) {
+          _firstSeason = season.season;
+        } else {
+          if (int.parse(_firstSeason) > int.parse(season.season))
+            _firstSeason = season.season;
+        }
+      });
+    }
+    return _firstSeason;
+  }
+
+  @override
+  Widget get statTable {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Column(
+          children: seasons
+              .map((season) => Row(
+                    children: skater
+                        ? PlayerStat.playerStats
+                            .map((stat) =>
+                                CustomDataTableSource.createSizedCell(
+                                    getJsonDynamic(stat, season.stat)
+                                        .toString()))
+                            .toList()
+                        : PlayerStat.goalieStats
+                            .map((stat) =>
+                                CustomDataTableSource.createSizedCell(
+                                    getJsonDynamic(stat, season.stat)
+                                        .toString()))
+                            .toList(),
+                  ))
+              .toList()),
     );
   }
 
   @override
-  Iterable<Widget> get getStatsWidget sync* {
-    if (regular.gamesPlayed > 0) {
-      yield Table(
-        children: [
-          TableRow(children: [
-            Center(child: Text('GP', style: Styles.infoTableHeaderText)),
-            Center(child: Text('G', style: Styles.infoTableHeaderText)),
-            Center(child: Text('A', style: Styles.infoTableHeaderText)),
-            Center(child: Text('P', style: Styles.infoTableHeaderText))
-          ]),
-          TableRow(children: [
-            Center(
-              child: Text(regular.gamesPlayed.toString(),
-                  style: Styles.infoTableValueText),
-            ),
-            Center(
-                child: Text(regular.goals.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(regular.assists.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(regular.points.toString(),
-                    style: Styles.infoTableValueText))
-          ]),
-        ],
-      );
-    } else {
-      yield Table(
-        children: [
-          TableRow(children: [
-            Center(
-              child: Text('Player hasnt played regular season games'),
-            )
-          ])
-        ],
-      );
-    }
-    if (playoff.gamesPlayed > 0) {
-      yield Table(
-        children: [
-          TableRow(children: [
-            Center(child: Text('GP', style: Styles.infoTableHeaderText)),
-            Center(child: Text('G', style: Styles.infoTableHeaderText)),
-            Center(child: Text('A', style: Styles.infoTableHeaderText)),
-            Center(child: Text('P', style: Styles.infoTableHeaderText))
-          ]),
-          TableRow(children: [
-            Center(
-              child: Text(playoff.gamesPlayed.toString(),
-                  style: Styles.infoTableValueText),
-            ),
-            Center(
-                child: Text(playoff.goals.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(playoff.assists.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(playoff.points.toString(),
-                    style: Styles.infoTableValueText))
-          ]),
-        ],
-      );
-    } else {
-      yield Table(
-        children: [
-          TableRow(children: [
-            Center(
-              child: Text('Player hasnt played playoff games'),
-            )
-          ])
-        ],
-      );
-    }
+  String get header => regularSeason ? 'Regular season stats' : 'Playoffs stats';
+}
+
+class PlayerYearByYearStatsSeason {
+  final Map<String, dynamic> stat;
+  final String teamAbb;
+  final String season;
+
+  PlayerYearByYearStatsSeason(
+      {@required this.stat, @required this.teamAbb, @required this.season});
+
+  factory PlayerYearByYearStatsSeason.fromJson(Map<String, dynamic> json) {
+    return PlayerYearByYearStatsSeason(
+      stat: getJsonObject(['stat'], json),
+      teamAbb: getJsonString2(['team', 'abbreviation'], json),
+      season: getJsonString('season', json),
+    );
   }
 }
 
-class GoalieAllTimeStat {
-  final int gamesPlayed;
-  final int wins;
-  final int losses;
-  final int otLosses;
-  final int shutouts;
+class PlayerDraft {
+  final int draftYear;
+  final int draftRound;
+  final int draftOverall;
 
-  GoalieAllTimeStat(
-      {this.gamesPlayed, this.wins, this.losses, this.otLosses, this.shutouts});
-}
+  PlayerDraft(this.draftYear, this.draftRound, this.draftOverall);
 
-class PlayerAllTimeStat {
-  final int gamesPlayed;
-  final int goals;
-  final int assists;
-  final int points;
-
-  PlayerAllTimeStat({this.gamesPlayed, this.goals, this.assists, this.points});
+  factory PlayerDraft.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> draftJson = getJsonList(['data'], json).first;
+    return PlayerDraft(
+        getJsonInt('draftYear', draftJson),
+        getJsonInt('draftRound', draftJson),
+        getJsonInt('draftOverall', draftJson));
+  }
 }

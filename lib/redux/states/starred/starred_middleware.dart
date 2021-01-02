@@ -20,14 +20,14 @@ class StarredMiddleware extends MiddlewareClass<AppState> {
           onCreate: (db, version) {
         print('StarredMiddleware onCreate');
         return db.execute(
-          "CREATE TABLE $DB_TABLE($DB_KEY_PLAYER_ID INTEGER PRIMARY KEY, $DB_KEY_PLAYER_NAME TEXT)",
+          "CREATE TABLE $DB_TABLE($DB_KEY_PLAYER_ID INTEGER PRIMARY KEY, $DB_KEY_PLAYER_NAME TEXT, $DB_KEY_PLAYER_TEAM TEXT, $DB_KEY_PLAYER_POSITION TEXT, $DB_KEY_PLAYER_ACTIVE INTEGER)",
         );
       }, onUpgrade: (db, v, v2) {
         print('StarredMiddleware onUpgrade');
       }, onOpen: (db) {
         print('StarredMiddleware onOpen');
         _getStarredPlayers(next);
-      }, version: 1);
+      }, version: 2);
     } else if (action is StarredLoadingPlayersAction) {
       await _getStarredPlayers(next);
     } else if (action is StarredAddPlayerAction) {

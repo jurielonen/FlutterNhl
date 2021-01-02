@@ -1,13 +1,12 @@
 import 'package:FlutterNhl/redux/models/award/award_enums.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
-import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 abstract class Recipient {
   factory Recipient.fromJsonWinner(Map<String, dynamic> json, TrophyType type) {
-    switch(type){
+    switch (type) {
       case TrophyType.TEAM:
         return TeamRecipient.fromJsonWinner(json);
       case TrophyType.PLAYER:
@@ -22,12 +21,14 @@ abstract class Recipient {
       case TrophyType.GM:
       case TrophyType.OTHER:
         return OtherRecipient.fromJsonWinner(json);
-      default: return UnknownRecipient();
+      default:
+        return UnknownRecipient();
     }
   }
 
-  factory Recipient.fromJsonRunnerUp(Map<String, dynamic> json, TrophyType type) {
-    switch(type){
+  factory Recipient.fromJsonRunnerUp(
+      Map<String, dynamic> json, TrophyType type) {
+    switch (type) {
       case TrophyType.TEAM:
         return TeamRecipient.fromJsonRunnerUp(json);
       case TrophyType.PLAYER:
@@ -42,12 +43,14 @@ abstract class Recipient {
       case TrophyType.GM:
       case TrophyType.OTHER:
         return OtherRecipient.fromJsonRunnerUp(json);
-      default: return UnknownRecipient();
+      default:
+        return UnknownRecipient();
     }
   }
 
-  factory Recipient.fromJsonFinalist(Map<String, dynamic> json, TrophyType type) {
-    switch(type){
+  factory Recipient.fromJsonFinalist(
+      Map<String, dynamic> json, TrophyType type) {
+    switch (type) {
       case TrophyType.TEAM:
         return TeamRecipient.fromJsonFinalist(json);
       case TrophyType.PLAYER:
@@ -62,7 +65,8 @@ abstract class Recipient {
       case TrophyType.GM:
       case TrophyType.OTHER:
         return OtherRecipient.fromJsonFinalist(json);
-      default: return UnknownRecipient();
+      default:
+        return UnknownRecipient();
     }
   }
 
@@ -87,37 +91,38 @@ class UnknownRecipient implements Recipient {
 }
 
 class SingleRecipient implements Recipient {
-  final Player player;
+  final String name;
+  final int id;
   final Team team;
 
-  SingleRecipient({@required this.player, @required this.team});
+  SingleRecipient(this.id, this.name, this.team);
 
   factory SingleRecipient.fromJsonWinner(Map<String, dynamic> json) {
+    Map<String, dynamic> obj = getJsonObject(['player'], json);
     return SingleRecipient(
-      player: Player.fromJson(getJsonObject(['player'], json)),
-      team: Team.fromJson(getJsonObject(['team'], json)),
+      getJsonInt('id', obj),
+      '${getJsonString('firstName', obj)} ${getJsonString('lastName', obj)}',
+      Team.fromJson(getJsonObject(['team'], json)),
     );
   }
 
   factory SingleRecipient.fromJsonRunnerUp(Map<String, dynamic> json) {
+    Map<String, dynamic> obj = getJsonObject(['runnerUpPlayer'], json);
     return SingleRecipient(
-      player: Player.fromJson(getJsonObject(['runnerUpPlayer'], json)),
-      team: Team.fromJson(getJsonObject(['runnerUpTeam'], json)),
+      getJsonInt('id', obj),
+      '${getJsonString('firstName', obj)} ${getJsonString('lastName', obj)}',
+      Team.fromJson(getJsonObject(['runnerUpTeam'], json)),
     );
   }
 
   factory SingleRecipient.fromJsonFinalist(Map<String, dynamic> json) {
+    Map<String, dynamic> obj = getJsonObject(['finalistPlayer'], json);
     return SingleRecipient(
-      player: Player.fromJson(getJsonObject(['finalistPlayer'], json)),
-      team: Team.fromJson(getJsonObject(['finalistTeam'], json)),
+      getJsonInt('id', obj),
+      '${getJsonString('firstName', obj)} ${getJsonString('lastName', obj)}',
+      Team.fromJson(getJsonObject(['finalistTeam'], json)),
     );
   }
-
-  @override
-  int get id => player.id;
-
-  @override
-  String get name => player.fullname;
 
   @override
   int get teamId => team.id;

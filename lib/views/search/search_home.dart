@@ -29,9 +29,7 @@ class _SearchHomeState extends State<SearchHome> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.addListener(() {
-
-    });
+    _controller.addListener(() {});
   }
 
   void dispose() {
@@ -59,8 +57,7 @@ class _SearchHomeState extends State<SearchHome> {
           appBar: AppBar(
             title: TextField(
               controller: _controller,
-              onChanged: (String text) =>
-                onTextChanged(text, viewModel),
+              onChanged: (String text) => onTextChanged(text, viewModel),
             ),
           ),
           body: getBody(viewModel),
@@ -70,12 +67,10 @@ class _SearchHomeState extends State<SearchHome> {
   }
 
   void onTextChanged(String text, SearchViewModel viewModel) {
-
     if (text.length > 0) {
-      if(viewModel.searchQuery == null || viewModel.searchQuery == ''){
+      if (viewModel.searchQuery == null || viewModel.searchQuery == '') {
         viewModel.searchInitialized(text, false);
-      }
-      else if (text.length < viewModel.searchQuery.length) {
+      } else if (text.length < viewModel.searchQuery.length) {
         viewModel.searchInitialized(text, false);
       } else if (viewModel.search == null || viewModel.search.needApi) {
         viewModel.searchInitialized(text, false);
@@ -92,26 +87,26 @@ class _SearchHomeState extends State<SearchHome> {
   Widget getBody(SearchViewModel viewModel) {
     switch (viewModel.loadingStatus) {
       case LoadingStatus.IDLE:
-        return IdleView(
-          'Search for players'
-        );
+        return IdleView('Search for players');
       case LoadingStatus.LOADING:
         return ProgressView('Searching for players');
       case LoadingStatus.SUCCESS:
         return getList(viewModel.search);
       case LoadingStatus.ERROR:
-        return ErrorView(
-            viewModel.error == null ? UIUnknownStateException('search_home getBody') : viewModel.error);
+        return ErrorView(viewModel.error == null
+            ? UIUnknownStateException('search_home getBody')
+            : viewModel.error);
       default:
-        return ErrorView(UIUnknownStateException('search_home getBody ${viewModel.loadingStatus}'));
+        return ErrorView(UIUnknownStateException(
+            'search_home getBody ${viewModel.loadingStatus}'));
     }
   }
 
   Widget getList(Search search) {
-    if (search == null || search.searchValues == null || _controller.text.length == 0) {
-      return IdleView(
-        'Search for players'
-      );
+    if (search == null ||
+        search.searchValues == null ||
+        _controller.text.length == 0) {
+      return IdleView('Search for players');
     } else if (search.searchValues.isEmpty) {
       return IdleView('No players found');
     } else {
@@ -124,7 +119,8 @@ class _SearchHomeState extends State<SearchHome> {
           return GestureDetector(
             onTap: () => Navigator.pushNamed(context, PlayerHome.routeName,
                 arguments: PlayerArguments(
-                    player,
+                    player.id,
+                    player.fullname,
                     player.position.isPlayer()
                         ? StatType.PLAYER
                         : StatType.GOALIE)),
@@ -135,9 +131,9 @@ class _SearchHomeState extends State<SearchHome> {
               child: Row(
                 children: [
                   Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Styles.buildPlayerCircleIcon(player, size: 30.0),
-                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Styles.buildPlayerCircleIcon(player, size: 30.0),
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
@@ -152,7 +148,10 @@ class _SearchHomeState extends State<SearchHome> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Expanded(child: Styles.buildTeamSvgImageAbb(Team.getTeamLogoUrl(player.teamAbb), )),
+                            Expanded(
+                                child: Styles.buildTeamSvgImageAbb(
+                              Team.getTeamLogoUrl(player.currentTeam),
+                            )),
                             Expanded(child: Text(player.statusText)),
                           ],
                         ),

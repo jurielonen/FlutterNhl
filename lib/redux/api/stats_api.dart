@@ -1,5 +1,6 @@
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/fetch.dart';
+import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/content/content.dart';
@@ -106,7 +107,7 @@ class StatsApi {
       await fetchSeason(seasonString);
     }
 
-    if(!Config().selectedSeason.fitsCurrentSeason(dateTime)){
+    if (!Config().selectedSeason.fitsCurrentSeason(dateTime)) {
       Config().setSelectedSeason(dateTime);
       date = Config().validDate(dateTime);
     }
@@ -335,6 +336,23 @@ class StatsApi {
       } catch (error) {
         throw NetworkParseException(
             'Failed to parse data.\nCall: fetchPlayoffGames.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
+      }
+    });
+  }
+
+  Future<PlayerPage> fetchPlayerSummary(int id) async {
+    final searchUri = Uri.https(baseUrl, 'api/v1/people/$id', {
+      'expand': 'person.stats,stats.team',
+      'stats':
+          'yearByYear,yearByYearPlayoffs,careerRegularSeason,careerPlayoffs',
+    });
+    print('$printMsg fetchPlayerSummary: $searchUri');
+    return await fetch(searchUri, client).then((value) {
+      try {
+        return PlayerPage.fromJson(value);
+      } catch (error) {
+        throw NetworkParseException(
+            'Failed to parse data.\nCall: fetchPlayerSummary.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
       }
     });
   }

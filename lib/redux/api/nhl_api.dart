@@ -27,7 +27,7 @@ class NHLApi {
         }
       }
       throw Exception('Error while formatting data in $printMsg::fetchConfig');
-    });//.catchError((error) => onFetchError(error));
+    }); //.catchError((error) => onFetchError(error));
   }
 
   Future<StatResponse> fetchStats(StatParameters params) async {
@@ -41,10 +41,10 @@ class NHLApi {
         throw NetworkParseException(
             'Failed to parse data.\nCall: fetchStats.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
       }
-    });//.catchError((error) => onFetchError(error));
+    }); //.catchError((error) => onFetchError(error));
   }
 
-  Future<PlayerPage> fetchPlayerBio(int playerId, StatType type) async {
+  Future<PlayerDraft> fetchPlayerBio(int playerId, StatType type) async {
     final searchUri =
         Uri.https(baseUrl, 'stats/rest/en/${statTypeToParam(type)}/bios', {
       'isAggregate': 'false',
@@ -55,13 +55,7 @@ class NHLApi {
     return await fetch(searchUri, client).then((value) {
       if (value is Map<String, dynamic>) {
         try {
-          if (type == StatType.PLAYER)
-            return PlayerPage.fromJsonPlayer(value);
-          else if (type == StatType.GOALIE)
-            return PlayerPage.fromJsonGoalie(value);
-          else
-            throw Exception(
-                '$printMsg::fetchPlayer: Unknown player type $type');
+          return PlayerDraft.fromJson(value);
         } catch (error) {
           throw NetworkParseException(
               'Failed to parse data.\nCall: fetchPlayerBio.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
@@ -69,13 +63,13 @@ class NHLApi {
       }
       throw Exception(
           'Error while formatting data in $printMsg::fetchPlayerBio');
-    });//.catchError((error) => onFetchError(error));
+    }); //.catchError((error) => onFetchError(error));
   }
 
   Future<List<dynamic>> fetchPlayerStat(
       PageStatParams stat, int playerId, StatType type) async {
-    final searchUri =
-        Uri.https(baseUrl, 'stats/rest/en/${statTypeToParam(type)}/${stat.stat}', {
+    final searchUri = Uri.https(
+        baseUrl, 'stats/rest/en/${statTypeToParam(type)}/${stat.stat}', {
       'isAggregate': 'false',
       'isGame': 'false',
       'sort': '[{\"property\":\"seasonId\", \"direction\":\"DESC\"}]',
@@ -94,7 +88,7 @@ class NHLApi {
         }
       }
       throw Exception('Error while formatting data in $printMsg::fetchPlayer');
-    });//.catchError((error) => onFetchError(error));
+    }); //.catchError((error) => onFetchError(error));
   }
 
   Future<List<dynamic>> fetchTeamStat(PageStatParams stat, int teamId) async {
@@ -117,7 +111,7 @@ class NHLApi {
         }
       }
       throw Exception('Error while formatting data in $printMsg::fetchPlayer');
-    });//.catchError((error) => onFetchError(error));
+    }); //.catchError((error) => onFetchError(error));
   }
 
   void onFetchError(Exception error) {

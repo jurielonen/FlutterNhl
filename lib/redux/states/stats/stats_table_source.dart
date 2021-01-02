@@ -26,13 +26,15 @@ class StatTableSource extends CustomDataTableSource {
   final bool _ascending;
   Function(String stat, bool ascending) columnCallBack;
 
-  StatTableSource(
-      {@required this.type,
-      @required this.displayItems,
-      @required this.stats,
-        String sortColumn,
-        bool ascending = false,
-      this.startIndex = 0,}) : _sortColumn = sortColumn, _ascending = ascending;
+  StatTableSource({
+    @required this.type,
+    @required this.displayItems,
+    @required this.stats,
+    String sortColumn,
+    bool ascending = false,
+    this.startIndex = 0,
+  })  : _sortColumn = sortColumn,
+        _ascending = ascending;
 
   @override
   List<DataRow> get rows {
@@ -96,16 +98,20 @@ class StatTableSource extends CustomDataTableSource {
         )
         .toList();
 
-    return DataRow( cells: cells, color: MaterialStateProperty.resolveWith<Color>((_) {
-      return rowColor;
-    }),);
+    return DataRow(
+      cells: cells,
+      color: MaterialStateProperty.resolveWith<Color>((_) {
+        return rowColor;
+      }),
+    );
   }
 
   Argument _getArgument(Map<String, dynamic> json) {
     if (_isTeam) {
       return TeamArguments(Team.fromJson(json));
     } else {
-      return PlayerArguments(Player.fromJson(json), type);
+      return PlayerArguments(getJsonInt('playerId', json),
+          getJsonString('skaterFullName', json), type);
     }
   }
 
@@ -204,10 +210,9 @@ class StatTableSource extends CustomDataTableSource {
 
   @override
   int get sortColumn {
-    if(_sortColumn != null){
+    if (_sortColumn != null) {
       int index = displayItems.indexOf(_sortColumn);
-      if(index > -1)
-        return index;
+      if (index > -1) return index;
     }
     return null;
   }
@@ -233,7 +238,7 @@ class StatTableSource extends CustomDataTableSource {
 
   @override
   void callback(int columnIndex, bool ascending) {
-    if(columnCallBack != null){
+    if (columnCallBack != null) {
       columnCallBack(displayItems[columnIndex], ascending);
     }
   }

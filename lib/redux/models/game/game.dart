@@ -281,7 +281,7 @@ class GameFinal extends Game {
   List<Play> plays;
   final TeamFinal home;
   final TeamFinal away;
-  final Map<String, Player> decisions;
+  final Map<String, int> decisions;
   Map<String, PlayerGame> _decisions = {};
 
   GameFinal(
@@ -304,7 +304,7 @@ class GameFinal extends Game {
           getJsonObject(['liveData', 'boxscore', 'teams', 'away'], json)),
       decisions:
           getJsonObject(['liveData', 'decisions'], json).map((key, value) {
-        return MapEntry(key, Player.fromJson(value));
+        return MapEntry(key, getJsonInt('id', value));
       }),
     );
   }

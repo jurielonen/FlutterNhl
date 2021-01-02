@@ -73,7 +73,7 @@ class Team {
     }
   }
 
-  static getTeamLogoUrl(String abb) {
+  static String getTeamLogoUrl(String abb) {
     return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
   }
 
@@ -93,8 +93,20 @@ class Team {
 
   String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
   String get logoSvg => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
-  static String logoSvgUrl(String abb) {
-    return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
+
+  static getTeamAbb(int teamId) {
+    if (_cache.containsKey(teamId)) {
+      return _cache[teamId].abb;
+    }
+    return null;
+  }
+
+  static getTeamAbbFromFranchiseId(int franchiseId) {
+    Team team = _cache.values.firstWhere(
+        (team) => team.franchiseId == franchiseId,
+        orElse: () => null);
+    if (team != null) return team.abb;
+    return '';
   }
 
   Color get teamColor => getTeamColor(name);
@@ -195,8 +207,8 @@ class TeamPreview extends Team {
       if (lastFive != null) {
         lastFiveKeys.forEach((stat) {
           if (lastFive.containsKey(stat)) {
-            leadersLastFive[stat] =
-                PlayerLastFive.fromJson(stat, getJsonObject([stat], lastFive));
+            leadersLastFive[stat] = PlayerLastFive.fromJson(
+                tId, stat, getJsonObject([stat], lastFive));
           }
         });
       }
@@ -257,14 +269,12 @@ class TeamFinal extends Team {
     );
   }
 
-  PlayerGame getPlayer(Player player) {
-    PlayerGame temp = playerTableSource.players.firstWhere(
-        (playerGame) => playerGame.id == player.id,
-        orElse: () => null);
+  PlayerGame getPlayer(int id) {
+    PlayerGame temp = playerTableSource.players
+        .firstWhere((playerGame) => playerGame.id == id, orElse: () => null);
     if (temp == null)
-      temp = goalieTableSource.players.firstWhere(
-          (playerGame) => playerGame.id == player.id,
-          orElse: () => null);
+      temp = goalieTableSource.players
+          .firstWhere((playerGame) => playerGame.id == id, orElse: () => null);
     return temp;
   }
 }
@@ -306,7 +316,7 @@ class TeamPage extends Team {
   factory TeamPage.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> team = getJsonObject(['teams', 0], json);
     String firstYear = getJsonString('firstYearOfPlay', team);
-    if(firstYear != ''){
+    if (firstYear != '') {
       firstYear = '$firstYear${int.parse(firstYear) + 1}';
     } else {
       firstYear = '20172018';

@@ -11,10 +11,11 @@ class PlayerBioTab extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return bioTiles.elementAt(index);
-          },
-          itemCount: bioTiles.length),
+        itemBuilder: (BuildContext context, int index) {
+          return bioTiles.elementAt(index);
+        },
+        itemCount: bioTiles.length,
+      ),
     );
   }
 
@@ -24,11 +25,8 @@ class PlayerBioTab extends StatelessWidget {
       playerInfoTable,
     );
     yield createTextCard('Draft', playerDraftTable);
-    int index = 0;
-    for (Widget table in player.allTimeStats.getStatsWidget) {
-      String header = index == 0 ? 'Regular season stats' : 'Playoffs stats';
-      yield createTextCard(header, table);
-      index++;
+    for (PlayerStat stat in player.playerStats) {
+      yield createTextCard(stat.header, stat.statTable);
     }
   }
 
@@ -124,9 +122,9 @@ class PlayerBioTab extends StatelessWidget {
   Table get playerDraftTable {
     return Table(
       children: [
-        getRow('Year', player.draftYear.toString()),
-        getRow('Round', '${player.draftRound} rd'),
-        getRow('Pick', player.draftNum.toString()),
+        getRow('Year', player.draft.draftYear.toString()),
+        getRow('Round', '${player.draft.draftRound} rd'),
+        getRow('Pick', player.draft.draftOverall.toString()),
       ],
     );
   }

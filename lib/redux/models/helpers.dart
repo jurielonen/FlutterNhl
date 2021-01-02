@@ -31,6 +31,8 @@ bool getJsonBoolean(String key, Map<String, dynamic> json) {
     if (json.containsKey(key)) {
       if (json[key] is bool) {
         return json[key];
+      } else if (json[key] is int) {
+        return json[key] == 1 ? true : false;
       }
     }
   }

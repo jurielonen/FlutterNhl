@@ -11,13 +11,14 @@ class GameArgument extends Argument {
 }
 
 class PlayerArguments extends Argument {
-  final Player player;
+  final int id;
+  final String name;
   final StatType type;
 
-  int get playerId => player.id;
-  String get playerFullName => player.fullname;
+  int get playerId => id;
+  String get playerFullName => name;
 
-  PlayerArguments(this.player, this.type);
+  PlayerArguments(this.id, this.name, this.type);
 }
 
 class TeamArguments extends Argument {

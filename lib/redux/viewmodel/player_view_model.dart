@@ -9,19 +9,22 @@ import 'package:flutter/foundation.dart';
 import 'package:redux/redux.dart';
 
 class PlayerAppBarViewModel {
+  final Player player;
   final VoidCallback getStats;
   final VoidCallback getGameLogs;
   final Function(Player) starredPlayer;
   final Function(Player) unstarredPlayer;
 
   PlayerAppBarViewModel(
-      {@required this.getStats,
+      {@required this.player,
+      @required this.getStats,
       @required this.getGameLogs,
       @required this.starredPlayer,
       @required this.unstarredPlayer});
 
   static PlayerAppBarViewModel fromStore(Store<AppState> store) {
     return PlayerAppBarViewModel(
+      player: selectedPlayerSelector(store.state),
       getStats: () => store.dispatch(PlayerStatsTabChangedAction()),
       getGameLogs: () => store.dispatch(PlayerGameLogTabChangedAction()),
       starredPlayer: (Player player) =>
@@ -32,10 +35,16 @@ class PlayerAppBarViewModel {
   }
 
   @override
-  bool operator ==(Object other) => true;
+  bool operator ==(Object other) {
+    bool retVal = identical(this, other) ||
+        other is PlayerAppBarViewModel &&
+            runtimeType == other.runtimeType &&
+            player == other.player;
+    return retVal;
+  }
 
   @override
-  int get hashCode => getStats.hashCode ^ getGameLogs.hashCode;
+  int get hashCode => player.hashCode;
 }
 
 class PlayerViewModel {

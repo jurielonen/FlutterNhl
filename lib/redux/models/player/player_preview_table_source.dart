@@ -80,7 +80,8 @@ class PlayerGameTableSource extends CustomDataTableSource {
             style: CustomDataTableSource.firstColumnStyle,
           ),
           callBack: () => _dataRowTapCallBack(
-              PlayerArguments(player, type), Routes.player)),
+              PlayerArguments(player.id, player.fullname, type),
+              Routes.player)),
     );
     List<DataCell> cells = _keys
         .map(

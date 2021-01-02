@@ -19,38 +19,39 @@ class AwardTableSource extends CustomDataTableSource {
 
   AwardTableSource({@required this.award});
 
-  void setRecipients(List<AwardFinalists> finalists){
+  void setRecipients(List<AwardFinalists> finalists) {
     award.recipients = finalists;
     _setColumns();
     _setRows();
   }
 
-  String get headerText => 'Rows ${_currentIndex + 1}-${_currentIndex + _rows.length} of ${award.recipients.length}';
+  String get headerText =>
+      'Rows ${_currentIndex + 1}-${_currentIndex + _rows.length} of ${award.recipients.length}';
   bool get pagesNext {
-    if((_currentIndex + _maxEntries) < award.recipients.length){
+    if ((_currentIndex + _maxEntries) < award.recipients.length) {
       return true;
     } else {
       return false;
     }
   }
 
-  void nextPage(){
+  void nextPage() {
     _currentIndex += _maxEntries;
     _setRows();
   }
 
   bool get pagesPrevious {
-    if((_currentIndex - _maxEntries) > 0){
+    if ((_currentIndex - _maxEntries) > 0) {
       return true;
     } else {
-      if(_currentIndex != 0){
+      if (_currentIndex != 0) {
         return true;
       }
       return false;
     }
   }
 
-  void previousPage(){
+  void previousPage() {
     _currentIndex -= _maxEntries;
     _setRows();
   }
@@ -64,26 +65,29 @@ class AwardTableSource extends CustomDataTableSource {
     return _rows;
   }
 
-  void _setRows(){
+  void _setRows() {
     _rows = [];
     _firstColumn = [];
-    if(award.recipients == null)
-      return;
-    for(int x = _currentIndex; x < _currentIndex + _maxEntries; x++){
-      if(award.recipients.length <= x)
-        continue;
+    if (award.recipients == null) return;
+    for (int x = _currentIndex; x < _currentIndex + _maxEntries; x++) {
+      if (award.recipients.length <= x) continue;
       AwardFinalists finalists = award.recipients[x];
-      _firstColumn.add(CustomDataTableSource.createTableFirstColumn(Text(finalists.seasonId.toString(), style: CustomDataTableSource.firstColumnStyle,)));
+      _firstColumn.add(CustomDataTableSource.createTableFirstColumn(Text(
+        finalists.seasonId.toString(),
+        style: CustomDataTableSource.firstColumnStyle,
+      )));
       _rows.add(_getCells(finalists));
     }
   }
 
-  DataRow _getCells(AwardFinalists finalists){
-        switch (award.trophyCategory) {
+  DataRow _getCells(AwardFinalists finalists) {
+    switch (award.trophyCategory) {
       case TrophyType.TEAM:
         return DataRow(cells: [
-          CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.name)),
-          CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.runnerUp.name)),
+          CustomDataTableSource.createTableCellWidget(
+              _createTeamCell(finalists.winner.name)),
+          CustomDataTableSource.createTableCellWidget(
+              _createTeamCell(finalists.runnerUp.name)),
         ]);
       case TrophyType.PLAYER:
       case TrophyType.COACH:
@@ -91,31 +95,38 @@ class AwardTableSource extends CustomDataTableSource {
         if (_columns.length == 6) {
           return DataRow(cells: [
             CustomDataTableSource.createTableCell(finalists.winner.name),
-            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.teamName)),
+            CustomDataTableSource.createTableCellWidget(
+                _createTeamCell(finalists.winner.teamName)),
             CustomDataTableSource.createTableCell(finalists.runnerUp.name),
-            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.runnerUp.teamName)),
+            CustomDataTableSource.createTableCellWidget(
+                _createTeamCell(finalists.runnerUp.teamName)),
             CustomDataTableSource.createTableCell(finalists.finalist.name),
-            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.finalist.teamName)),
+            CustomDataTableSource.createTableCellWidget(
+                _createTeamCell(finalists.finalist.teamName)),
           ]);
         } else if (_columns.length == 4) {
           return DataRow(cells: [
             CustomDataTableSource.createTableCell(finalists.winner.name),
-            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.teamName)),
+            CustomDataTableSource.createTableCellWidget(
+                _createTeamCell(finalists.winner.teamName)),
             CustomDataTableSource.createTableCell(finalists.runnerUp.name),
-            CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.runnerUp.teamName)),
+            CustomDataTableSource.createTableCellWidget(
+                _createTeamCell(finalists.runnerUp.teamName)),
           ]);
         }
-        return DataRow( cells: [
+        return DataRow(cells: [
           CustomDataTableSource.createTableCell(finalists.winner.name),
-          CustomDataTableSource.createTableCellWidget(_createTeamCell(finalists.winner.teamName)),
+          CustomDataTableSource.createTableCellWidget(
+              _createTeamCell(finalists.winner.teamName)),
         ]);
       case TrophyType.OTHER:
-        return DataRow( cells: [
+        return DataRow(cells: [
           CustomDataTableSource.createTableCell(finalists.winner.name),
         ]);
     }
 
-    return DataRow(cells: _columns.map((e) => CustomDataTableSource.createTableCell('')));
+    return DataRow(
+        cells: _columns.map((e) => CustomDataTableSource.createTableCell('')));
   }
 
   @override
@@ -127,7 +138,7 @@ class AwardTableSource extends CustomDataTableSource {
     return _columns;
   }
 
-  void _setColumns(){
+  void _setColumns() {
     _columns = [];
     switch (award.trophyCategory) {
       case TrophyType.TEAM:
@@ -143,24 +154,30 @@ class AwardTableSource extends CustomDataTableSource {
             .any((recipient) => recipient.finalist.name != '')) {
           _columns.addAll(<DataColumn>[
             CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
-            CustomDataTableSource.createTableColumn('Team', 'Award winners team'),
+            CustomDataTableSource.createTableColumn(
+                'Team', 'Award winners team'),
             CustomDataTableSource.createTableColumn('2nd', 'Award runner up'),
-            CustomDataTableSource.createTableColumn('Team', 'Award runner ups team'),
+            CustomDataTableSource.createTableColumn(
+                'Team', 'Award runner ups team'),
             CustomDataTableSource.createTableColumn('3rd', 'Award finalist'),
-            CustomDataTableSource.createTableColumn('Team', 'Award finalists team'),
+            CustomDataTableSource.createTableColumn(
+                'Team', 'Award finalists team'),
           ]);
         } else if (award.recipients
             .any((recipient) => recipient.runnerUp.name != '')) {
           _columns.addAll(<DataColumn>[
             CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
-            CustomDataTableSource.createTableColumn('Team', 'Award winners team'),
+            CustomDataTableSource.createTableColumn(
+                'Team', 'Award winners team'),
             CustomDataTableSource.createTableColumn('2nd', 'Award runner up'),
-            CustomDataTableSource.createTableColumn('Team', 'Award runner ups team'),
+            CustomDataTableSource.createTableColumn(
+                'Team', 'Award runner ups team'),
           ]);
         } else {
           _columns.addAll(<DataColumn>[
             CustomDataTableSource.createTableColumn('Winner', 'Award winner'),
-            CustomDataTableSource.createTableColumn('Team', 'Award winners team'),
+            CustomDataTableSource.createTableColumn(
+                'Team', 'Award winners team'),
           ]);
         }
         break;
@@ -173,13 +190,13 @@ class AwardTableSource extends CustomDataTableSource {
     print('COLUMN LENGHT: ${_columns.length}');
   }
 
-  Widget _createTeamCell(String teamAbb){
+  Widget _createTeamCell(String teamAbb) {
     return Row(
-            children: [
-              Styles.buildTeamSvgImageAbb(Team.logoSvgUrl(teamAbb), size: 15),
-              Text(teamAbb, style: CustomDataTableSource.cellRowStyle)
-            ],
-          );
+      children: [
+        Styles.buildTeamSvgImageAbb(Team.getTeamLogoUrl(teamAbb), size: 15),
+        Text(teamAbb, style: CustomDataTableSource.cellRowStyle)
+      ],
+    );
   }
 
   @override
@@ -193,11 +210,11 @@ class AwardTableSource extends CustomDataTableSource {
 
   @override
   void callback(int columnIndex, bool ascending) {
-      // TODO: implement callback
-    }
-  
-    @override
-    void set setRowCallBack(dataRowTapCallBack) {
+    // TODO: implement callback
+  }
+
+  @override
+  void set setRowCallBack(dataRowTapCallBack) {
     // TODO: implement setRowCallBack
   }
 
@@ -211,126 +228,7 @@ class AwardTableSource extends CustomDataTableSource {
   void set setColumnSortCallBack(dataColumnSortCallback) {
     // TODO: implement setColumnSortCallBack
   }
-
 }
-
-/*class AwardDataTableSource extends DataTableSource {
-  final Award award;
-  final Function(int) onRowPressed;
-  List<DataColumn> _columns = [];
-
-  AwardDataTableSource({@required this.award, @required this.onRowPressed});
-
-  @override
-  DataRow getRow(int index) {
-    assert(index >= 0);
-    if(index >= rowCount){
-      return null;
-    }
-    final AwardFinalists finalists = award.recipients[index];
-    switch (award.trophyCategory) {
-      case TrophyType.TEAM:
-        return DataRow.byIndex(index: index, cells: [
-          DataCell(Text(finalists.seasonId.toString())),
-          DataCell(Text(finalists.winner.name)),
-          DataCell(Text(finalists.runnerUp.name)),
-        ]);
-      case TrophyType.PLAYER:
-      case TrophyType.COACH:
-      case TrophyType.GM:
-        if (_columns.length == 7) {
-          return DataRow.byIndex(index: index, cells: [
-            DataCell(Text(finalists.seasonId.toString())),
-            DataCell(Text(finalists.winner.name)),
-            DataCell(Text(finalists.winner.teamName)),
-            DataCell(Text(finalists.runnerUp.name)),
-            DataCell(Text(finalists.runnerUp.teamName)),
-            DataCell(Text(finalists.finalist.name)),
-            DataCell(Text(finalists.finalist.teamName)),
-          ]);
-        } else if (_columns.length == 5) {
-          return DataRow.byIndex(index: index, cells: [
-            DataCell(Text(finalists.seasonId.toString())),
-            DataCell(Text(finalists.winner.name)),
-            DataCell(Text(finalists.winner.teamName)),
-            DataCell(Text(finalists.runnerUp.name)),
-            DataCell(Text(finalists.runnerUp.teamName)),
-          ]);
-        }
-        return DataRow.byIndex(index: index, cells: [
-          DataCell(Text(finalists.seasonId.toString())),
-          DataCell(Text(finalists.winner.name)),
-          DataCell(Text(finalists.winner.teamName)),
-        ]);
-      case TrophyType.OTHER:
-        return DataRow.byIndex(index: index, cells: [
-          DataCell(Text(finalists.seasonId.toString())),
-          DataCell(Text(finalists.winner.name)),
-        ]);
-    }
-    throw Exception('Unknown amount of columns(${_columns.length}) on ${award.name}');
-  }
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get rowCount => award.recipients.length;
-
-  @override
-  int get selectedRowCount => 0;
-
-  int get rowsPerPage => rowCount < 10 ? rowCount : 10;
-
-  List<DataColumn> get columns {
-    if (_columns != null && _columns.isNotEmpty) {
-      return _columns;
-    }
-    _columns = [DataColumn(label: Text('Year'))];
-    switch (award.trophyCategory) {
-      case TrophyType.TEAM:
-        _columns.addAll(<DataColumn>[
-          DataColumn(label: Text('Winner')),
-          DataColumn(label: Text('2nd')),
-        ]);
-        break;
-      case TrophyType.PLAYER:
-      case TrophyType.COACH:
-      case TrophyType.GM:
-        if (award.recipients
-            .any((recipient) => recipient.finalist.name != '')) {
-          _columns.addAll(<DataColumn>[
-            DataColumn(label: Text('Winner')),
-            DataColumn(label: Text('Team')),
-            DataColumn(label: Text('2nd')),
-            DataColumn(label: Text('Team')),
-            DataColumn(label: Text('3rd')),
-            DataColumn(label: Text('Team')),
-          ]);
-        } else if (award.recipients
-            .any((recipient) => recipient.runnerUp.name != '')) {
-          _columns.addAll(<DataColumn>[
-            DataColumn(label: Text('Winner')),
-            DataColumn(label: Text('Team')),
-            DataColumn(label: Text('2nd')),
-            DataColumn(label: Text('Team')),
-          ]);
-        } else {
-          _columns.addAll(<DataColumn>[
-            DataColumn(label: Text('Winner')),
-            DataColumn(label: Text('Team')),
-          ]);
-        }
-        break;
-      case TrophyType.OTHER:
-        _columns.addAll(<DataColumn>[
-          DataColumn(label: Text('Winner')),
-        ]);
-        break;
-    }
-    return _columns;
-  }
-}*/
 
 class Award {
   final int id;

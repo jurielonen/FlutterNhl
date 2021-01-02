@@ -12,6 +12,7 @@ abstract class CustomDataTableSource {
   static const double headerRowHeight = 35;
   static const double dataRowHeight = 30;
   static const double firstColumnWidth = 100;
+  static const double cellWidth = 35;
   Widget get tableCorner;
   List<Widget> get firstColumn;
   List<DataColumn> get columns;
@@ -111,6 +112,23 @@ abstract class CustomDataTableSource {
 
   static DataCell createTableCellWidget(Widget value) {
     return DataCell(value);
+  }
+
+  static Widget createSizedCell(String value) {
+    return SizedBox(
+      width: CustomDataTableSource.cellWidth,
+      height: CustomDataTableSource.dataRowHeight,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            style: CustomDataTableSource.cellRowStyle,
+          ),
+        ),
+      ),
+    );
   }
 }
 

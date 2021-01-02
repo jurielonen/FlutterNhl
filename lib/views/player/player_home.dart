@@ -64,27 +64,35 @@ class _PlayerHomeState extends State<PlayerHome> {
         converter: (store) => PlayerAppBarViewModel.fromStore(store),
         builder: (_, viewModel) {
           print('PlayerAppBarViewModel build');
+          if (viewModel.player == null)
+            return Scaffold(
+              appBar: AppBar(
+                title: Padding(
+                  padding: const EdgeInsets.fromLTRB(38.0, 8.0, 8.0, 8.0),
+                  child: Text(widget.playerArgs.playerFullName),
+                ),
+              ),
+            );
           return Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: true,
               title: Row(
                 children: <Widget>[
-                  Styles.buildPlayerCircleIcon(widget.playerArgs.player,
-                      size: 30.0),
+                  Styles.buildPlayerCircleIcon(viewModel.player, size: 30.0),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(widget.playerArgs.player.fullname),
+                    child: Text(widget.playerArgs.playerFullName),
                   ),
                 ],
               ),
               actions: [
                 IconButton(
-                    icon: widget.playerArgs.player.starred
+                    icon: viewModel.player.starred
                         ? const Icon(Icons.star)
                         : const Icon(Icons.star_border),
-                    onPressed: () => widget.playerArgs.player.starred
-                        ? viewModel.unstarredPlayer(widget.playerArgs.player)
-                        : viewModel.starredPlayer(widget.playerArgs.player))
+                    onPressed: () => viewModel.player.starred
+                        ? viewModel.unstarredPlayer(viewModel.player)
+                        : viewModel.starredPlayer(viewModel.player))
               ],
               bottom: PreferredSize(
                 preferredSize: Size.fromHeight(50.0),
@@ -264,8 +272,8 @@ class _PlayerHomeState extends State<PlayerHome> {
           viewModel.player.getGameLog(viewModel.selectedParams);
 
       widget = Expanded(
-          child:
-              PlayerGameLogView(logs, viewModel.player.position != Position.G));
+          child: PlayerGameLogView(
+              logs, viewModel.player.position.code != Position.G));
     }
     return Column(
       children: <Widget>[

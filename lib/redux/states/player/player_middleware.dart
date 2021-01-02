@@ -29,20 +29,23 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
 
       ///TODO: add check to see if player already downloaded
       await _getBio(store, next);
-    } else if (action is PlayerStatsChangedAction || action is PlayerStatsTabChangedAction) {
+    } else if (action is PlayerStatsChangedAction ||
+        action is PlayerStatsTabChangedAction) {
       PlayerPage page = selectedPlayerSelector(store.state);
-      if(page == null){
+      if (page == null) {
         next(PlayerErrorAction(NoDataException('Player data not found')));
       } else if (!page.containsStat(store.state.playerState.selectedStat)) {
         await _getStat(store, next);
       } else {
         next(PlayerStatsAlreadyDownloaded());
       }
-    } else if (action is PlayerGetGameLogsAction || action is PlayerGameLogTabChangedAction) {
+    } else if (action is PlayerGetGameLogsAction ||
+        action is PlayerGameLogTabChangedAction) {
       PlayerPage page = selectedPlayerSelector(store.state);
-      if(page == null){
+      if (page == null) {
         next(PlayerErrorAction(NoDataException('Player data not found')));
-      } else if (!page.containsGameLogs(store.state.playerState.gameLogParams)) {
+      } else if (!page
+          .containsGameLogs(store.state.playerState.gameLogParams)) {
         await _getGameLogs(store, next);
       } else {
         next(PlayerGameLogsAlreadyDownloaded());
@@ -54,7 +57,9 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
     if (store.state.playerState.loadingStatus != LoadingStatus.LOADING) {
       next(PlayerRequestingAction());
       try {
-        final PlayerPage player = await nhlApi.fetchPlayerBio(
+        final PlayerPage player =
+            await statsApi.fetchPlayerSummary(store.state.playerState.playerId);
+        player.draft = await nhlApi.fetchPlayerBio(
             store.state.playerState.playerId,
             store.state.playerState.playerType);
         next(PlayerReceivedBioAction(player));
@@ -87,8 +92,7 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
         List<GameLogsPlayer> logs = await statsApi.fetchPlayerGameLogs(
             store.state.playerState.playerId,
             store.state.playerState.gameLogParams.year,
-            store.state.playerState.gameLogParams.gameType
-            );
+            store.state.playerState.gameLogParams.gameType);
         next(PlayerReceivedGameLogsAction(logs));
       } catch (error) {
         next(PlayerErrorAction(error));

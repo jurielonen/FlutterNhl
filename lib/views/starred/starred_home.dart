@@ -45,7 +45,8 @@ class StarredHome extends StatelessWidget {
           Player player = players[index];
           return GestureDetector(
             onTap: () => Navigator.pushNamed(context, PlayerHome.routeName,
-                arguments: PlayerArguments(player, StatType.PLAYER)),
+                arguments: PlayerArguments(
+                    player.id, player.fullname, StatType.PLAYER)),
             child: Container(
               decoration: BoxDecoration(
                   border: Border(
