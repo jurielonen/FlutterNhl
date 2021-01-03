@@ -25,27 +25,28 @@ class TeamBioTab extends StatelessWidget {
   }
 
   Iterable<Widget> get bioTiles sync* {
-    yield PlayerBioTab.createTextCard('info', teamInfoTable);
-    yield PlayerBioTab.createHeaderDivider('Last ${team.previousGame.length} games');
-    for(Game game in team.previousGame){
+    yield PlayerBioWidget.createTextCard('info', teamInfoTable);
+    yield PlayerBioWidget.createHeaderDivider(
+        'Last ${team.previousGame.length} games');
+    for (Game game in team.previousGame) {
       yield GameMatchUpView.lastFiveGame(game, team);
     }
 
-    yield PlayerBioTab.createHeaderDivider('Next ${team.nextGame.length} games');
-    for(Game game in team.nextGame){
+    yield PlayerBioWidget.createHeaderDivider(
+        'Next ${team.nextGame.length} games');
+    for (Game game in team.nextGame) {
       yield GameMatchUpView.lastFiveGame(game, team);
     }
   }
 
   Table get teamInfoTable {
-    return Table(children: [
-      PlayerBioTab.getRow('First year of play', team.firstYear),
-      PlayerBioTab.getRow('Venue', team.venue),
-      PlayerBioTab.getRow('Division', team.division),
-      PlayerBioTab.getRow('Conference', team.conference),
-    ],);
+    return Table(
+      children: [
+        PlayerBioWidget.getRow('First year of play', team.firstYear),
+        PlayerBioWidget.getRow('Venue', team.venue),
+        PlayerBioWidget.getRow('Division', team.division),
+        PlayerBioWidget.getRow('Conference', team.conference),
+      ],
+    );
   }
-
-
-
 }

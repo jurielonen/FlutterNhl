@@ -1,6 +1,5 @@
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/game/game_enums.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:meta/meta.dart';
 import 'package:kt_dart/collection.dart';
@@ -16,15 +15,16 @@ class PageParam {
 
   String get gameTypeString => gameType ? _regularString : _playoffsString;
 
-  static bool getGameTypeBoolean(String type) => type == _playoffsString ? false : true;
+  static bool getGameTypeBoolean(String type) =>
+      type == _playoffsString ? false : true;
 }
 
-class PageStatParams extends PageParam{
+class PageStatParams extends PageParam {
   String stat;
 
-  PageStatParams(this.stat,  bool gameType): super(gameType);
+  PageStatParams(this.stat, bool gameType) : super(gameType);
 
-  PageStatParams copyWith({String stat, bool gameType}){
+  PageStatParams copyWith({String stat, bool gameType}) {
     return PageStatParams(stat ?? this.stat, gameType ?? this.gameType);
   }
 
@@ -34,16 +34,16 @@ class PageStatParams extends PageParam{
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is PageStatParams &&
-              runtimeType == other.runtimeType &&
-              stat == other.stat &&
-              gameType == other.gameType;
+      other is PageStatParams &&
+          runtimeType == other.runtimeType &&
+          stat == other.stat &&
+          gameType == other.gameType;
 }
 
-class PageGameLogParams extends PageParam{
+class PageGameLogParams extends PageParam {
   String year;
 
-  PageGameLogParams(this.year, bool gameType): super(gameType);
+  PageGameLogParams(this.year, bool gameType) : super(gameType);
 
   PageGameLogParams copyWith({String year, bool gameType}) {
     return PageGameLogParams(year ?? this.year, gameType ?? this.gameType);

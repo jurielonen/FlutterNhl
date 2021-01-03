@@ -13,7 +13,7 @@ class PlayerReceivedBioAction extends PlayerAction {
 
 class PlayerStatsChangedAction extends PlayerAction {
   final PageStatParams stat;
-  PlayerStatsChangedAction(this.stat);
+  PlayerStatsChangedAction({this.stat});
 }
 
 class PlayerStatsAlreadyDownloaded extends PlayerAction {}

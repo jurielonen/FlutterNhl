@@ -19,15 +19,16 @@ class StarredMiddleware extends MiddlewareClass<AppState> {
       database = openDatabase(join(await getDatabasesPath(), DB_PATH),
           onCreate: (db, version) {
         print('StarredMiddleware onCreate');
-        return db.execute(
+        db.execute(
           "CREATE TABLE $DB_TABLE($DB_KEY_PLAYER_ID INTEGER PRIMARY KEY, $DB_KEY_PLAYER_NAME TEXT, $DB_KEY_PLAYER_TEAM TEXT, $DB_KEY_PLAYER_POSITION TEXT, $DB_KEY_PLAYER_ACTIVE INTEGER)",
         );
+        _getStarredPlayers(next);
       }, onUpgrade: (db, v, v2) {
         print('StarredMiddleware onUpgrade');
       }, onOpen: (db) {
         print('StarredMiddleware onOpen');
         _getStarredPlayers(next);
-      }, version: 2);
+      }, version: 3);
     } else if (action is StarredLoadingPlayersAction) {
       await _getStarredPlayers(next);
     } else if (action is StarredAddPlayerAction) {
@@ -56,8 +57,7 @@ class StarredMiddleware extends MiddlewareClass<AppState> {
     final Database db = await database;
     try {
       await db.insert(DB_TABLE, player.toMap());
-      player.starred = true;
-      next(StarredAddPlayerAddedAction());
+      next(StarredAddPlayerAddedAction(player));
     } catch (e) {
       print(e.toString());
       if (e is Exception)
@@ -72,8 +72,7 @@ class StarredMiddleware extends MiddlewareClass<AppState> {
     try {
       await db.delete(DB_TABLE,
           where: '$DB_KEY_PLAYER_ID = ?', whereArgs: [player.id]);
-      player.starred = false;
-      next(StarredDeletePlayerDeletedAction());
+      next(StarredDeletePlayerDeletedAction(player));
     } catch (e) {
       print(e.toString());
       if (e is Exception)

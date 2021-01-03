@@ -24,7 +24,7 @@ class GameSummary extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-            child: PlayerBioTab.createHeaderDivider('Scoring by period'),
+            child: PlayerBioWidget.createHeaderDivider('Scoring by period'),
           ),
         ),
         SliverPadding(
@@ -43,7 +43,7 @@ class GameSummary extends StatelessWidget {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: scoringRows.length,
-                      itemBuilder: (_, row){
+                      itemBuilder: (_, row) {
                         return scoringRows.elementAt(row);
                       },
                     ),
@@ -56,7 +56,7 @@ class GameSummary extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-            child: PlayerBioTab.createHeaderDivider('Shots by period'),
+            child: PlayerBioWidget.createHeaderDivider('Shots by period'),
           ),
         ),
         SliverPadding(
@@ -73,7 +73,7 @@ class GameSummary extends StatelessWidget {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: shotsRows.length,
-                      itemBuilder: (_, row){
+                      itemBuilder: (_, row) {
                         return shotsRows.elementAt(row);
                       },
                     ),
@@ -86,7 +86,7 @@ class GameSummary extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-            child: PlayerBioTab.createHeaderDivider('Scoring plays'),
+            child: PlayerBioWidget.createHeaderDivider('Scoring plays'),
           ),
         ),
         SliverFixedExtentList(
@@ -104,7 +104,7 @@ class GameSummary extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-            child: PlayerBioTab.createHeaderDivider('Stats'),
+            child: PlayerBioWidget.createHeaderDivider('Stats'),
           ),
         ),
         GameStats(
@@ -115,7 +115,7 @@ class GameSummary extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-            child: PlayerBioTab.createHeaderDivider('Decisions'),
+            child: PlayerBioWidget.createHeaderDivider('Decisions'),
           ),
         ),
         SliverList(delegate: SliverChildListDelegate(threeStars.toList())),
@@ -129,7 +129,7 @@ class GameSummary extends StatelessWidget {
         padding: const EdgeInsets.all(5.0),
         child: Column(
           children: [
-            PlayerBioTab.createSecondaryHeaderDivider(entry.key),
+            PlayerBioWidget.createSecondaryHeaderDivider(entry.key),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Row(

@@ -26,10 +26,14 @@ class GameMatchUpView extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(top: 20),
           sliver: SliverToBoxAdapter(
-              child: PlayerBioTab.createHeaderDividerWidget(Column(children: [
-                Text('Players to watch'.toUpperCase(), style: Styles.infoTableHeaderText),
-                Text('Last 5 Games'.toUpperCase(), style: Styles.infoTableHeaderText)
-              ],))),
+              child: PlayerBioWidget.createHeaderDividerWidget(Column(
+            children: [
+              Text('Players to watch'.toUpperCase(),
+                  style: Styles.infoTableHeaderText),
+              Text('Last 5 Games'.toUpperCase(),
+                  style: Styles.infoTableHeaderText)
+            ],
+          ))),
         ),
         SliverFixedExtentList(
           itemExtent: 100,
@@ -43,7 +47,7 @@ class GameMatchUpView extends StatelessWidget {
           }, childCount: lastFivePlayersWidgets.length),
         ),
         SliverToBoxAdapter(
-          child: PlayerBioTab.createHeaderDividerWidget(
+          child: PlayerBioWidget.createHeaderDividerWidget(
             Column(
               children: <Widget>[
                 Styles.buildTeamSvgImage(home),
@@ -64,7 +68,7 @@ class GameMatchUpView extends StatelessWidget {
           }, childCount: lastFiveGamesHomeWidgets.length),
         ),
         SliverToBoxAdapter(
-          child: PlayerBioTab.createHeaderDividerWidget(
+          child: PlayerBioWidget.createHeaderDividerWidget(
             Column(
               children: <Widget>[
                 Styles.buildTeamSvgImage(away),

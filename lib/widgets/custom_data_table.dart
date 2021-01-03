@@ -130,6 +130,23 @@ abstract class CustomDataTableSource {
       ),
     );
   }
+
+  static Widget createColumnBasic(String value) {
+    return SizedBox(
+      width: CustomDataTableSource.cellWidth,
+      height: CustomDataTableSource.headerRowHeight,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            style: CustomDataTableSource.cellRowStyle,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class CustomDataTable extends StatefulWidget {

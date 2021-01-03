@@ -37,10 +37,10 @@ class PlayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (summaryView)
-      return PlayerBioTab.createSecondaryHeaderDivider(
+      return PlayerBioWidget.createSecondaryHeaderDivider(
           '${play.about.ordinalNum} ${play.event}');
     else
-      return PlayerBioTab.createHeaderDivider(
+      return PlayerBioWidget.createHeaderDivider(
           '${play.about.ordinalNum} ${play.event}');
   }
 }

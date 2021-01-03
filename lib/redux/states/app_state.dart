@@ -63,7 +63,7 @@ class AppState {
       showSnackBar: null,
       loadingStatus: LoadingStatus.IDLE,
       error: null,
-      currentPage: DrawerPages.SCHEDULE,
+      currentPage: DrawerPages.STARRED,
       firebaseState: FirebaseState.initial(),
       scheduleState: ScheduleState.initial(),
       statsState: StatsState.initial(),

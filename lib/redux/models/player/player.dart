@@ -17,7 +17,6 @@ class Player {
   final String currentTeam;
   final PersonPosition position;
   final bool active;
-  bool starred;
 
   Player({
     @required this.id,
@@ -25,7 +24,6 @@ class Player {
     @required this.currentTeam,
     @required this.position,
     @required this.active,
-    this.starred = false,
   });
 
   static final Map<int, Player> _cache = <int, Player>{};
@@ -37,7 +35,6 @@ class Player {
           currentTeam: clone.currentTeam,
           position: clone.position,
           active: clone.active,
-          starred: clone.starred,
         );
 
   ///Turns player object to a map.
@@ -47,7 +44,7 @@ class Player {
       DB_KEY_PLAYER_ID: id,
       DB_KEY_PLAYER_NAME: fullname,
       DB_KEY_PLAYER_TEAM: currentTeam,
-      DB_KEY_PLAYER_POSITION: positionToAbbString(position.code),
+      DB_KEY_PLAYER_POSITION: positionToApiString(position.code),
       DB_KEY_PLAYER_ACTIVE: active ? 1 : 0,
     };
   }
@@ -55,13 +52,12 @@ class Player {
   static List<Player> fromDatabase(List<Map<String, dynamic>> players) =>
       players.map((e) {
         Player temp = Player(
-            id: getJsonInt(DB_KEY_PLAYER_ID, e),
-            fullname: getJsonString(DB_KEY_PLAYER_NAME, e),
-            currentTeam: getJsonString(DB_KEY_PLAYER_TEAM, e),
-            position: PersonPosition.fromDatabase(
-                e), //positionFromString(getJsonString(DB_KEY_PLAYER_TEAM, e)),
-            active: getJsonBoolean(DB_KEY_PLAYER_TEAM, e),
-            starred: true);
+          id: getJsonInt(DB_KEY_PLAYER_ID, e),
+          fullname: getJsonString(DB_KEY_PLAYER_NAME, e),
+          currentTeam: getJsonString(DB_KEY_PLAYER_TEAM, e),
+          position: PersonPosition.fromDatabase(e),
+          active: getJsonBoolean(DB_KEY_PLAYER_ACTIVE, e),
+        );
         _cache[temp.id] = temp;
         return temp;
       }).toList();
@@ -479,6 +475,14 @@ class PlayerPage extends Player {
     }
     return _firstSeason;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Player && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode ^ fullname.hashCode;
 }
 
 abstract class PlayerStat {
@@ -505,6 +509,8 @@ abstract class PlayerStat {
   String get header;
 
   Widget get statTable;
+
+  List<String> get statList;
 
   static List<String> playerStats = [
     "games",
@@ -544,6 +550,28 @@ abstract class PlayerStat {
     "shortHandedSavePercentage",
     "evenStrengthSavePercentage",
   ];
+
+  static Widget goalieHeaderRow() {
+    return Row(
+      children: [
+        CustomDataTableSource.createTableCorner('Season'),
+        ...goalieStats.map((stat) =>
+            CustomDataTableSource.createColumnBasic(getColumnAbb(stat)))
+      ],
+    );
+  }
+
+  static Widget skaterHeaderRow() {
+    return Row(
+      children: [
+        CustomDataTableSource.createTableCorner('Season'),
+        ...playerStats
+            .map((stat) =>
+                CustomDataTableSource.createColumnBasic(getColumnAbb(stat)))
+            .toList()
+      ],
+    );
+  }
 }
 
 class PlayerAllTimeStat implements PlayerStat {
@@ -566,18 +594,30 @@ class PlayerAllTimeStat implements PlayerStat {
 
   @override
   Widget get statTable {
+    List<Widget> cells = [
+      CustomDataTableSource.createTableFirstColumn(Text(
+        regularSeason ? 'NHL Career' : 'Career Playoffs',
+        style: CustomDataTableSource.firstColumnStyle,
+      ))
+    ];
+    cells.addAll(skater
+        ? PlayerStat.playerStats
+            .map((statName) => CustomDataTableSource.createSizedCell(
+                getJsonDynamic(statName, stat).toString()))
+            .toList()
+        : PlayerStat.goalieStats
+            .map((statName) => CustomDataTableSource.createSizedCell(
+                getJsonDynamic(statName, stat).toString()))
+            .toList());
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: skater
-            ? PlayerStat.playerStats
-                .map((statName) => CustomDataTableSource.createSizedCell(
-                    getJsonDynamic(statName, stat).toString()))
-                .toList()
-            : PlayerStat.goalieStats
-                .map((statName) => CustomDataTableSource.createSizedCell(
-                    getJsonDynamic(statName, stat).toString()))
-                .toList(),
+      child: Column(
+        children: [
+          skater ? PlayerStat.skaterHeaderRow() : PlayerStat.goalieHeaderRow(),
+          Row(
+            children: cells,
+          ),
+        ],
       ),
     );
   }
@@ -585,7 +625,9 @@ class PlayerAllTimeStat implements PlayerStat {
   @override
   String get header => regularSeason ? 'Career' : 'Career Playoffs';
 
-
+  @override
+  List<String> get statList =>
+      skater ? PlayerStat.playerStats : PlayerStat.goalieStats;
 }
 
 class PlayerYearByYearStats implements PlayerStat {
@@ -629,28 +671,43 @@ class PlayerYearByYearStats implements PlayerStat {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Column(
-          children: seasons
-              .map((season) => Row(
-                    children: skater
-                        ? PlayerStat.playerStats
-                            .map((stat) =>
-                                CustomDataTableSource.createSizedCell(
-                                    getJsonDynamic(stat, season.stat)
-                                        .toString()))
-                            .toList()
-                        : PlayerStat.goalieStats
-                            .map((stat) =>
-                                CustomDataTableSource.createSizedCell(
-                                    getJsonDynamic(stat, season.stat)
-                                        .toString()))
-                            .toList(),
-                  ))
-              .toList()),
+        children: [
+          skater ? PlayerStat.skaterHeaderRow() : PlayerStat.goalieHeaderRow(),
+          ...seasons
+              .map(
+                (season) => Row(
+                  children: getSeasonRow(season),
+                ),
+              )
+              .toList(),
+        ],
+      ),
     );
   }
 
+  List<Widget> getSeasonRow(PlayerYearByYearStatsSeason season) {
+    return [
+      CustomDataTableSource.createTableFirstColumn(Text(
+        season.season,
+        style: CustomDataTableSource.firstColumnStyle,
+      )),
+      ...statList
+          .map(
+            (stat) => CustomDataTableSource.createSizedCell(
+              getJsonDynamic(stat, season.stat).toString(),
+            ),
+          )
+          .toList()
+    ];
+  }
+
   @override
-  String get header => regularSeason ? 'Regular season stats' : 'Playoffs stats';
+  List<String> get statList =>
+      skater ? PlayerStat.playerStats : PlayerStat.goalieStats;
+
+  @override
+  String get header =>
+      regularSeason ? 'Regular season stats' : 'Playoffs stats';
 }
 
 class PlayerYearByYearStatsSeason {

@@ -13,12 +13,8 @@ import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:FlutterNhl/views/player/widgets/player_game_log_view.dart';
-import 'package:FlutterNhl/widgets/custom_data_table.dart';
-import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
-import 'package:FlutterNhl/widgets/custom_year_select.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/progress_view.dart';
-import 'package:FlutterNhl/widgets/scaffold_template.dart';
+import 'package:FlutterNhl/widgets/single_stat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -63,7 +59,7 @@ class _PlayerHomeState extends State<PlayerHome> {
             PlayerEntered(widget.playerArgs.playerId, widget.playerArgs.type)),
         converter: (store) => PlayerAppBarViewModel.fromStore(store),
         builder: (_, viewModel) {
-          print('PlayerAppBarViewModel build');
+          print('PlayerAppBarViewModel BUILD: ${viewModel.player}');
           if (viewModel.player == null)
             return Scaffold(
               appBar: AppBar(
@@ -87,10 +83,10 @@ class _PlayerHomeState extends State<PlayerHome> {
               ),
               actions: [
                 IconButton(
-                    icon: viewModel.player.starred
+                    icon: viewModel.isStarred
                         ? const Icon(Icons.star)
                         : const Icon(Icons.star_border),
-                    onPressed: () => viewModel.player.starred
+                    onPressed: () => viewModel.isStarred
                         ? viewModel.unstarredPlayer(viewModel.player)
                         : viewModel.starredPlayer(viewModel.player))
               ],
@@ -138,175 +134,35 @@ class _PlayerHomeState extends State<PlayerHome> {
                 ),
               ),
             ),
-            body: _buildBody(),
+            //body: _buildBody(viewModel.player),
           );
         });
   }
 
-  Widget _buildBody() {
-    return StoreConnector<AppState, PlayerViewModel>(
-        distinct: true,
-        onInit: (store) => store.dispatch(
-            PlayerEntered(widget.playerArgs.playerId, widget.playerArgs.type)),
-        converter: (store) => PlayerViewModel.fromStore(store),
-        builder: (_, viewModel) {
-          print('PlayerViewModel build: ${viewModel.loadingStatus}');
-          return PageView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            controller: _pageController,
-            onPageChanged: (int index) {
-              print(index);
-              if (PlayerHome.tabs.length > index) {
-                switch (PlayerHome.tabs[index].name) {
-                  case 'Stats':
-                    viewModel.getStats(viewModel.selectedStat);
-                    break;
-                  case 'Game Logs':
-                    viewModel.getGameLogs(viewModel.selectedParams);
-                    break;
-                }
-              }
-              setState(() {
-                _currentPage = index;
-              });
-            },
-            itemBuilder: (context, position) {
-              print('position: $position,');
-              switch (viewModel.loadingStatus) {
-                case LoadingStatus.IDLE:
-                  return ProgressView('Checking player data');
-                  break;
-                case LoadingStatus.LOADING:
-                  return ProgressView('Downloading player data');
-                  break;
-                default:
-                  return _createTab(PlayerHome.tabs[position].name, viewModel);
-                  break;
-              }
-            },
-            itemCount: PlayerHome.tabs.length,
-          );
+  Widget _buildBody(PlayerPage player) {
+    return PageView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      controller: _pageController,
+      onPageChanged: (int index) {
+        print('Player _buildbody pageChanged: $index');
+        setState(() {
+          _currentPage = index;
         });
-  }
-
-  Widget _createTab(String tab, PlayerViewModel viewModel) {
-    switch (tab) {
-      case 'Bio':
-        return _createBioTab(viewModel);
-      case 'Stats':
-        return _createStatTab(viewModel);
-      case 'Game Logs':
-        return _createGameLogTab(viewModel);
-      default:
-        return ErrorView(UIUnknownStateException('player_home _createTab'));
-    }
-  }
-
-  Widget _createBioTab(PlayerViewModel viewModel) {
-    if (viewModel.loadingStatus == LoadingStatus.ERROR &&
-        viewModel.error != null) {
-      return ErrorView(viewModel.error);
-    } else if (viewModel.player == null)
-      return ErrorView(
-          UINoDataDownloadedException('player_home _createBioTab'));
-    else
-      return PlayerBioTab(player: viewModel.player);
-  }
-
-  Widget _createStatTab(PlayerViewModel viewModel) {
-    Widget widget;
-    if (viewModel.loadingStatus == LoadingStatus.ERROR &&
-        viewModel.error != null) {
-      widget = ErrorView(viewModel.error);
-    } else if (viewModel.player != null &&
-        viewModel.player.containsStat(viewModel.selectedStat)) {
-      PlayerSeasonTableSource stats =
-          viewModel.player.getStat(viewModel.selectedStat);
-      widget = Expanded(
-        child: SingleChildScrollView(
-          child: CustomDataTable(
-            dataTableSource: stats,
-          ),
-        ),
-      );
-    }
-    return Column(
-      children: <Widget>[
-        Container(
-          height: 50.0,
-          color: Colors.black12,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomDropdownButton(
-                selectedValue: viewModel.selectedStat.stat,
-                values: viewModel.displayItems,
-                onValueChanged: (String stat) => viewModel
-                    .getStats(viewModel.selectedStat.copyWith(stat: stat)),
-              ),
-              CustomDropdownButton(
-                selectedValue: viewModel.selectedStat.gameTypeString,
-                values: PageParam.gameTypes,
-                onValueChanged: (String type) => viewModel.getStats(viewModel
-                    .selectedStat
-                    .copyWith(gameType: PageParam.getGameTypeBoolean(type))),
-              ),
-            ],
-          ),
-        ),
-        widget ??
-            ErrorView(
-                UINoDataDownloadedException('player_home _createStatTab')),
-      ],
-    );
-  }
-
-  Widget _createGameLogTab(PlayerViewModel viewModel) {
-    Widget widget;
-    if (viewModel.loadingStatus == LoadingStatus.ERROR &&
-        viewModel.error != null) {
-      widget = ErrorView(viewModel.error);
-    } else if (viewModel.player != null &&
-        viewModel.player.containsGameLogs(viewModel.selectedParams)) {
-      List<GameLogsPlayer> logs =
-          viewModel.player.getGameLog(viewModel.selectedParams);
-
-      widget = Expanded(
-          child: PlayerGameLogView(
-              logs, viewModel.player.position.code != Position.G));
-    }
-    return Column(
-      children: <Widget>[
-        Container(
-          height: 50.0,
-          color: Colors.black12,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomYearPicker(
-                selected: int.parse(viewModel.selectedParams.year),
-                onSelected: (int year) => viewModel.getGameLogs(
-                    viewModel.selectedParams.copyWith(year: year.toString())),
-                maxValue: int.parse(StatParameters.getCurrentSeason()),
-                minValue: viewModel.player != null
-                    ? viewModel.player.firstSeason
-                    : int.parse(Config.getCurrentSeason),
-                reducer: 10001,
-              ),
-              CustomDropdownButton(
-                selectedValue: viewModel.selectedParams.gameTypeString,
-                values: PageParam.gameTypes,
-                onValueChanged: (String type) => viewModel.getGameLogs(viewModel
-                    .selectedParams
-                    .copyWith(gameType: PageParam.getGameTypeBoolean(type))),
-              ),
-            ],
-          ),
-        ),
-        widget ??
-            ErrorView(
-                UINoDataDownloadedException('player_home _createGameLogTab')),
-      ],
+      },
+      itemBuilder: (context, position) {
+        print('Player _buildBody position: $position,');
+        switch (PlayerHome.tabs[position].name) {
+          case 'Bio':
+            return PlayerBioTab();
+          case 'Stats':
+            return SingleStatView();
+          case 'Game Logs':
+            return PlayerGameLogView();
+          default:
+            return ErrorView(UIUnknownStateException('player_home _createTab'));
+        }
+      },
+      itemCount: PlayerHome.tabs.length,
     );
   }
 

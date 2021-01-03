@@ -1,11 +1,47 @@
 import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
+import 'package:FlutterNhl/redux/states/app_state.dart';
+import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
+import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class PlayerBioTab extends StatelessWidget {
-  final PlayerPage player;
+  //final PlayerPage player;
 
-  const PlayerBioTab({Key key, this.player}) : super(key: key);
+  const PlayerBioTab({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector<AppState, PlayerBioTabViewModel>(
+        converter: (store) => PlayerBioTabViewModel.fromStore(store),
+        builder: (ctx, viewModel) {
+          print(
+              'PLAYERBIOTAB: BUILD: ${viewModel.loadingStatus} ${viewModel.player}');
+          if (viewModel.loadingStatus == LoadingStatus.IDLE) {
+            return ProgressView('Loading player bio');
+          } else if (viewModel.loadingStatus == LoadingStatus.LOADING) {
+            return ProgressView('Loading player bio');
+          } else if (viewModel.loadingStatus == LoadingStatus.ERROR) {
+            return ErrorView(viewModel.error);
+          } else {
+            if (viewModel.player == null)
+              return ErrorView(NoDataException('PlayerBioTab build'));
+            return PlayerBioWidget(
+              player: viewModel.player,
+            );
+          }
+        });
+  }
+}
+
+class PlayerBioWidget extends StatelessWidget {
+  final PlayerBioTabObject player;
+
+  const PlayerBioWidget({Key key, this.player}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -109,8 +145,8 @@ class PlayerBioTab extends StatelessWidget {
       getRow('Team', player.currentTeam),
       getRow('Position', player.playerPositionString),
       getRow('Handess', player.playerHandessString),
-      getRow('First year in NHL', player.firstSeason.toString()),
-      getRow('First year in playoffs', player.firstSeason.toString()),
+      getRow('First year in NHL', player.firstYearRegularSeason),
+      getRow('First year in playoffs', player.firstYearRegularPlayoffs),
       getRow('Birth date', Styles.dateFormat.format(player.birthDate)),
       getRow('Birthplace', '${player.birthCity}, ${player.birthCountry}'),
       getRow('Nationality', player.nationality),
