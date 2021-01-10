@@ -16,7 +16,8 @@ class FirebaseMiddleware extends MiddlewareClass<AppState> {
         FirebaseApp app = await Firebase.initializeApp();
         next(FirebaseInitializedAction(app));
         Crashlytics.instance.enableInDevMode = false;//true;
-        FlutterError.onError = Crashlytics.instance.recordFlutterError;
+        if(Crashlytics.instance.enableInDevMode)
+          FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
       } catch (error) {
         next(FirebaseInitializationErrorAction(error));

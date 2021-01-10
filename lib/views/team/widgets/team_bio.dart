@@ -1,10 +1,7 @@
-import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/views/game/game_widgets/game_matchup_view.dart';
 import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
-import 'package:FlutterNhl/views/team/widgets/team_game_log.dart';
-import 'package:FlutterNhl/widgets/content_card.dart';
 import 'package:flutter/material.dart';
 
 class TeamBioTab extends StatelessWidget {

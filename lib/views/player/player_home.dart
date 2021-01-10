@@ -1,19 +1,14 @@
 import 'package:FlutterNhl/constants/styles.dart';
-import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
-import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
-import 'package:FlutterNhl/redux/models/player/player_enums.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
-import 'package:FlutterNhl/redux/states/player/player_state.dart';
-import 'package:FlutterNhl/redux/states/player/player_table_source.dart';
 import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:FlutterNhl/views/player/widgets/player_game_log_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
+import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:FlutterNhl/widgets/single_stat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -59,7 +54,6 @@ class _PlayerHomeState extends State<PlayerHome> {
             PlayerEntered(widget.playerArgs.playerId, widget.playerArgs.type)),
         converter: (store) => PlayerAppBarViewModel.fromStore(store),
         builder: (_, viewModel) {
-          print('PlayerAppBarViewModel BUILD: ${viewModel.player}');
           if (viewModel.player == null)
             return Scaffold(
               appBar: AppBar(
@@ -68,6 +62,7 @@ class _PlayerHomeState extends State<PlayerHome> {
                   child: Text(widget.playerArgs.playerFullName),
                 ),
               ),
+              body: ProgressView('Downloading player ok'),
             );
           return Scaffold(
             appBar: AppBar(
@@ -134,7 +129,7 @@ class _PlayerHomeState extends State<PlayerHome> {
                 ),
               ),
             ),
-            //body: _buildBody(viewModel.player),
+            body: _buildBody(viewModel.player),
           );
         });
   }

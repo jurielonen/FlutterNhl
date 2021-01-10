@@ -2,7 +2,6 @@ import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
@@ -13,7 +12,6 @@ import 'package:FlutterNhl/widgets/custom_data_table.dart';
 import 'package:FlutterNhl/widgets/custom_dropdown_button.dart';
 import 'package:FlutterNhl/widgets/custom_year_select.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/loading_status_widget.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -28,7 +26,7 @@ class PlayerGameLogView extends StatelessWidget {
       onInit: (store) => store.dispatch(PlayerGameLogTabChangedAction()),
       converter: (store) => PlayerGameLogViewModel.fromStore(store),
       builder: (ctx, viewModel) {
-        print('PlayerGameLogView: BUILD: ${viewModel.loadingStatus} ${viewModel.selectedGameLogs.length}');
+        print('PlayerGameLogView: BUILD: ${viewModel.loadingStatus} ${viewModel.selectedGameLogs}');
         if (viewModel.loadingStatus == LoadingStatus.IDLE) {
           return ProgressView('Loading player game logs');
         } else if (viewModel.loadingStatus == LoadingStatus.LOADING) {
@@ -96,9 +94,9 @@ class PlayerGameLogView extends StatelessWidget {
       return ErrorView(
           UINoDataDownloadedException('player_game_log_view _buildGameLogList'));
     } else if (logs.length < 1) {
-      return ErrorView(NoDataException('player_game_log_view _buildGameLogList'));
+      return ErrorView(NoDataException(''));
     } else {
-      return Column(
+      return /*Stack(
         children: <Widget>[
           Container(
             color: Colors.black,
@@ -106,16 +104,16 @@ class PlayerGameLogView extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Row(children: statColumn.toList()),
             ),
-          ),
+          ),*/
           Expanded(
             child: ListView.builder(
                 itemBuilder: (BuildContext context, int index) {
                   return getGameRow(logs[index]);
                 },
                 itemCount: logs.length),
-          ),
+          )/*,
         ],
-      );
+      )*/;
     }
   }
 

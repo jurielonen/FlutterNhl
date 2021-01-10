@@ -28,6 +28,8 @@ class PageStatParams extends PageParam {
     return PageStatParams(stat ?? this.stat, gameType ?? this.gameType);
   }
 
+  PageStatParams.clone(PageStatParams params):this(params.stat, params.gameType);
+
   @override
   int get hashCode => stat.hashCode ^ gameType.hashCode;
 
@@ -48,6 +50,8 @@ class PageGameLogParams extends PageParam {
   PageGameLogParams copyWith({String year, bool gameType}) {
     return PageGameLogParams(year ?? this.year, gameType ?? this.gameType);
   }
+
+  PageGameLogParams.clone(PageGameLogParams params):this(params.year, params.gameType);
 
   @override
   int get hashCode => year.hashCode ^ gameType.hashCode;
