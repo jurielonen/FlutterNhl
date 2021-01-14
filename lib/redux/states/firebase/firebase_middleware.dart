@@ -6,6 +6,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:redux/redux.dart';
 
+import 'package:flutter/foundation.dart' show kDebugMode;
+
 class FirebaseMiddleware extends MiddlewareClass<AppState> {
   @override
   Future<Null> call(
@@ -15,8 +17,12 @@ class FirebaseMiddleware extends MiddlewareClass<AppState> {
       try {
         FirebaseApp app = await Firebase.initializeApp();
         next(FirebaseInitializedAction(app));
-        Crashlytics.instance.enableInDevMode = false;//true;
-        FlutterError.onError = Crashlytics.instance.recordFlutterError;
+        if(kDebugMode){
+          FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+        } else {
+          FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+          FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+        }
 
       } catch (error) {
         next(FirebaseInitializationErrorAction(error));
