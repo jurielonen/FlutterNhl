@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/constants/constants.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/player/game_logs_player/game_logs_player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
@@ -137,8 +138,11 @@ class Player {
     );
   }
 
-  String get headShotUrl =>
-      'https://cms.nhl.bamgrid.com/images/headshots/current/168x168/$id.jpg';
+  String get headShotUrl {
+    if(active)
+      return 'https://assets.nhle.com/mugs/nhl/${Config.getCurrentSeason}/$currentTeam/$id.png';
+    return 'https://cms.nhl.bamgrid.com/images/headshots/current/168x168/$id.jpg';
+  }
 
   static String tableName(String fName) {
     List<String> names = fName.split(' ');
