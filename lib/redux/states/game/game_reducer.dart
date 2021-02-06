@@ -31,7 +31,6 @@ GameState gameReducer(GameState state, dynamic action) {
     gamesMap[state.selectedGame.id].content = action.content;
     return state.copyWith(
         loadingStatus: LoadingStatus.SUCCESS, games: gamesMap);
-    ;
   } else if (action is GameAlreadyDownloadedContentAction) {
     return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   }

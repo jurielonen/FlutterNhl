@@ -50,10 +50,11 @@ class Config {
   /// Returns seasons end date if current date is higher than today's date.
   /// Returns seasons start date if current date is lower than today's date.
   DateTime getStartingDate(){
-    int compareValue = DateTime.now().compareTo(currentSeason.seasonEndDate);
-    if(0 < compareValue){
+    int compareValueEnd = DateTime.now().compareTo(currentSeason.seasonEndDate);
+    int compareValueStart = DateTime.now().compareTo(currentSeason.regularSeasonStartDate);
+    if(0 < compareValueEnd){
       return currentSeason.seasonEndDate;
-    } else if(0 > compareValue){
+    } else if(0 > compareValueStart){
       return currentSeason.regularSeasonStartDate;
     } else {
       return DateTime.now();
@@ -254,7 +255,7 @@ class Config {
   static String get getCurrentSeason {
     if(Config().currentSeason != null)
       return Config().currentSeason.season;
-    return '20192020';
+    return '20202021';
   }
 }
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
@@ -30,11 +29,11 @@ class _VideoViewState extends State<VideoView>
   String _currentPositionString = '00:00';
   String _videoDurationString = '00:00';
   AnimationController _animationController;
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    print("ENABLE WAKELOCK");
     Wakelock.toggle(enable: true);
     SystemChrome.setEnabledSystemUIOverlays([]);
     _animationController =
@@ -44,7 +43,6 @@ class _VideoViewState extends State<VideoView>
     );
 
     _initializeVideoPlayerFuture = _controller.initialize();
-
     _controller.setLooping(false);
     _controller.addListener(() {
       if (_controller.value.initialized) {
@@ -54,12 +52,35 @@ class _VideoViewState extends State<VideoView>
               _animationController.value < 1.0) _animationController.forward();
           _videoDuration = _controller.value.duration;
           _videoDurationString = _parseDuration(_videoDuration);
+          _controller.play();
         }
         setState(() {
           _currentPosition = _controller.value.position;
           _currentPositionString = _parseDuration(_currentPosition);
         });
       }
+    });
+
+    //to automatically hide video bar
+    _animationController.addListener(() {
+      if(_animationController.status == AnimationStatus.completed){
+        setNewTimer();
+      }
+    });
+  }
+
+  /// Sets a new timer for when to hide video bar
+  void setNewTimer(){
+    if(_timer != null){
+      if(_timer.isActive)
+        _timer.cancel();
+      _timer = null;
+    }
+    _timer = Timer(Duration(seconds: 5), (){
+      if(_animationController.status == AnimationStatus.completed){
+        _animationController.reverse();
+      }
+      _timer = null;
     });
   }
 
@@ -68,7 +89,6 @@ class _VideoViewState extends State<VideoView>
     _controller.dispose();
     _animationController.dispose();
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-    print("DESTROY WAKELOCK");
     Wakelock.toggle(enable: false);
     super.dispose();
   }
@@ -153,6 +173,7 @@ class _VideoViewState extends State<VideoView>
                       else
                         _controller.seekTo(Duration(seconds: 0));
                     });
+                    setNewTimer();
                   }),
               IconButton(
                   icon: Icon(_controller.value.isPlaying
@@ -165,6 +186,7 @@ class _VideoViewState extends State<VideoView>
                       else
                         _controller.play();
                     });
+                    setNewTimer();
                   }),
               IconButton(
                   icon: Icon(Icons.forward_10),
@@ -176,6 +198,7 @@ class _VideoViewState extends State<VideoView>
                         _controller
                             .seekTo(_currentPosition + Duration(seconds: 10));
                     });
+                    setNewTimer();
                   }),
             ],
           ),
