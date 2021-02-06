@@ -22,7 +22,7 @@ final Play empty = Play(
     type: PlayEnum.UNKNOWN,
     event: '',
     about: About(
-        eventIdx: -1,
+        eventId: -1,
         period: -1,
         periodType: '',
         ordinalNum: '',
@@ -33,7 +33,7 @@ final Play periodPlay = Play(
     type: PlayEnum.PERIOD_READY,
     event: 'Period Ready',
     about: About(
-        eventIdx: 1,
+        eventId: 1,
         period: 1,
         periodType: 'REGULAR',
         ordinalNum: '1st',
@@ -72,7 +72,7 @@ final PlayWithPlayers shotPlay = PlayWithPlayers(
         type: PlayEnum.SHOT,
         event: 'Shot',
         about: About(
-            eventIdx: 8,
+            eventId: 8,
             period: 1,
             periodType: 'REGULAR',
             ordinalNum: '1st',

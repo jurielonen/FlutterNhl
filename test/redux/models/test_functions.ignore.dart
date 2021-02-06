@@ -30,7 +30,7 @@ checkGoals(Goals actual, Goals expected) {
 }
 
 checkAbout(About actual, About expected) {
-  expect(actual.eventIdx, expected.eventIdx);
+  expect(actual.eventId, expected.eventId);
   expect(actual.period, expected.period);
   expect(actual.periodType, expected.periodType);
   expect(actual.ordinalNum, expected.ordinalNum);

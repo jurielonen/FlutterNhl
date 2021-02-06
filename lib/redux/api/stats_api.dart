@@ -114,7 +114,7 @@ class StatsApi {
     final searchUri = Uri.https(baseUrl, '/api/v1/schedule', {
       'date': date,
       'hydrate':
-          'team,linescore,game(content(media(epg)),seriesSummary),decisions,scoringplays,boxscore'
+          'team,linescore,game(content(media(epg),highlights(all)),seriesSummary),decisions,scoringplays,boxscore'
     });
     print('$printMsg fetchSchedule: $searchUri');
     return await fetch(searchUri, client).then((value) {

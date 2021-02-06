@@ -345,8 +345,20 @@ class GameFinal extends Game {
 
   Iterable<Play> get scoringPlays sync* {
     for (Play play in plays) {
-      if (play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START)
-        yield play;
+      if (play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START){
+        VideoHighlight video = content.videos.firstWhere((video) {
+          if(video is VideoHighlight){
+            if(video.playId == play.about.eventId)
+              return true;
+          }
+          return false;
+        },
+        orElse: () => null);
+        if(video != null && video.videoUrl.isNotEmpty)
+          yield ScoringPlay(play: play, video: video);
+        else
+          yield play;
+      }
     }
   }
 
