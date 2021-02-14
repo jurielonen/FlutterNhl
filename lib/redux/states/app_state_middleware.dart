@@ -1,6 +1,7 @@
 import 'package:FlutterNhl/redux/api/stats_api.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
+import 'package:FlutterNhl/redux/states/settings/settings_action.dart';
 import 'package:redux/redux.dart';
 
 class AppStateMiddleware extends MiddlewareClass<AppState> {
@@ -12,6 +13,7 @@ class AppStateMiddleware extends MiddlewareClass<AppState> {
   Future<Null> call(Store<AppState> store, action, next) async {
     next(action);
     if (action is InitAction) {
+      next(SettingsInitialDownloadAction());
       try {
         await api.fetchCurrentSeason();
         await api.fetchTeams();

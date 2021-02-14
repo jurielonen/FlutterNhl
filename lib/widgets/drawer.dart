@@ -38,10 +38,13 @@ class AppDrawer extends StatelessWidget {
               text: 'Playoffs',
               onTap: () => _tilePressed(context, DrawerPages.PLAYOFFS)),
           _createDrawerItem(
-            icon: Icons.person,
-            text: 'Starred players',
-            onTap: () => _tilePressed(context, DrawerPages.STARRED),
-          ),
+              icon: Icons.person,
+              text: 'Starred players',
+              onTap: () => _tilePressed(context, DrawerPages.STARRED)),
+          _createDrawerItem(
+              icon: Icons.settings,
+              text: 'Settings',
+              onTap: () => _tilePressed(context, DrawerPages.SETTINGS)),
           Divider(),
         ],
       ),
@@ -59,8 +62,7 @@ class AppDrawer extends StatelessWidget {
       padding: EdgeInsets.zero,
       decoration: BoxDecoration(
           image: DecorationImage(
-              fit: BoxFit.fill,
-              image: AssetImage('assets/drawer_header_background.png'))),
+              fit: BoxFit.fill, image: AssetImage('assets/drawer_header_background.png'))),
       child: Stack(
         children: <Widget>[
           Positioned(
@@ -80,8 +82,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget _createDrawerItem(
-      {IconData icon, String text, GestureTapCallback onTap}) {
+  Widget _createDrawerItem({IconData icon, String text, GestureTapCallback onTap}) {
     return ListTile(
       title: Row(
         children: <Widget>[

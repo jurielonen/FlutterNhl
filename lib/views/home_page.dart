@@ -7,6 +7,7 @@ import 'package:FlutterNhl/views/award/award_home.dart';
 import 'package:FlutterNhl/views/draft/draft_home.dart';
 import 'package:FlutterNhl/views/playoffs/playoffs_home.dart';
 import 'package:FlutterNhl/views/schedule/schedule_home.dart';
+import 'package:FlutterNhl/views/settings/settings_home.dart';
 import 'package:FlutterNhl/views/standing/standing_home.dart';
 import 'package:FlutterNhl/views/starred/starred_home.dart';
 import 'package:FlutterNhl/views/stats/stats_home.dart';
@@ -36,17 +37,20 @@ class HomePage extends StatelessWidget {
       },
       builder: (ctx, viewModel) => Scaffold(
         key: _scaffoldKey,
+        appBar: viewModel.currentPage == DrawerPages.SETTINGS
+            ? AppBar(
+                title: Text('Settings'),
+              )
+            : null,
         drawer: AppDrawer(
           onTilePressed: (DrawerPages page) => viewModel.pageChanged(page),
         ),
-        body: _getBody(
-            viewModel.loadingStatus, viewModel.currentPage, viewModel.error),
+        body: _getBody(viewModel.loadingStatus, viewModel.currentPage, viewModel.error),
       ),
     );
   }
 
-  Widget _getBody(
-      LoadingStatus loadingStatus, DrawerPages page, Exception error) {
+  Widget _getBody(LoadingStatus loadingStatus, DrawerPages page, Exception error) {
     switch (loadingStatus) {
       case LoadingStatus.IDLE:
       case LoadingStatus.LOADING:
@@ -91,6 +95,10 @@ class HomePage extends StatelessWidget {
       case DrawerPages.STARRED:
         {
           return StarredHome();
+        }
+      case DrawerPages.SETTINGS:
+        {
+          return SettingsPage();
         }
       default:
         {

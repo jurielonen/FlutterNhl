@@ -62,6 +62,8 @@ abstract class SeriesAction {}
 
 abstract class StarredAction {}
 
+abstract class SettingsAction {}
+
 class ScheduleEntered extends ScheduleAction {}
 
 class StatsEntered extends StatsAction {}

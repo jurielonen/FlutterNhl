@@ -3,10 +3,15 @@ import 'dart:ui';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 //Database
-const String DB_PATH = 'players.db';
-const String DB_TABLE = 'players';
+const String DB_PATH_PLAYER = 'players.db';
+const String DB_TABLE_PLAYER = 'players';
 const String DB_KEY_PLAYER_ID = 'id';
 const String DB_KEY_PLAYER_NAME = 'fullName';
+
+const String DB_PATH_SETTINGS = 'settings.db';
+const String DB_TABLE_SETTINGS = 'settings';
+const String DB_KEY_SETTINGS_NAME = 'key';
+const String DB_KEY_SETTINGS_VALUE = 'value';
 
 //Rink coordinates dimensions
 const double xMax = 200;
@@ -903,8 +908,7 @@ const Map<String, String> constantTooltips = {
   'shAssists': 'Shorthanded Assists (since 1933-34)',
   'shGoalsPer60': 'Shorthanded Goals per 60 minutes',
   'shIndividualSatFor': 'Shorthanded Individual SAT For (since 2009-10)',
-  'shIndividualSatForPer60':
-      'Shorthanded Individual SAT For per 60 minutes (since 2009-10)',
+  'shIndividualSatForPer60': 'Shorthanded Individual SAT For per 60 minutes (since 2009-10)',
   'shPointsPer60': 'Shorthanded Points per 60',
   'shPrimaryAssists': 'Shorthanded Primary Assists',
   'shPrimaryAssistsPer60': 'Shorthanded Primary Assists per 60 minutes',
@@ -949,8 +953,7 @@ const Map<String, String> constantTooltips = {
   'satPercentageTied': 'SAT Percentage Tied',
   'shootingPct5v5': 'Team\'s 5v5 Shooting % when Player on Ice',
   'skaterSavePct5v5': 'Team\'s 5v5 Save % when Player on Ice',
-  'skaterShootingPlusSavePct5v5':
-      'Team\'s 5v5 Shooting + Save % when Player on Ice',
+  'skaterShootingPlusSavePct5v5': 'Team\'s 5v5 Shooting + Save % when Player on Ice',
   'usatPercentage': 'USAT Percentage',
   'usatPercentageAhead': 'USAT Percentage Ahead',
   'usatPercentageBehind': 'USAT Percentage Behind',
@@ -982,8 +985,7 @@ const Map<String, String> constantTooltips = {
   'goalsAgainstAverage': 'Goals Against Average',
   'completeGamePct': 'Complete Game Percentage',
   'completeGames': 'Complete Games When Starter',
-  'goalsAgainstPerRegulationLoss':
-      'Goals Against per Regulation Plus Overtime Losses',
+  'goalsAgainstPerRegulationLoss': 'Goals Against per Regulation Plus Overtime Losses',
   'goalsForAverage': 'Goals For Average',
   'incompleteGames': 'Incomplete Games When Starter',
   'qualityStart': 'Games Started > .900 Save Percentage',
@@ -1044,8 +1046,7 @@ const Map<String, String> constantTooltips = {
   'isInHallOfFameYn': 'In Hall of Fame',
   'nationalityCode': 'Player Nationality',
   'weight': 'Player Weight',
-  "daysRest":
-      "Days Between Games (\'0\' = Back-to-Back Games, \'4\' = 4 or more days)",
+  "daysRest": "Days Between Games (\'0\' = Back-to-Back Games, \'4\' = 4 or more days)",
   "netGoalsPerGame": "Net Goals per Game Played",
   "ppOpportunitiesPerGame": "Power Play Opportunities per Game Played",
   "shotDifferentialPerGame": "Shot Differential per Game",

@@ -7,7 +7,6 @@ import 'package:FlutterNhl/views/stats/stat_widgets/stat_filter_popup.dart';
 import 'package:FlutterNhl/views/team/team_home.dart';
 import 'package:FlutterNhl/views/video/video_view.dart';
 
-
 class Routes {
   //TODO: Add route string from class
   static const String homepage = HomePage.routeName;
@@ -28,4 +27,5 @@ enum DrawerPages {
   STATS,
   PLAYOFFS,
   STARRED,
+  SETTINGS,
 }

@@ -32,8 +32,7 @@ class PlayoffsHome extends StatelessWidget {
               selectedYear = int.parse(seasonVM.selectedSeason);
             return <Widget>[
               SliverOverlapAbsorber(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                 sliver: SliverAppBar(
                   title: const Text('Playoffs'),
                   pinned: true,
@@ -50,14 +49,12 @@ class PlayoffsHome extends StatelessWidget {
                             icon: Icon(Icons.navigate_before),
                             tooltip: 'Previous season',
                             onPressed: selectedYear > minSeason
-                                ? () => seasonVM.seasonChanged(
-                                    (selectedYear - 10001).toString())
+                                ? () => seasonVM.seasonChanged((selectedYear - 10001).toString())
                                 : null,
                           ),
                           CustomYearPicker(
                             selected: selectedYear,
-                            onSelected: (int year) =>
-                                seasonVM.seasonChanged(year.toString()),
+                            onSelected: (int year) => seasonVM.seasonChanged(year.toString()),
                             maxValue: int.parse(Config.getCurrentSeason),
                             minValue: minSeason,
                             reducer: 10001,
@@ -65,10 +62,8 @@ class PlayoffsHome extends StatelessWidget {
                           IconButton(
                             icon: Icon(Icons.navigate_next),
                             tooltip: 'Next season',
-                            onPressed: selectedYear <
-                                    int.parse(Config.getCurrentSeason)
-                                ? () => seasonVM.seasonChanged(
-                                    (selectedYear + 10001).toString())
+                            onPressed: selectedYear < int.parse(Config.getCurrentSeason)
+                                ? () => seasonVM.seasonChanged((selectedYear + 10001).toString())
                                 : null,
                           ),
                         ],
@@ -84,8 +79,7 @@ class PlayoffsHome extends StatelessWidget {
               return CustomScrollView(
                 slivers: <Widget>[
                   SliverOverlapInjector(
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                          context)),
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
                   _buildBody(),
                 ],
               );
@@ -112,8 +106,13 @@ class PlayoffsHome extends StatelessWidget {
             case LoadingStatus.SUCCESS:
               if (playoffVM.playoff == null) {
                 return SliverErrorView(
-                    error: UINoDataDownloadedException(
-                        'playoffs_home _buildBody'));
+                    error: UINoDataDownloadedException('playoffs_home _buildBody'));
+              } else if (playoffVM.playoff.rounds.isEmpty) {
+                return SliverErrorView(
+                  error: UINoDataDownloadedException(
+                      'No data found for playoffs ${playoffVM.playoff.season}'),
+                  color: Colors.grey,
+                );
               } else {
                 return SliverFillRemaining(
                   hasScrollBody: true,
@@ -124,8 +123,7 @@ class PlayoffsHome extends StatelessWidget {
               }
               break;
             default:
-              return SliverErrorView(
-                  error: UIUnknownStateException('Unknown state'));
+              return SliverErrorView(error: UIUnknownStateException('Unknown state'));
           }
         });
   }
@@ -138,8 +136,7 @@ class PlayoffsTabView extends StatefulWidget {
   _PlayoffsTabViewState createState() => _PlayoffsTabViewState();
 }
 
-class _PlayoffsTabViewState extends State<PlayoffsTabView>
-    with TickerProviderStateMixin {
+class _PlayoffsTabViewState extends State<PlayoffsTabView> with TickerProviderStateMixin {
   TabController _tabController;
   PageController _pageController;
 
@@ -147,9 +144,7 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
   void initState() {
     super.initState();
     _tabController = new TabController(
-        length: widget.playoff.tabs.length,
-        vsync: this,
-        initialIndex: widget.playoff.defaultRound);
+        length: widget.playoff.tabs.length, vsync: this, initialIndex: widget.playoff.defaultRound);
     _pageController = new PageController(initialPage: _tabController.index);
   }
 
@@ -205,15 +200,23 @@ class _PlayoffsTabViewState extends State<PlayoffsTabView>
                   itemBuilder: (context, position) {
                     //PlayoffRound round = widget.playoff.getPlayoffRound(name);
                     List<Widget> items = widget.playoff.getPlayoffRound(name).gridItems;
-                    if(items.length == 1){
-                      return Center(child: Container(height: 100, width: MediaQuery.of(context).size.width/2, child: items.first),);
+                    if (items.length == 1) {
+                      return Center(
+                        child: Container(
+                            height: 100,
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: items.first),
+                      );
                     }
                     return Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                      child: GridView.count(crossAxisCount: 2,
+                      child: GridView.count(
+                        crossAxisCount: 2,
                         childAspectRatio: 2.0,
                         crossAxisSpacing: 10,
-                        mainAxisSpacing: 10, children: items,),
+                        mainAxisSpacing: 10,
+                        children: items,
+                      ),
                     );
                   },
                 ),
