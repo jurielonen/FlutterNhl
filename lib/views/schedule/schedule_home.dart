@@ -22,7 +22,6 @@ class ScheduleHome extends StatelessWidget {
       distinct: true,
       onInit: (store) => store.dispatch(ScheduleEntered()),
       onDispose: (store) {
-        print('Schedule exited');
         store.dispatch(ScheduleExited());
       },
       converter: (store) => ScheduleViewModel.fromStore(store),
@@ -31,8 +30,7 @@ class ScheduleHome extends StatelessWidget {
           successContent: viewModel.selectedSchedule is ScheduleGames
               ? _getGamesView(viewModel.selectedSchedule)
               : _getEmptyView(viewModel.selectedSchedule),
-          appBar: _buildSliverAppBar(
-              viewModel.selectedDate, viewModel.changeSelectedDate),
+          appBar: _buildSliverAppBar(viewModel.selectedDate, viewModel.changeSelectedDate),
           error: viewModel.error,
           callback: () => _callBack(viewModel)),
     );
@@ -50,7 +48,10 @@ class ScheduleHome extends StatelessWidget {
       pinned: true,
       actions: [
         IconButton(
-          icon: Icon(Icons.calendar_today, color: Colors.green,),
+          icon: Icon(
+            Icons.calendar_today,
+            color: Colors.green,
+          ),
           onPressed: () => onChangeDate(DateTime.now()),
           tooltip: 'Go to current date',
         )
@@ -74,10 +75,9 @@ class ScheduleHome extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.navigate_before),
               tooltip: 'Previous days games',
-              onPressed:
-                  Config.selectedMinDate().isAfter(date.subtract(Duration(days: 1)))
-                      ? null
-                      : () => onChangeDate(date.subtract(Duration(days: 1))),
+              onPressed: Config.selectedMinDate().isAfter(date.subtract(Duration(days: 1)))
+                  ? null
+                  : () => onChangeDate(date.subtract(Duration(days: 1))),
             ),
             CustomDateTimePicker(
                 config: CustomDatePickerConfig(Config.minDate, Config.maxDate(),
@@ -97,7 +97,6 @@ class ScheduleHome extends StatelessWidget {
   }
 
   Widget _getGamesView(ScheduleGames selectedSchedule) {
-    print('scheduleview rebuilded');
     if (selectedSchedule == null) {
       return SliverFillRemaining(
         child: ErrorView(UINoDataDownloadedException('schedule_home _getGamesView')),

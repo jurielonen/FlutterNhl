@@ -1,3 +1,4 @@
+import 'package:FlutterNhl/redux/models/settings/game_show.dart';
 import 'package:FlutterNhl/redux/models/settings/settings.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 
@@ -18,4 +19,9 @@ class SettingsErrorAction extends SettingsAction {
 class SettingsChangedAction extends SettingsAction {
   final NhlSettings settings;
   SettingsChangedAction(this.settings);
+}
+
+class SettingsGamesShownChangedAction extends SettingsAction {
+  final GameShow gameShow;
+  SettingsGamesShownChangedAction(this.gameShow);
 }
