@@ -2,6 +2,7 @@ import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/enums.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
+import 'package:FlutterNhl/redux/models/settings/game_show.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
@@ -9,7 +10,7 @@ import 'package:FlutterNhl/redux/viewmodel/schedule_view_model.dart';
 import 'package:FlutterNhl/views/schedule/schedule_game.dart';
 import 'package:FlutterNhl/widgets/custom_date_picker.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/template_view.dart';
+import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -18,31 +19,72 @@ class ScheduleHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, ScheduleViewModel>(
-      distinct: true,
-      onInit: (store) => store.dispatch(ScheduleEntered()),
-      onDispose: (store) {
-        store.dispatch(ScheduleExited());
+    return StoreConnector<AppState, ScheduleAppBarViewModel>(
+        distinct: true,
+        onInit: (store) => store.dispatch(ScheduleEntered()),
+        onDispose: (store) {
+          store.dispatch(ScheduleExited());
+        },
+        converter: (store) => ScheduleAppBarViewModel.fromStore(store),
+        builder: (context, viewModel) {
+          return NestedScrollView(
+            headerSliverBuilder: (BuildContext ctx, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 0.1,
+                  ),
+                ),
+                SliverOverlapAbsorber(
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(ctx),
+                  sliver: _buildSliverAppBar(viewModel.selectedDate, viewModel.changeSelectedDate,
+                      viewModel.refreshSchedule),
+                )
+              ];
+            },
+            body: Builder(
+              builder: (BuildContext ctx) {
+                return CustomScrollView(
+                  slivers: [
+                    SliverOverlapInjector(
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(ctx)),
+                    _getStateWidget(),
+                  ],
+                );
+              },
+            ),
+          );
+        });
+  }
+
+  Widget _getStateWidget() {
+    return StoreConnector<AppState, ScheduleBodyViewModel>(
+      converter: (store) => ScheduleBodyViewModel.fromStore(store),
+      builder: (ctx, viewModel) {
+        switch (viewModel.loadingStatus) {
+          case LoadingStatus.IDLE:
+          case LoadingStatus.LOADING:
+            return SliverFillRemaining(
+              child: ProgressView('Loading schedule'),
+            );
+          case LoadingStatus.ERROR:
+            return SliverFillRemaining(
+              child: ErrorView(viewModel.error),
+            );
+          case LoadingStatus.SUCCESS:
+            return viewModel.selectedSchedule is ScheduleGames
+                ? _getGamesView(viewModel.selectedSchedule, viewModel.gameShow)
+                : _getEmptyView(viewModel.selectedSchedule);
+          default:
+            return SliverFillRemaining(
+              child: ErrorView(UIUnknownStateException('Unknown state')),
+            );
+        }
       },
-      converter: (store) => ScheduleViewModel.fromStore(store),
-      builder: (_, viewModel) => RefreshTemplateView(
-          loadingStatus: viewModel.loadingStatus,
-          successContent: viewModel.selectedSchedule is ScheduleGames
-              ? _getGamesView(viewModel.selectedSchedule)
-              : _getEmptyView(viewModel.selectedSchedule),
-          appBar: _buildSliverAppBar(viewModel.selectedDate, viewModel.changeSelectedDate),
-          error: viewModel.error,
-          callback: () => _callBack(viewModel)),
     );
   }
 
-  Future<Null> _callBack(ScheduleViewModel viewModel) {
-    print('CallBack');
-    viewModel.refreshSchedule();
-    return null;
-  }
-
-  Widget _buildSliverAppBar(DateTime date, Function onChangeDate) {
+  Widget _buildSliverAppBar(DateTime date, Function onChangeDate, Function refresh) {
     return SliverAppBar(
       title: Text('NHL'),
       pinned: true,
@@ -54,6 +96,11 @@ class ScheduleHome extends StatelessWidget {
           ),
           onPressed: () => onChangeDate(DateTime.now()),
           tooltip: 'Go to current date',
+        ),
+        IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () => refresh(),
+          tooltip: 'Refresh schedule',
         )
       ],
       bottom: PreferredSize(
@@ -96,7 +143,7 @@ class ScheduleHome extends StatelessWidget {
     );
   }
 
-  Widget _getGamesView(ScheduleGames selectedSchedule) {
+  Widget _getGamesView(ScheduleGames selectedSchedule, GameShow gameShow) {
     if (selectedSchedule == null) {
       return SliverFillRemaining(
         child: ErrorView(UINoDataDownloadedException('schedule_home _getGamesView')),
@@ -107,7 +154,7 @@ class ScheduleHome extends StatelessWidget {
       itemExtent: isPlayoffs ? 140.0 : 130.0,
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          return ScheduleGameCard(selectedSchedule.games[index], isPlayoffs);
+          return getScheduleGameCard(selectedSchedule.games[index], isPlayoffs, gameShow: gameShow);
         },
         childCount: selectedSchedule.games.length,
       ),

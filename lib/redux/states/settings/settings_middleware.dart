@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/constants/constants.dart';
+import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/settings/game_show.dart';
 import 'package:FlutterNhl/redux/models/settings/settings.dart';
@@ -14,7 +15,7 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
   Future<Database> database;
   SharedPreferences sharedPreferences;
   static const SP_KEY_CURRENT_DATE = 'CURRENT_DATE';
-  static const SP_KEY_GAMES_SHOWN = 'CURRENT_DATE';
+  static const SP_KEY_GAMES_SHOWN = 'GAMES_SHOWN';
 
   @override
   call(Store<AppState> store, dynamic action, NextDispatcher next) async {
@@ -29,11 +30,19 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
           for (Map<String, dynamic> setting in NhlSettings.getInitialMap()) {
             await db.insert(DB_TABLE_SETTINGS, setting);
           }
-          _checkGameShown(await _getSettings(next), next);
+          final settings = NhlSettings.fromJson(await db.query(DB_TABLE_SETTINGS));
+          next(SettingsReceivedAction(settings));
+          await _checkGameShown(settings, next);
         },
         onOpen: (db) async {
           print('SettingsMiddleware onOpen');
-          _checkGameShown(await _getSettings(next), next);
+          db.query(DB_TABLE_SETTINGS).then((value) async {
+            final settings = NhlSettings.fromJson(value);
+            next(SettingsReceivedAction(settings));
+            await _checkGameShown(settings, next);
+          }).catchError((error) {
+            print(error);
+          });
         },
         onUpgrade: (db, v1, v2) async {
           print('SettingsMiddleware onUpgrade');
@@ -41,7 +50,9 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
             await db.insert(DB_TABLE_SETTINGS, setting,
                 conflictAlgorithm: ConflictAlgorithm.ignore);
           }
-          _checkGameShown(await _getSettings(next), next);
+          final settings = NhlSettings.fromJson(await db.query(DB_TABLE_SETTINGS));
+          next(SettingsReceivedAction(settings));
+          await _checkGameShown(settings, next);
         },
         version: 1,
       );
@@ -52,7 +63,7 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
     }
   }
 
-  Future<Null> _getSettings(NextDispatcher next) async {
+  Future<NhlSettings> _getSettings(NextDispatcher next) async {
     next(SettingsDownloadAction());
     NhlSettings settings;
     try {
@@ -81,7 +92,7 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
             where: '$DB_KEY_SETTINGS_NAME = ?',
             whereArgs: [setting[DB_KEY_SETTINGS_NAME]]);
       }
-      _getSettings(next);
+      _getSettings(next).then((value) => _checkGameShown(value, next));
     } catch (e) {
       if (e is Exception)
         next(SettingsErrorAction(e));
@@ -98,7 +109,7 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
     }
     String currentDate = sharedPreferences.getString(SP_KEY_CURRENT_DATE);
     GameShow gameShow;
-    if (Config().getStartingDate().toString() != currentDate) {
+    if (Styles.apiDateFormat.format(Config().getStartingDate()) != currentDate) {
       currentDate = Config().getStartingDate().toString();
       sharedPreferences.setString(SP_KEY_CURRENT_DATE, currentDate);
       sharedPreferences.remove(SP_KEY_GAMES_SHOWN);
@@ -107,8 +118,7 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
       gameShow = GameShow.fromSharedPrefs(
           currentDate, sharedPreferences.getStringList(SP_KEY_GAMES_SHOWN));
     }
-    next(ScheduleGameShownAction(gameShow));
-    next(ScheduleDateChangedAction(Config().getStartingDate()));
+    next(SettingsGamesShownChangedAction(gameShow));
   }
 
   Future<Null> _saveGameShown(GameShow gameShow) async {

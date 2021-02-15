@@ -49,7 +49,7 @@ class Config {
   /// Returns seasons end date if current date is higher than today's date.
   /// Returns seasons start date if current date is lower than today's date.
   DateTime getStartingDate() {
-    final DateTime dateTimeNow = DateTime.now().subtract(Duration(hours: 20));
+    final DateTime dateTimeNow = DateTime.now().subtract(Duration(hours: 18));
     int compareValueEnd = dateTimeNow.compareTo(currentSeason.seasonEndDate);
     int compareValueStart = dateTimeNow.compareTo(currentSeason.regularSeasonStartDate);
     if (0 < compareValueEnd) {

@@ -1,3 +1,5 @@
+import 'package:FlutterNhl/constants/styles.dart';
+import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:flutter/cupertino.dart';
 
 @immutable
@@ -20,8 +22,19 @@ class GameShow {
     return GameShow(DateTime.parse(currentDateString), gShown);
   }
 
-  String get getCurrentDateString => currentDate.toString();
+  GameShow addGameToList(int gameId) {
+    if (!gamesShown.contains(gameId)) {
+      List<int> list = this.gamesShown;
+      list.add(gameId);
+      return GameShow(this.currentDate, list);
+    }
+    return this;
+  }
+
+  String get getCurrentDateString => Styles.apiDateFormat.format(currentDate);
 
   List<String> get gameShownListString =>
-      gamesShown.isEmpty ? [] : gamesShown.map((e) => e.toString());
+      gamesShown.isEmpty ? [] : gamesShown.map((e) => e.toString()).toList();
+
+  bool checkGame(Game game) => gamesShown.contains(game.id);
 }

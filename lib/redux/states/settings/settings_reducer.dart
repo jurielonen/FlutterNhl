@@ -11,6 +11,8 @@ SettingsState settingsReducer(SettingsState state, SettingsAction action) {
         settings: action.settings, loadingStatus: LoadingStatus.SUCCESS, error: null);
   } else if (action is SettingsErrorAction) {
     return state.copyWith(loadingStatus: LoadingStatus.ERROR, error: action.error);
+  } else if (action is SettingsGamesShownChangedAction) {
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS, gameShow: action.gameShow);
   }
 
   return state;
