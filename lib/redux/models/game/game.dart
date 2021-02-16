@@ -54,13 +54,10 @@ class Game {
   factory Game.fromJson(Map<String, dynamic> json) {
     PlayoffSeriesSummary seriesSummary;
     final dateTime = getJsonDateTime('gameDate', json);
-    if (Config().selectedSeason != null &&
-        Config().selectedSeason.isPlayoffs(dateTime)) {
-      seriesSummary =
-          PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
+    if (Config().selectedSeason != null && Config().selectedSeason.isPlayoffs(dateTime)) {
+      seriesSummary = PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
     } else if (json.containsKey('seriesSummary')) {
-      seriesSummary =
-          PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
+      seriesSummary = PlayoffSeriesSummary.fromJson(getJsonObject(['seriesSummary'], json));
     }
     return Game(
       id: getJsonInt('gamePk', json),
@@ -69,8 +66,7 @@ class Game {
       homeTeam: TeamSchedule.fromJson(getJsonObject(homeTeamPath, json)),
       awayTeam: TeamSchedule.fromJson(getJsonObject(awayTeamPath, json)),
       seriesSummary: seriesSummary,
-      state:
-          gameStateFromString(getJsonString2(['status', 'statusCode'], json)),
+      state: gameStateFromString(getJsonString2(['status', 'statusCode'], json)),
       content: Content.fromJson(getJsonObject(['content'], json)),
       lineScore: LineScore.fromJson(getJsonObject(['linescore'], json)),
     );
@@ -88,9 +84,7 @@ class Game {
   bool isHomeTeam(Team team) {
     return team.id == homeTeam.id
         ? true
-        : (team.id == awayTeam.id
-            ? false
-            : throw Exception('Given team hasnt played in $this'));
+        : (team.id == awayTeam.id ? false : throw Exception('Given team hasnt played in $this'));
   }
 
   bool get isPreview =>
@@ -99,8 +93,7 @@ class Game {
       state == GameStateEnum.SCHEDULED_TBD ||
       state == GameStateEnum.PRE_GAME;
   bool get isLive =>
-      state == GameStateEnum.IN_PROGRESS_CRITICAL ||
-      state == GameStateEnum.IN_PROGRESS;
+      state == GameStateEnum.IN_PROGRESS_CRITICAL || state == GameStateEnum.IN_PROGRESS;
   bool get isFinal => !isPreview && !isLive;
 
   String get homeAppBarText {
@@ -134,8 +127,7 @@ class Game {
       return Styles.timeFormat.format(dateTime.toLocal());
   }
 
-  String get getLiveScheduleInfo =>
-      '${lineScore.periodString} ${lineScore.timeRemaining}';
+  String get getLiveScheduleInfo => '${lineScore.periodString} ${lineScore.timeRemaining}';
   String get getAppBarInfo => Styles.dateTimeFormat.format(dateTime.toLocal());
 
   String opponentAbbWith(Team team) {
@@ -188,48 +180,49 @@ class Game {
 
   Widget get homeScheduleInfo {
     if (isFinal)
-      return Text('${lineScore.homeStats.shots} SOG',
-          style: Styles.cardTeamWinnerMinorText);
+      return Text('${lineScore.homeStats.shots} SOG', style: Styles.cardTeamWinnerMinorText);
     else if (isLive)
       return lineScore.homeLiveInfo;
     else
-      return Text(homeTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
+      return homeRecord;
   }
+
+  Widget get homeRecord => Text(homeTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
 
   Widget get awayScheduleInfo {
     if (isFinal)
-      return Text('${lineScore.awayStats.shots} SOG',
-          style: Styles.cardTeamWinnerMinorText);
+      return Text('${lineScore.awayStats.shots} SOG', style: Styles.cardTeamWinnerMinorText);
     else if (isLive)
       return lineScore.awayLiveInfo;
     else
-      return Text(awayTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
+      return awayRecord;
   }
+
+  Widget get awayRecord => Text(awayTeam.teamRecord, style: Styles.cardTeamWinnerMinorText);
 
   Text get gameStateText {
     if (isPreview) {
-      return Text(
-        gameStateToString(state).toUpperCase(),
-        style: Styles.gameStateText,
-      );
+      return gameState;
     } else if (isLive) {
       return Text(
         gameStateToString(state).toUpperCase(),
         style: Styles.gameStateText.copyWith(color: Colors.green),
       );
-    } else if (isFinal) {
+    } else {
       if (lineScore.period > 3) {
         return Text(
           '${gameStateToString(state).toUpperCase()} ${lineScore.periodString}',
           style: Styles.gameStateText,
         );
       }
-      return Text(
+      return gameState;
+    }
+  }
+
+  Text get gameState => Text(
         gameStateToString(state).toUpperCase(),
         style: Styles.gameStateText,
       );
-    }
-  }
 }
 
 class PlayoffSeriesSummary {
@@ -238,9 +231,7 @@ class PlayoffSeriesSummary {
   final String seriesStatus;
 
   PlayoffSeriesSummary(
-      {@required this.gameNumber,
-      @required this.gameLabel,
-      @required this.seriesStatus});
+      {@required this.gameNumber, @required this.gameLabel, @required this.seriesStatus});
 
   factory PlayoffSeriesSummary.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) return null;
@@ -264,10 +255,10 @@ class GamePreview extends Game {
       throw Exception('Error: GamePreview.fromJson');
     }
 
-    TeamPreview home = TeamPreview.fromJson(getJsonObject(['teams', 0], json),
-        lastFive: homeLastFive);
-    TeamPreview away = TeamPreview.fromJson(getJsonObject(['teams', 1], json),
-        lastFive: awayLastFive);
+    TeamPreview home =
+        TeamPreview.fromJson(getJsonObject(['teams', 0], json), lastFive: homeLastFive);
+    TeamPreview away =
+        TeamPreview.fromJson(getJsonObject(['teams', 1], json), lastFive: awayLastFive);
 
     return GamePreview(
       game: game,
@@ -284,8 +275,7 @@ class GameFinal extends Game {
   final Map<String, Player> decisions;
   Map<String, PlayerGame> _decisions = {};
 
-  GameFinal(
-      {@required Game game, this.plays, this.home, this.away, this.decisions})
+  GameFinal({@required Game game, this.plays, this.home, this.away, this.decisions})
       : super.clone(game);
 
   factory GameFinal.fromJson(Game game, Map<String, dynamic> json) {
@@ -296,24 +286,17 @@ class GameFinal extends Game {
     return GameFinal(
       game: game,
       plays: List<Play>.from(
-          getJsonList(['liveData', 'plays', 'allPlays'], json)
-              .map((play) => Play.fromJson(play))),
-      home: TeamFinal.fromJson(
-          getJsonObject(['liveData', 'boxscore', 'teams', 'home'], json)),
-      away: TeamFinal.fromJson(
-          getJsonObject(['liveData', 'boxscore', 'teams', 'away'], json)),
-      decisions:
-          getJsonObject(['liveData', 'decisions'], json).map((key, value) {
+          getJsonList(['liveData', 'plays', 'allPlays'], json).map((play) => Play.fromJson(play))),
+      home: TeamFinal.fromJson(getJsonObject(['liveData', 'boxscore', 'teams', 'home'], json)),
+      away: TeamFinal.fromJson(getJsonObject(['liveData', 'boxscore', 'teams', 'away'], json)),
+      decisions: getJsonObject(['liveData', 'decisions'], json).map((key, value) {
         return MapEntry(key, Player.fromJson(value));
       }),
     );
   }
 
   ShotMapObject get getShotMapObject => ShotMapObject(
-      homeTeam: home,
-      awayTeam: away,
-      periods: lineScore.periods,
-      shotPlays: shotPlays.toList());
+      homeTeam: home, awayTeam: away, periods: lineScore.periods, shotPlays: shotPlays.toList());
 
   Map<String, PlayerGame> get decisionPlayers {
     if (_decisions != null && _decisions.isNotEmpty) return _decisions;
@@ -340,21 +323,18 @@ class GameFinal extends Game {
   }
 
   @override
-  String get getAppBarInfo =>
-      '${lineScore.periodString} ${lineScore.timeRemaining}';
+  String get getAppBarInfo => '${lineScore.periodString} ${lineScore.timeRemaining}';
 
   Iterable<Play> get scoringPlays sync* {
     for (Play play in plays) {
-      if (play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START){
+      if (play.type == PlayEnum.GOAL || play.type == PlayEnum.PERIOD_START) {
         VideoHighlight video = content.videos.firstWhere((video) {
-          if(video is VideoHighlight){
-            if(video.playId == play.about.eventId)
-              return true;
+          if (video is VideoHighlight) {
+            if (video.playId == play.about.eventId) return true;
           }
           return false;
-        },
-        orElse: () => null);
-        if(video != null && video.videoUrl.isNotEmpty)
+        }, orElse: () => null);
+        if (video != null && video.videoUrl.isNotEmpty)
           yield ScoringPlay(play: play, video: video);
         else
           yield play;
@@ -438,12 +418,10 @@ class LineScore {
       period: getJsonInt('currentPeriod', json),
       periodString: getJsonString('currentPeriodOrdinal', json),
       timeRemaining: getJsonString('currentPeriodTimeRemaining', json),
-      periods: List<Period>.from(getJsonList(['periods'], json)
-          .map((period) => Period.fromJson(period))),
-      homeStats:
-          LineScoreStats.fromJson(getJsonObject(['teams', 'home'], json)),
-      awayStats:
-          LineScoreStats.fromJson(getJsonObject(['teams', 'away'], json)),
+      periods: List<Period>.from(
+          getJsonList(['periods'], json).map((period) => Period.fromJson(period))),
+      homeStats: LineScoreStats.fromJson(getJsonObject(['teams', 'home'], json)),
+      awayStats: LineScoreStats.fromJson(getJsonObject(['teams', 'away'], json)),
     );
   }
 
@@ -476,19 +454,13 @@ class LineScoreStats {
       List<TextSpan> texts = [];
       if (powerPlay)
         texts.add(TextSpan(
-            text: ' PP',
-            style: Styles.cardTeamWinnerMinorText
-                .copyWith(color: Colors.redAccent)));
+            text: ' PP', style: Styles.cardTeamWinnerMinorText.copyWith(color: Colors.redAccent)));
       if (goaliePulled)
         texts.add(TextSpan(
             text: ' Goalie pulled',
-            style: Styles.cardTeamWinnerMinorText
-                .copyWith(color: Colors.redAccent)));
+            style: Styles.cardTeamWinnerMinorText.copyWith(color: Colors.redAccent)));
       return Text.rich(
-        TextSpan(
-            text: '$shots SOG',
-            style: Styles.cardTeamWinnerMinorText,
-            children: texts),
+        TextSpan(text: '$shots SOG', style: Styles.cardTeamWinnerMinorText, children: texts),
       );
     }
     return Text(

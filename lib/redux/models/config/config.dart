@@ -48,8 +48,8 @@ class Config {
   /// Returns current date if it is inside current season.
   /// Returns seasons end date if current date is higher than today's date.
   /// Returns seasons start date if current date is lower than today's date.
-  DateTime getStartingDate() {
-    final DateTime dateTimeNow = DateTime.now().subtract(Duration(hours: 18));
+  DateTime getStartingDate({int delayDate = 0}) {
+    final DateTime dateTimeNow = DateTime.now().subtract(Duration(hours: delayDate));
     int compareValueEnd = dateTimeNow.compareTo(currentSeason.seasonEndDate);
     int compareValueStart = dateTimeNow.compareTo(currentSeason.regularSeasonStartDate);
     if (0 < compareValueEnd) {

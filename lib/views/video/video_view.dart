@@ -16,10 +16,14 @@ class VideoView extends StatefulWidget {
 
   @override
   _VideoViewState createState() => _VideoViewState();
+
+  static String twoDigits(int n) {
+    if (n >= 10) return "$n";
+    return "0$n";
+  }
 }
 
-class _VideoViewState extends State<VideoView>
-    with SingleTickerProviderStateMixin {
+class _VideoViewState extends State<VideoView> with SingleTickerProviderStateMixin {
   VideoPlayerController _controller;
   Future<void> _initializeVideoPlayerFuture;
   Duration _currentPosition = Duration(seconds: 0);
@@ -36,8 +40,7 @@ class _VideoViewState extends State<VideoView>
     super.initState();
     Wakelock.toggle(enable: true);
     SystemChrome.setEnabledSystemUIOverlays([]);
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+    _animationController = AnimationController(vsync: this, duration: Duration(seconds: 1));
     _controller = VideoPlayerController.network(
       widget.arguments.url,
     );
@@ -48,8 +51,8 @@ class _VideoViewState extends State<VideoView>
       if (_controller.value.initialized) {
         if (!_initialized) {
           _initialized = true;
-          if (!_animationController.isAnimating &&
-              _animationController.value < 1.0) _animationController.forward();
+          if (!_animationController.isAnimating && _animationController.value < 1.0)
+            _animationController.forward();
           _videoDuration = _controller.value.duration;
           _videoDurationString = _parseDuration(_videoDuration);
           _controller.play();
@@ -63,21 +66,20 @@ class _VideoViewState extends State<VideoView>
 
     //to automatically hide video bar
     _animationController.addListener(() {
-      if(_animationController.status == AnimationStatus.completed){
+      if (_animationController.status == AnimationStatus.completed) {
         setNewTimer();
       }
     });
   }
 
   /// Sets a new timer for when to hide video bar
-  void setNewTimer(){
-    if(_timer != null){
-      if(_timer.isActive)
-        _timer.cancel();
+  void setNewTimer() {
+    if (_timer != null) {
+      if (_timer.isActive) _timer.cancel();
       _timer = null;
     }
-    _timer = Timer(Duration(seconds: 5), (){
-      if(_animationController.status == AnimationStatus.completed){
+    _timer = Timer(Duration(seconds: 5), () {
+      if (_animationController.status == AnimationStatus.completed) {
         _animationController.reverse();
       }
       _timer = null;
@@ -104,8 +106,8 @@ class _VideoViewState extends State<VideoView>
             if (snapshot.connectionState == ConnectionState.done) {
               return videoPlayer();
             } else if (snapshot.hasError) {
-              return ErrorView(NetworkException(
-                  'Error while downloading video: ${snapshot.error.toString()}'));
+              return ErrorView(
+                  NetworkException('Error while downloading video: ${snapshot.error.toString()}'));
             } else {
               return ProgressView('Downloading video');
             }
@@ -168,17 +170,14 @@ class _VideoViewState extends State<VideoView>
                   onPressed: () {
                     setState(() {
                       if (_currentPosition.inSeconds > 10)
-                        _controller
-                            .seekTo(_currentPosition - Duration(seconds: 10));
+                        _controller.seekTo(_currentPosition - Duration(seconds: 10));
                       else
                         _controller.seekTo(Duration(seconds: 0));
                     });
                     setNewTimer();
                   }),
               IconButton(
-                  icon: Icon(_controller.value.isPlaying
-                      ? Icons.pause
-                      : Icons.play_arrow),
+                  icon: Icon(_controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
                   onPressed: () {
                     setState(() {
                       if (_controller.value.isPlaying)
@@ -192,11 +191,8 @@ class _VideoViewState extends State<VideoView>
                   icon: Icon(Icons.forward_10),
                   onPressed: () {
                     setState(() {
-                      if ((_videoDuration.inSeconds -
-                              _currentPosition.inSeconds) >
-                          10)
-                        _controller
-                            .seekTo(_currentPosition + Duration(seconds: 10));
+                      if ((_videoDuration.inSeconds - _currentPosition.inSeconds) > 10)
+                        _controller.seekTo(_currentPosition + Duration(seconds: 10));
                     });
                     setNewTimer();
                   }),
@@ -226,12 +222,7 @@ class _VideoViewState extends State<VideoView>
     );
   }
 
-  String _parseDuration(Duration duration) {
-    return '${_twoDigits(duration.inMinutes)}:${_twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute))}';
-  }
-
-  String _twoDigits(int n) {
-    if (n >= 10) return "$n";
-    return "0$n";
+  static String _parseDuration(Duration duration) {
+    return '${VideoView.twoDigits(duration.inMinutes)}:${VideoView.twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute))}';
   }
 }

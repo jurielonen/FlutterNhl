@@ -26,8 +26,6 @@ ScheduleState scheduleReducer(ScheduleState state, dynamic action) {
     return state.copyWith(inSchedule: true);
   } else if (action is ScheduleExited) {
     return state.copyWith(inSchedule: false);
-  } else if (action is SeasonConfigReceived) {
-    return state.copyWith(selectedDate: Config().getStartingDate());
   }
 
   return state;

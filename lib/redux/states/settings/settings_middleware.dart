@@ -4,6 +4,7 @@ import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/settings/game_show.dart';
 import 'package:FlutterNhl/redux/models/settings/settings.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
+import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_action.dart';
 import 'package:FlutterNhl/redux/states/settings/settings_action.dart';
 import 'package:path/path.dart';
@@ -33,15 +34,23 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
           final settings = NhlSettings.fromJson(await db.query(DB_TABLE_SETTINGS));
           next(SettingsReceivedAction(settings));
           await _checkGameShown(settings, next);
+          next(ScheduleDateChangedAction(
+              Config().getStartingDate(delayDate: settings.yesterdayGame)));
+          next(InitActionFinished());
         },
         onOpen: (db) async {
           print('SettingsMiddleware onOpen');
           db.query(DB_TABLE_SETTINGS).then((value) async {
             final settings = NhlSettings.fromJson(value);
             next(SettingsReceivedAction(settings));
-            await _checkGameShown(settings, next);
+            _checkGameShown(settings, next).then((value) {
+              next(ScheduleDateChangedAction(
+                  Config().getStartingDate(delayDate: settings.yesterdayGame)));
+              next(InitActionFinished());
+            });
           }).catchError((error) {
             print(error);
+            next(InitActionFinished());
           });
         },
         onUpgrade: (db, v1, v2) async {
@@ -53,6 +62,9 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
           final settings = NhlSettings.fromJson(await db.query(DB_TABLE_SETTINGS));
           next(SettingsReceivedAction(settings));
           await _checkGameShown(settings, next);
+          next(ScheduleDateChangedAction(
+              Config().getStartingDate(delayDate: settings.yesterdayGame)));
+          next(InitActionFinished());
         },
         version: 1,
       );
@@ -109,7 +121,8 @@ class SettingsMiddleware extends MiddlewareClass<AppState> {
     }
     String currentDate = sharedPreferences.getString(SP_KEY_CURRENT_DATE);
     GameShow gameShow;
-    if (Styles.apiDateFormat.format(Config().getStartingDate()) != currentDate) {
+    if (Styles.apiDateFormat.format(Config().getStartingDate(delayDate: settings.yesterdayGame)) !=
+        currentDate) {
       currentDate = Config().getStartingDate().toString();
       sharedPreferences.setString(SP_KEY_CURRENT_DATE, currentDate);
       sharedPreferences.remove(SP_KEY_GAMES_SHOWN);

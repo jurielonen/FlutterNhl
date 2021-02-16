@@ -28,12 +28,13 @@ AppState appReducer(AppState state, dynamic action) {
         config: Config());
   } else if (action is SeasonConfigReceived) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.SUCCESS,
         scheduleState: scheduleReducer(state.scheduleState, action),
         //TODO: add statsState to handle getting current season
         draftState: draftReducer(state.draftState, action),
         playoffsState: playoffsReducer(state.playoffsState, action),
         config: Config());
+  } else if (action is InitActionFinished) {
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   } else if (action is PageChangedAction) {
     return state.copyWith(currentPage: action.page);
   } else if (action is ScheduleAction) {

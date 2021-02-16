@@ -39,13 +39,13 @@ class ScheduleGameFinalHiddenCard extends ScheduleGameBaseFinalCard {
     return [
       TableRow(
         children: [
-          ...ScheduleGameBaseCard.buildTeamTableRow(game.homeTeam, game.homeScheduleInfo),
+          ...ScheduleGameBaseCard.buildTeamTableRow(game.homeTeam, Text('')),
           TableCell(child: Text('')),
         ],
       ),
       TableRow(
         children: [
-          ...ScheduleGameBaseCard.buildTeamTableRow(game.awayTeam, game.awayScheduleInfo),
+          ...ScheduleGameBaseCard.buildTeamTableRow(game.awayTeam, Text('')),
           TableCell(child: Text('')),
         ],
       ),
@@ -55,7 +55,7 @@ class ScheduleGameFinalHiddenCard extends ScheduleGameBaseFinalCard {
   @override
   Widget getStateRow({BuildContext context, VoidCallback callback}) {
     List<Widget> widgets = [];
-    widgets.add(game.gameStateText);
+    widgets.add(game.gameState);
     if (game.isFinal &&
         game.content != null &&
         game.content.videos != null &&

@@ -60,8 +60,8 @@ abstract class ScheduleGameBaseCard extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: PressableCard(
         onPressed: () {
-          if (onCardPressed != null) onCardPressed();
           Navigator.pushNamed(context, Routes.game, arguments: GameArgument(game));
+          onCardPressed?.call();
         },
         color: kNHLBackground,
         child: Container(
