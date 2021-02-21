@@ -8,6 +8,7 @@ import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock/wakelock.dart';
 
 class VideoView extends StatefulWidget {
   static const String routeName = '/video';
@@ -33,6 +34,8 @@ class _VideoViewState extends State<VideoView>
   @override
   void initState() {
     super.initState();
+    print("ENABLE WAKELOCK");
+    Wakelock.toggle(enable: true);
     SystemChrome.setEnabledSystemUIOverlays([]);
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
@@ -65,6 +68,8 @@ class _VideoViewState extends State<VideoView>
     _controller.dispose();
     _animationController.dispose();
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    print("DESTROY WAKELOCK");
+    Wakelock.toggle(enable: false);
     super.dispose();
   }
 
