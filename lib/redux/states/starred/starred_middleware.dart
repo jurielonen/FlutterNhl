@@ -26,39 +26,34 @@ class StarredMiddleware extends MiddlewareClass<AppState> {
       List<Player> players = await PlayerDatabase().get();
       next(StarredReceivedPlayersAction(players));
     } catch (e) {
-      print(e.toString());
-      if (e is Exception)
-        next(StarredErrorAction(e));
-      else
-        next(StarredErrorAction(Exception(e.toString())));
+      _handleException(next, e);
     }
   }
 
   Future<Null> _addPlayer(NextDispatcher next, Player player) async {
     final temp = player.copyWith(starred: true);
     try {
-      PlayerDatabase().insert(temp);
+      await PlayerDatabase().insert(temp);
       next(StarredAddPlayerAddedAction(temp));
     } catch (e) {
-      print(e.toString());
-      if (e is Exception)
-        next(StarredErrorAction(e));
-      else
-        next(StarredErrorAction(Exception(e.toString())));
+      _handleException(next, e);
     }
   }
 
   Future<Null> _deletePlayer(NextDispatcher next, Player player) async {
     final temp = player.copyWith(starred: false);
     try {
-      PlayerDatabase().delete(temp);
+      await PlayerDatabase().delete(temp);
       next(StarredDeletePlayerDeletedAction(temp));
     } catch (e) {
-      print(e.toString());
-      if (e is Exception)
-        next(StarredErrorAction(e));
-      else
-        next(StarredErrorAction(Exception(e.toString())));
+      _handleException(next, e);
     }
+  }
+
+  void _handleException(NextDispatcher next, dynamic error) {
+    if (error is Exception)
+      next(StarredErrorAction(error));
+    else
+      next(StarredErrorAction(Exception(error.toString())));
   }
 }
