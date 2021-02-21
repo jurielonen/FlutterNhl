@@ -19,6 +19,7 @@ import 'package:FlutterNhl/redux/states/team/team_reducer.dart';
 
 ///TODO: config to static
 AppState appReducer(AppState state, dynamic action) {
+  print('APPREDUCER: ${action.runtimeType} $action');
   if (action is DownloadAction) {
     return state.copyWith(loadingStatus: LoadingStatus.LOADING);
   } else if (action is ConfigReceived) {

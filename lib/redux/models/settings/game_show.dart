@@ -15,7 +15,7 @@ class GameShow {
 
   factory GameShow.fromSharedPrefs(String currentDateString, List<String> gameShownString) {
     List<int> gShown = [];
-    gameShownString.forEach((element) {
+    gameShownString?.forEach((element) {
       int gameId = int.parse(element, onError: (e) => null);
       if (gameId != null) gShown.add(gameId);
     });

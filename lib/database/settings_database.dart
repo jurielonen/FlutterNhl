@@ -44,7 +44,7 @@ class _SettingsDB {
   Future<Database> get db async {
     if (_db == null) {
       _db = openDatabase(join(await getDatabasesPath(), DB_PATH_SETTINGS),
-          onCreate: _dbOnCreate, version: 1);
+          onCreate: _dbOnCreate, version: 2);
     }
     return _db;
   }
