@@ -25,18 +25,26 @@ class Player {
     @required this.currentTeam,
     @required this.position,
     @required this.active,
-  });
+  }) {
+    _addToCache(this);
+  }
 
   static final Map<int, Player> _cache = <int, Player>{};
 
   Player.clone(Player clone)
-      : this(
-          id: clone.id,
-          fullname: clone.fullname,
-          currentTeam: clone.currentTeam,
-          position: clone.position,
-          active: clone.active,
-        );
+      : id = clone.id,
+        fullname = clone.fullname,
+        currentTeam = clone.currentTeam,
+        position = clone.position,
+        active = clone.active {
+    _addToCache(this);
+  }
+
+  static void _addToCache(Player player) {
+    if (!_cache.containsKey(player.id)) {
+      _cache[player.id] = player;
+    }
+  }
 
   ///Turns player object to a map.
   ///Used for Database.
@@ -58,7 +66,7 @@ class Player {
           position: PersonPosition.fromDatabase(e),
           active: getJsonBoolean(DB_KEY_PLAYER_ACTIVE, e),
         );
-        _cache[temp.id] = temp;
+        _addToCache(temp);
         return temp;
       }).toList();
 
@@ -84,7 +92,7 @@ class Player {
           json)), //positionFromString(getJsonString2(['primaryPosition', 'code'], json)),
       active: getJsonBoolean('active', json),
     );
-    _cache[temp.id] = temp;
+    _addToCache(temp);
     return temp;
   }
 
@@ -102,7 +110,7 @@ class Player {
         position: PersonPosition(code: positionFromString(values[12]), name: values[12]),
         active: int.parse(values[3]) == 1);
 
-    _cache[temp.id] = temp;
+    _addToCache(temp);
     return temp;
   }
 
@@ -120,7 +128,7 @@ class Player {
       position: PersonPosition.fromJson(getJsonObject(['primaryPosition'], json)),
       active: true,
     );
-    _cache[temp.id] = temp;
+    _addToCache(temp);
     return temp;
   }
 
@@ -180,7 +188,7 @@ class PlayerLastFive extends Player {
   factory PlayerLastFive.fromJson(int teamId, String stat, Map<String, dynamic> json) {
     Map<String, dynamic> player = getJsonObject(['players', 0], json);
     return PlayerLastFive(
-      player: Player.fromJsonLastFive(json, teamId),
+      player: Player.fromJsonLastFive(player, teamId),
       stat: stat,
       value: getJsonDynamic('statValue', json),
       shortName: getJsonString('shortName', player),

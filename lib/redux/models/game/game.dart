@@ -283,12 +283,16 @@ class GameFinal extends Game {
       ///TODO: better error msg
       throw Exception('Error: GameFinal.fromJson');
     }
+    //TODO fix, either get all players here in cache and then use only ids on everywhere else
+    getJsonObject(['gameData', 'players'], json).forEach((key, value) {
+      Player.fromJsonStatsApi(value);
+    });
     return GameFinal(
       game: game,
-      plays: List<Play>.from(
-          getJsonList(['liveData', 'plays', 'allPlays'], json).map((play) => Play.fromJson(play))),
       home: TeamFinal.fromJson(getJsonObject(['liveData', 'boxscore', 'teams', 'home'], json)),
       away: TeamFinal.fromJson(getJsonObject(['liveData', 'boxscore', 'teams', 'away'], json)),
+      plays: List<Play>.from(
+          getJsonList(['liveData', 'plays', 'allPlays'], json).map((play) => Play.fromJson(play))),
       decisions: getJsonObject(['liveData', 'decisions'], json).map((key, value) {
         return MapEntry(key, getJsonInt('id', value));
       }),
