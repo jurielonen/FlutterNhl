@@ -16,8 +16,7 @@ class Content {
       }
     });
 
-    List<dynamic> highlights =
-        getJsonList(['highlights', 'scoreboard', 'items'], json);
+    List<dynamic> highlights = getJsonList(['highlights', 'scoreboard', 'items'], json);
     if (highlights.length < 1) {
       highlights = getJsonList(['highlights', 'scoreboard', 'items'], json);
     }
@@ -25,7 +24,7 @@ class Content {
       highlights.forEach((highlight) {
         String type = getJsonString('type', highlight);
         if (type == 'video') {
-          Video temp = Video.fromJson(highlight);
+          Video temp = VideoHighlight.fromJson(highlight);
           if (temp.videoUrl != '') tVideos.add(temp);
         }
       });
@@ -36,8 +35,7 @@ class Content {
   }
 
   bool get containsAllVideos {
-    if(videos.length > 3)
-      return true;
+    if (videos.length > 3) return true;
     return false;
   }
 }
@@ -59,6 +57,8 @@ class Video {
     this.videoPic,
   });
 
+  Video.clone(Video video) : this(title: video.title, blurb: video.blurb, description: video.description, duration: video.duration, videoUrl: video.videoUrl, videoPic: video.videoPic);
+
   factory Video.fromJson(Map<String, dynamic> json) {
     List<dynamic> playbacks = getJsonList(['playbacks'], json);
     String url = '';
@@ -68,10 +68,11 @@ class Video {
         String name = getJsonString('name', playback);
         if (name.startsWith('FLASH_')) {
           int tQuality = 0;
-          if (name.contains('X'))
+          if (name.contains('X')) {
             tQuality = int.parse(name.split('X').last);
-          else if (name.contains('x'))
+          } else if (name.contains('x')) {
             tQuality = int.parse(name.split('x').last);
+          }
           if (quality < tQuality) {
             quality = tQuality;
             url = getJsonString('url', playback);
@@ -96,6 +97,23 @@ class Video {
         duration: getJsonString('duration', json),
         videoUrl: url,
         videoPic: pic);
+  }
+}
+
+class VideoHighlight extends Video {
+  final int playId;
+
+  VideoHighlight({Video video, this.playId}) : super.clone(video);
+
+  factory VideoHighlight.fromJson(Map<String, dynamic> json) {
+    int eventId = -1;
+    for (dynamic keyword in getJsonList(['keywords'], json)) {
+      if (getJsonString('type', keyword) == 'statsEventId') {
+        eventId = int.parse(getJsonString('value', keyword));
+        break;
+      }
+    }
+    return VideoHighlight(video: Video.fromJson(json), playId: eventId);
   }
 }
 

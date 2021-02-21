@@ -22,8 +22,7 @@ class Player {
 
   static final Map<int, Player> _cache = <int, Player>{};
 
-  Player.clone(Player clone)
-      : this(id: clone.id, fullname: clone.fullname, starred: clone.starred);
+  Player.clone(Player clone) : this(id: clone.id, fullname: clone.fullname, starred: clone.starred);
 
   ///Turns player object to a map.
   ///Used for Database.
@@ -74,8 +73,7 @@ class Player {
     );
   }
 
-  String get headShotUrl =>
-      'https://cms.nhl.bamgrid.com/images/headshots/current/168x168/$id.jpg';
+  String get headShotUrl => 'https://cms.nhl.bamgrid.com/images/headshots/current/168x168/$id.jpg';
 
   static String tableName(String fName) {
     List<String> names = fName.split(' ');
@@ -89,6 +87,11 @@ class Player {
       }
     });
     return name;
+  }
+
+  Player copyWith({int id, String fullname, bool starred}) {
+    return Player(
+        id: id ?? this.id, fullname: fullname ?? this.fullname, starred: starred ?? this.starred);
   }
 }
 
@@ -116,8 +119,7 @@ class PlayerLastFive extends Player {
       value: getJsonDynamic('statValue', json),
       shortName: getJsonString('shortName', player),
       number: getJsonString('primaryNumber', player),
-      position:
-          PersonPosition.fromJson(getJsonObject(['primaryPosition'], player)),
+      position: PersonPosition.fromJson(getJsonObject(['primaryPosition'], player)),
     );
   }
 }
@@ -152,15 +154,13 @@ class PlayerGame extends Player {
   }) : super.clone(player);
 
   factory PlayerGame.fromJsonFinal(Map<String, dynamic> json) {
-    PersonPosition posTemp =
-        PersonPosition.fromJson(getJsonObject(['position'], json));
+    PersonPosition posTemp = PersonPosition.fromJson(getJsonObject(['position'], json));
     Map<String, dynamic> statsTemp = {};
     if (posTemp.isGoalie()) {
       statsTemp = getJsonObject(['stats', 'goalieStats'], json);
     } else if (posTemp.isPlayer()) {
       statsTemp = getJsonObject(['stats', 'skaterStats'], json);
-      statsTemp['points'] =
-          getJsonInt('goals', statsTemp) + getJsonInt('assists', statsTemp);
+      statsTemp['points'] = getJsonInt('goals', statsTemp) + getJsonInt('assists', statsTemp);
     }
 
     return PlayerGame(
@@ -184,21 +184,13 @@ class PlayerGame extends Player {
     List<TextSpan> temp = [];
     if (position.isPlayer()) {
       skaterStats.forEach((stat) {
-        temp.add(TextSpan(
-            text: '${getColumnTooltip(stat)}: ',
-            style: Styles.decisionStatAbbText));
-        temp.add(TextSpan(
-            text: '${getStatFromMap(stat, stats)} ',
-            style: Styles.decisionStatText));
+        temp.add(TextSpan(text: '${getColumnTooltip(stat)}: ', style: Styles.decisionStatAbbText));
+        temp.add(TextSpan(text: '${getStatFromMap(stat, stats)} ', style: Styles.decisionStatText));
       });
     } else if (position.isGoalie()) {
       goalieStats.forEach((stat) {
-        temp.add(TextSpan(
-            text: '${getColumnTooltip(stat)}: ',
-            style: Styles.decisionStatAbbText));
-        temp.add(TextSpan(
-            text: '${getStatFromMap(stat, stats)} ',
-            style: Styles.decisionStatText));
+        temp.add(TextSpan(text: '${getColumnTooltip(stat)}: ', style: Styles.decisionStatAbbText));
+        temp.add(TextSpan(text: '${getStatFromMap(stat, stats)} ', style: Styles.decisionStatText));
       });
     }
     return RichText(text: TextSpan(children: temp));
@@ -238,10 +230,8 @@ class PersonPosition {
   }
 
   bool isPlayer() {
-    if (code == Position.C ||
-        code == Position.D ||
-        code == Position.L ||
-        code == Position.R) return true;
+    if (code == Position.C || code == Position.D || code == Position.L || code == Position.R)
+      return true;
     return false;
   }
 
@@ -493,21 +483,12 @@ class GoaliePageAllTimeStats implements PlayerAllTimeStats {
         ]),
         TableRow(children: [
           Center(
-            child: Text(regular.gamesPlayed.toString(),
-                style: Styles.infoTableValueText),
+            child: Text(regular.gamesPlayed.toString(), style: Styles.infoTableValueText),
           ),
-          Center(
-              child: Text(regular.wins.toString(),
-                  style: Styles.infoTableValueText)),
-          Center(
-              child: Text(regular.losses.toString(),
-                  style: Styles.infoTableValueText)),
-          Center(
-              child: Text(regular.otLosses.toString(),
-                  style: Styles.infoTableValueText)),
-          Center(
-              child: Text(regular.shutouts.toString(),
-                  style: Styles.infoTableValueText))
+          Center(child: Text(regular.wins.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.losses.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.otLosses.toString(), style: Styles.infoTableValueText)),
+          Center(child: Text(regular.shutouts.toString(), style: Styles.infoTableValueText))
         ]),
       ],
     );
@@ -550,18 +531,11 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
           ]),
           TableRow(children: [
             Center(
-              child: Text(regular.gamesPlayed.toString(),
-                  style: Styles.infoTableValueText),
+              child: Text(regular.gamesPlayed.toString(), style: Styles.infoTableValueText),
             ),
-            Center(
-                child: Text(regular.goals.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(regular.assists.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(regular.points.toString(),
-                    style: Styles.infoTableValueText))
+            Center(child: Text(regular.goals.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(regular.assists.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(regular.points.toString(), style: Styles.infoTableValueText))
           ]),
         ],
       );
@@ -587,18 +561,11 @@ class PlayerPageAllTimeStats implements PlayerAllTimeStats {
           ]),
           TableRow(children: [
             Center(
-              child: Text(playoff.gamesPlayed.toString(),
-                  style: Styles.infoTableValueText),
+              child: Text(playoff.gamesPlayed.toString(), style: Styles.infoTableValueText),
             ),
-            Center(
-                child: Text(playoff.goals.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(playoff.assists.toString(),
-                    style: Styles.infoTableValueText)),
-            Center(
-                child: Text(playoff.points.toString(),
-                    style: Styles.infoTableValueText))
+            Center(child: Text(playoff.goals.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(playoff.assists.toString(), style: Styles.infoTableValueText)),
+            Center(child: Text(playoff.points.toString(), style: Styles.infoTableValueText))
           ]),
         ],
       );
@@ -623,8 +590,7 @@ class GoalieAllTimeStat {
   final int otLosses;
   final int shutouts;
 
-  GoalieAllTimeStat(
-      {this.gamesPlayed, this.wins, this.losses, this.otLosses, this.shutouts});
+  GoalieAllTimeStat({this.gamesPlayed, this.wins, this.losses, this.otLosses, this.shutouts});
 }
 
 class PlayerAllTimeStat {

@@ -141,6 +141,7 @@ enum ShotTypeEnum {
   WRIST,
   SLAP,
   TIP,
+  DEFLECTED,
   BACKHAND,
   WRAP,
   MISSED,
@@ -149,23 +150,25 @@ enum ShotTypeEnum {
 }
 
 ShotTypeEnum shotTypeEnumFromString(String type) {
-  switch (type) {
-    case "Wrist Shot":
+  switch (type.toLowerCase()) {
+    case "wrist shot":
       return ShotTypeEnum.WRIST;
-    case "Snap Shot":
+    case "snap shot":
       return ShotTypeEnum.SNAP;
-    case "Slap Shot":
+    case "slap shot":
       return ShotTypeEnum.SLAP;
-    case "Deflected":
-      return ShotTypeEnum.TIP;
-    case "Backhand":
+    case "deflected":
+      return ShotTypeEnum.DEFLECTED;
+    case "backhand":
       return ShotTypeEnum.BACKHAND;
-    case "Wrap-around":
+    case "wrap-around":
       return ShotTypeEnum.WRAP;
-    case "MISSED SHOT":
+    case "missed shot":
       return ShotTypeEnum.MISSED;
-    case "BLOCKED SHOT":
+    case "blocked shot":
       return ShotTypeEnum.BLOCKED;
+    case "tip-in":
+      return ShotTypeEnum.TIP;
     default:
       return ShotTypeEnum.UNK;
   }
@@ -180,7 +183,7 @@ String shotTypeEnumToString(ShotTypeEnum type) {
     case ShotTypeEnum.SLAP:
       return "Slap Shot";
     case ShotTypeEnum.TIP:
-      return "Deflected";
+      return "Tip-In";
     case ShotTypeEnum.BACKHAND:
       return "Backhand";
     case ShotTypeEnum.WRAP:
@@ -189,6 +192,8 @@ String shotTypeEnumToString(ShotTypeEnum type) {
       return "Missed Shot";
     case ShotTypeEnum.BLOCKED:
       return "Blocked Shot";
+    case ShotTypeEnum.DEFLECTED:
+      return "Deflected";
     default:
       return 'Unknown';
   }

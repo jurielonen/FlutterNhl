@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class SliverErrorView extends StatelessWidget {
   final Exception error;
   final VoidCallback refresh;
+  final Color color;
 
-  const SliverErrorView({Key key, this.error, this.refresh}) : super(key: key);
+  const SliverErrorView({Key key, this.error, this.refresh, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +14,7 @@ class SliverErrorView extends StatelessWidget {
       child: ErrorView(
         error,
         refresh: refresh,
+        color: color,
       ),
     );
   }
@@ -40,10 +42,7 @@ class ErrorView extends StatelessWidget {
     ];
     if (refresh != null) {
       children.add(
-        RaisedButton.icon(
-            onPressed: refresh,
-            icon: Icon(Icons.refresh),
-            label: Text('Refresh')),
+        RaisedButton.icon(onPressed: refresh, icon: Icon(Icons.refresh), label: Text('Refresh')),
       );
     }
     return Center(

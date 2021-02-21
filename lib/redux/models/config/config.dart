@@ -33,8 +33,7 @@ class Config {
   ///if season is found returns true else false.
   bool checkForCurrentSeason() {
     Season temp = Season.getCurrentSeason(DateTime.now());
-    if(temp == null)
-      return false;
+    if (temp == null) return false;
     currentSeason = temp;
     selectedSeason = currentSeason;
     return true;
@@ -49,38 +48,36 @@ class Config {
   /// Returns current date if it is inside current season.
   /// Returns seasons end date if current date is higher than today's date.
   /// Returns seasons start date if current date is lower than today's date.
-  DateTime getStartingDate(){
-    int compareValue = DateTime.now().compareTo(currentSeason.seasonEndDate);
-    if(0 < compareValue){
+  DateTime getStartingDate({int delayDate = 0}) {
+    final DateTime dateTimeNow = DateTime.now().subtract(Duration(hours: delayDate));
+    int compareValueEnd = dateTimeNow.compareTo(currentSeason.seasonEndDate);
+    int compareValueStart = dateTimeNow.compareTo(currentSeason.regularSeasonStartDate);
+    if (0 < compareValueEnd) {
       return currentSeason.seasonEndDate;
-    } else if(0 > compareValue){
+    } else if (0 > compareValueStart) {
       return currentSeason.regularSeasonStartDate;
     } else {
-      return DateTime.now();
+      return dateTimeNow;
     }
   }
 
-  setCurrentSeason(Season season){
+  setCurrentSeason(Season season) {
     selectedSeason = season;
   }
 
   bool isEmpty() {
-    return playerReportData.isEmpty ||
-        goalieReportData.isEmpty ||
-        teamReportData.isEmpty;
+    return playerReportData.isEmpty || goalieReportData.isEmpty || teamReportData.isEmpty;
   }
 
   ParamType checkParamType(StatType type) {
     switch (type) {
       case StatType.GOALIE:
         String stat = goalieReportData.keys.first;
-        return ParamType(
-            type, stat, goalieReportData[stat].season.getSortKeys());
+        return ParamType(type, stat, goalieReportData[stat].season.getSortKeys());
         break;
       case StatType.PLAYER:
         String stat = playerReportData.keys.first;
-        return ParamType(
-            type, stat, playerReportData[stat].season.getSortKeys());
+        return ParamType(type, stat, playerReportData[stat].season.getSortKeys());
         break;
       default:
         String stat = teamReportData.keys.first;
@@ -93,20 +90,17 @@ class Config {
     switch (type) {
       case StatType.GOALIE:
         if (goalieReportData.containsKey(stat)) {
-          return ParamType(
-              type, stat, goalieReportData[stat].season.getSortKeys());
+          return ParamType(type, stat, goalieReportData[stat].season.getSortKeys());
         }
         break;
       case StatType.PLAYER:
         if (playerReportData.containsKey(stat)) {
-          return ParamType(
-              type, stat, playerReportData[stat].season.getSortKeys());
+          return ParamType(type, stat, playerReportData[stat].season.getSortKeys());
         }
         break;
       case StatType.TEAM:
         if (teamReportData.containsKey(stat)) {
-          return ParamType(
-              type, stat, teamReportData[stat].season.getSortKeys());
+          return ParamType(type, stat, teamReportData[stat].season.getSortKeys());
         }
         break;
     }
@@ -130,9 +124,9 @@ class Config {
     return ['Unknown'];
   }
 
-  List<String> _compareKeys(List<String> list){
-    list.sort((a,b) {
-      if(a == 'summary')
+  List<String> _compareKeys(List<String> list) {
+    list.sort((a, b) {
+      if (a == 'summary')
         return -1;
       else
         return a.compareTo(b);
@@ -175,50 +169,49 @@ class Config {
   }
 
   static bool isPlayoffsDate(DateTime date) {
-    if(_config.selectedSeason.fitsCurrentSeason(date)){
+    if (_config.selectedSeason.fitsCurrentSeason(date)) {
       return _config.selectedSeason.isPlayoffs(date);
     } else {
       Season temp = Season.getCurrentSeason(date);
-      if(temp != null){
+      if (temp != null) {
         return temp.isPlayoffs(date);
       }
     }
     return false;
   }
 
-  static bool isPlayoffsCurrent(){
-    if(_config.currentSeason != null){
+  static bool isPlayoffsCurrent() {
+    if (_config.currentSeason != null) {
       return _config.currentSeason.isPlayoffs(DateTime.now());
     }
     return false;
   }
 
-  static DateTime maxDate(){
-    if(_config.currentSeason != null)
-      return _config.currentSeason.checkEndDate;
+  static DateTime maxDate() {
+    if (_config.currentSeason != null) return _config.currentSeason.checkEndDate;
     return DateTime.now();
   }
 
-  static DateTime selectedMaxDate(){
-    if(_config.selectedSeason != null){
+  static DateTime selectedMaxDate() {
+    if (_config.selectedSeason != null) {
       return _config.selectedSeason.checkEndDate;
     }
     return DateTime.now();
   }
 
-  static DateTime selectedMinDate(){
-    if(_config.selectedSeason != null){
+  static DateTime selectedMinDate() {
+    if (_config.selectedSeason != null) {
       return _config.selectedSeason.checkStartDate;
     }
     return minDate;
   }
 
-  static String getMaxSeason(){
-    if(_config.currentSeason != null){
+  static String getMaxSeason() {
+    if (_config.currentSeason != null) {
       return _config.currentSeason.season;
     }
     int year = DateTime.now().year;
-    return '$year${year+1}';
+    return '$year${year + 1}';
   }
 
   /*bool isSeasonDownloaded(String date){
@@ -233,18 +226,17 @@ class Config {
     return false;
   }*/
 
-  void setSelectedSeason(DateTime date){
+  void setSelectedSeason(DateTime date) {
     final temp = Season.getCurrentSeason(date);
-    if(temp == null)
-      throw Exception('Couldnt find current season');
+    if (temp == null) throw Exception('Couldnt find current season');
     selectedSeason = temp;
   }
 
-  String validDate(DateTime date){
-    if(selectedSeason.fitsCurrentSeason(date))
+  String validDate(DateTime date) {
+    if (selectedSeason.fitsCurrentSeason(date))
       return Styles.apiDateFormat.format(date);
-    else{
-      if(selectedSeason.seasonEndDate.isBefore(date))
+    else {
+      if (selectedSeason.seasonEndDate.isBefore(date))
         return Styles.apiDateFormat.format(selectedSeason.seasonEndDate);
       else
         return Styles.apiDateFormat.format(selectedSeason.regularSeasonStartDate);
@@ -252,9 +244,8 @@ class Config {
   }
 
   static String get getCurrentSeason {
-    if(Config().currentSeason != null)
-      return Config().currentSeason.season;
-    return '20192020';
+    if (Config().currentSeason != null) return Config().currentSeason.season;
+    return '20202021';
   }
 }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:FlutterNhl/redux/api/stats_api.dart';
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/models/config/config.dart';
 import 'package:FlutterNhl/redux/models/schedule.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
@@ -15,17 +16,16 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
   ScheduleMiddleware(this.api);
 
   @override
-  Future<Null> call(
-      Store<AppState> store, dynamic action, NextDispatcher next) async {
+  Future<Null> call(Store<AppState> store, dynamic action, NextDispatcher next) async {
     next(action);
     if (action is ScheduleEntered) {
       if (store.state.scheduleState.selectedDate == null) {
-        next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
+        next(ScheduleDateChangedAction(Config().getStartingDate()));
       }
       await _getSchedule(store, next);
     } else if (action is GetCurrentDateScheduleIfNotLoadedAction) {
       if (store.state.scheduleState.selectedDate == null) {
-        next(ScheduleDateChangedAction(DateTime(2020, 2, 1)));
+        next(ScheduleDateChangedAction(Config().getStartingDate()));
       }
       await _getSchedule(store, next);
     } else {
@@ -33,8 +33,10 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
         await _getSchedule(store, next);
       } else if (action is RefreshScheduleAction) {
         await _downloadSchedule(store, next);
-        if(store.state.scheduleState.loadingStatus == LoadingStatus.SUCCESS)
-          store.dispatch(ShowSnackBar(SnackBarNotification('Schedule refreshed ${DateTime.now()}', )));
+        if (store.state.scheduleState.loadingStatus == LoadingStatus.SUCCESS)
+          store.dispatch(ShowSnackBar(SnackBarNotification(
+            'Schedule refreshed ${DateTime.now()}',
+          )));
       }
     }
   }
@@ -52,8 +54,7 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
     }
   }
 
-  Future<Null> _downloadSchedule(
-      Store<AppState> store, NextDispatcher next) async {
+  Future<Null> _downloadSchedule(Store<AppState> store, NextDispatcher next) async {
     String sDate = selectedDateSelector(store.state);
     try {
       final Schedule schedule = await api.fetchSchedule(sDate);
@@ -70,7 +71,7 @@ class ScheduleMiddleware extends MiddlewareClass<AppState> {
       refreshInitialized = true;
       Future.delayed(Duration(seconds: 30), () {
         refreshInitialized = false;
-        if(store.state.scheduleState.inSchedule) {
+        if (store.state.scheduleState.inSchedule) {
           print('schedule refresh called ${DateTime.now()}');
           store.dispatch(RefreshScheduleAction());
         }

@@ -14,6 +14,7 @@ import 'package:FlutterNhl/redux/states/playoffs/playoffs_middleware.dart';
 import 'package:FlutterNhl/redux/states/playoffs/series/series_middleware.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_middleware.dart';
 import 'package:FlutterNhl/redux/states/search/search_middleware.dart';
+import 'package:FlutterNhl/redux/states/settings/settings_middleware.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_middleware.dart';
 import 'package:FlutterNhl/redux/states/starred/starred_middleware.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_middleware.dart';
@@ -28,24 +29,22 @@ Store<AppState> createStore(Client client) {
   final RecordsApi recordsApi = RecordsApi(client);
   final SuggestApi suggestApi = SuggestApi(client);
 
-  return Store(appReducer,
-      initialState: AppState.initial(),
-      distinct: true,
-      middleware: [
-        AppStateMiddleware(statsApi),
-        ScheduleMiddleware(statsApi),
-        StatsMiddleware(nhlApi),
-        PlayerMiddleware(statsApi, nhlApi),
-        TeamMiddleware(statsApi, nhlApi),
-        DraftMiddleware(statsApi),
-        AwardMiddleware(recordsApi),
-        GameMiddleware(statsApi),
-        StandingsMiddleware(statsApi),
-        SearchMiddleware(suggestApi),
-        PlayoffsMiddleware(statsApi),
-        FirebaseMiddleware(),
-        SeriesMiddleware(statsApi),
-        LoggingMiddleware.printer(),
-        StarredMiddleware()
-      ]);
+  return Store(appReducer, initialState: AppState.initial(), distinct: true, middleware: [
+    AppStateMiddleware(statsApi),
+    ScheduleMiddleware(statsApi),
+    StatsMiddleware(nhlApi),
+    PlayerMiddleware(statsApi, nhlApi),
+    TeamMiddleware(statsApi, nhlApi),
+    DraftMiddleware(statsApi),
+    AwardMiddleware(recordsApi),
+    GameMiddleware(statsApi),
+    StandingsMiddleware(statsApi),
+    SearchMiddleware(suggestApi),
+    PlayoffsMiddleware(statsApi),
+    FirebaseMiddleware(),
+    SeriesMiddleware(statsApi),
+    LoggingMiddleware.printer(),
+    StarredMiddleware(),
+    SettingsMiddleware(),
+  ]);
 }

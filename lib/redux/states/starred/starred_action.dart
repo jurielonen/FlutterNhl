@@ -18,11 +18,17 @@ class StarredAddPlayerAction extends StarredAction {
   StarredAddPlayerAction(this.player);
 }
 
-class StarredAddPlayerAddedAction extends StarredAction {}
+class StarredAddPlayerAddedAction extends StarredAction {
+  final Player player;
+  StarredAddPlayerAddedAction(this.player);
+}
 
 class StarredDeletePlayerAction extends StarredAction {
   final Player player;
   StarredDeletePlayerAction(this.player);
 }
 
-class StarredDeletePlayerDeletedAction extends StarredAction {}
+class StarredDeletePlayerDeletedAction extends StarredAction {
+  final Player player;
+  StarredDeletePlayerDeletedAction(this.player);
+}

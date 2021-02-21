@@ -1,4 +1,5 @@
 import 'package:FlutterNhl/redux/models/schedule.dart';
+import 'package:FlutterNhl/redux/models/settings/game_show.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 
 class ScheduleDateChangedAction extends ScheduleAction {
@@ -26,3 +27,13 @@ class ErrorScheduleAction extends ScheduleAction {
 class RefreshScheduleAction extends ScheduleAction {}
 
 class ScheduleExited extends ScheduleAction {}
+
+class ScheduleGameShownAction extends ScheduleAction {
+  final GameShow gameShow;
+  ScheduleGameShownAction(this.gameShow);
+}
+
+class ScheduleGameUpdateShownAction extends ScheduleAction {
+  final GameShow gameShow;
+  ScheduleGameUpdateShownAction(this.gameShow);
+}

@@ -10,6 +10,7 @@ import 'package:FlutterNhl/redux/states/playoffs/playoffs_state.dart';
 import 'package:FlutterNhl/redux/states/playoffs/series/series_state.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_state.dart';
 import 'package:FlutterNhl/redux/states/search/search_state.dart';
+import 'package:FlutterNhl/redux/states/settings/settings_state.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_state.dart';
 import 'package:FlutterNhl/redux/states/starred/starred_state.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_state.dart';
@@ -35,6 +36,7 @@ class AppState {
   final PlayoffsState playoffsState;
   final SeriesState seriesState;
   final StarredState starredState;
+  final SettingsState settingsState;
   final Config config;
 
   AppState({
@@ -56,6 +58,7 @@ class AppState {
     @required this.playoffsState,
     @required this.starredState,
     @required this.seriesState,
+    @required this.settingsState,
   });
 
   factory AppState.initial() {
@@ -77,6 +80,7 @@ class AppState {
       playoffsState: PlayoffsState.initial(),
       seriesState: SeriesState.initial(),
       starredState: StarredState.initial(),
+      settingsState: SettingsState.initial(),
       config: Config(),
     );
   }
@@ -99,6 +103,7 @@ class AppState {
     PlayoffsState playoffsState,
     SeriesState seriesState,
     StarredState starredState,
+    SettingsState settingsState,
     Config config,
   }) {
     return AppState(
@@ -119,6 +124,7 @@ class AppState {
       playoffsState: playoffsState ?? this.playoffsState,
       seriesState: seriesState ?? this.seriesState,
       starredState: starredState ?? this.starredState,
+      settingsState: settingsState ?? this.settingsState,
       config: config ?? this.config,
     );
   }

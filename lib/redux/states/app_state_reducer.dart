@@ -11,6 +11,7 @@ import 'package:FlutterNhl/redux/states/playoffs/playoffs_reducer.dart';
 import 'package:FlutterNhl/redux/states/playoffs/series/series_reducer.dart';
 import 'package:FlutterNhl/redux/states/schedule/schedule_reducer.dart';
 import 'package:FlutterNhl/redux/states/search/search_reducer.dart';
+import 'package:FlutterNhl/redux/states/settings/settings_reducer.dart';
 import 'package:FlutterNhl/redux/states/standings/standings_reducer.dart';
 import 'package:FlutterNhl/redux/states/starred/starred_reducer.dart';
 import 'package:FlutterNhl/redux/states/stats/stats_reducer.dart';
@@ -27,12 +28,13 @@ AppState appReducer(AppState state, dynamic action) {
         config: Config());
   } else if (action is SeasonConfigReceived) {
     return state.copyWith(
-        loadingStatus: LoadingStatus.SUCCESS,
         scheduleState: scheduleReducer(state.scheduleState, action),
         //TODO: add statsState to handle getting current season
         draftState: draftReducer(state.draftState, action),
         playoffsState: playoffsReducer(state.playoffsState, action),
         config: Config());
+  } else if (action is InitActionFinished) {
+    return state.copyWith(loadingStatus: LoadingStatus.SUCCESS);
   } else if (action is PageChangedAction) {
     return state.copyWith(currentPage: action.page);
   } else if (action is ScheduleAction) {
@@ -62,26 +64,21 @@ AppState appReducer(AppState state, dynamic action) {
     s.show = false;
     return state.copyWith(showSnackBar: s);
   } else if (action is StandingsAction) {
-    return state.copyWith(
-        standingsState: standingsReducer(state.standingsState, action));
+    return state.copyWith(standingsState: standingsReducer(state.standingsState, action));
   } else if (action is SearchAction) {
-    return state.copyWith(
-        searchState: searchReducer(state.searchState, action));
+    return state.copyWith(searchState: searchReducer(state.searchState, action));
   } else if (action is ErrorAction) {
-    return state.copyWith(
-        loadingStatus: LoadingStatus.ERROR, error: action.error);
+    return state.copyWith(loadingStatus: LoadingStatus.ERROR, error: action.error);
   } else if (action is PlayoffsAction) {
-    return state.copyWith(
-        playoffsState: playoffsReducer(state.playoffsState, action));
+    return state.copyWith(playoffsState: playoffsReducer(state.playoffsState, action));
   } else if (action is FirebaseAction) {
-    return state.copyWith(
-        firebaseState: firebaseReducer(state.firebaseState, action));
+    return state.copyWith(firebaseState: firebaseReducer(state.firebaseState, action));
   } else if (action is SeriesAction) {
-    return state.copyWith(
-        seriesState: seriesReducer(state.seriesState, action));
+    return state.copyWith(seriesState: seriesReducer(state.seriesState, action));
   } else if (action is StarredAction) {
-    return state.copyWith(
-        starredState: starredReducer(state.starredState, action));
+    return state.copyWith(starredState: starredReducer(state.starredState, action));
+  } else if (action is SettingsAction) {
+    return state.copyWith(settingsState: settingsReducer(state.settingsState, action));
   }
   return state;
 }
