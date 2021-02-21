@@ -67,6 +67,7 @@ class _SearchHomeState extends State<SearchHome> {
   }
 
   void onTextChanged(String text, SearchViewModel viewModel) {
+    print('onsubmitted: $text');
     if (text.length > 0) {
       if (viewModel.searchQuery == null || viewModel.searchQuery == '') {
         viewModel.searchInitialized(text, false);
@@ -97,15 +98,12 @@ class _SearchHomeState extends State<SearchHome> {
             ? UIUnknownStateException('search_home getBody')
             : viewModel.error);
       default:
-        return ErrorView(UIUnknownStateException(
-            'search_home getBody ${viewModel.loadingStatus}'));
+        return ErrorView(UIUnknownStateException('search_home getBody ${viewModel.loadingStatus}'));
     }
   }
 
   Widget getList(Search search) {
-    if (search == null ||
-        search.searchValues == null ||
-        _controller.text.length == 0) {
+    if (search == null || search.searchValues == null || _controller.text.length == 0) {
       return IdleView('Search for players');
     } else if (search.searchValues.isEmpty) {
       return IdleView('No players found');
@@ -118,22 +116,17 @@ class _SearchHomeState extends State<SearchHome> {
           PlayerSearch player = players[index];
           return GestureDetector(
             onTap: () => Navigator.pushNamed(context, PlayerHome.routeName,
-                arguments: PlayerArguments(
-                    player.id,
-                    player.fullname,
-                    player.position.isPlayer()
-                        ? StatType.PLAYER
-                        : StatType.GOALIE)),
+                arguments: PlayerArguments(player.id, player.fullname,
+                    player.position.isPlayer() ? StatType.PLAYER : StatType.GOALIE)),
             child: Container(
               decoration: BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(color: Theme.of(context).hintColor))),
+                  border: Border(bottom: BorderSide(color: Theme.of(context).hintColor))),
               child: Row(
                 children: [
-                  Padding(
+                  /*Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Styles.buildPlayerCircleIcon(player, size: 30.0),
-                  ),
+                  ),*/
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),

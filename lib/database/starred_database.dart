@@ -41,13 +41,22 @@ class _PlayerDB {
   Future<Database> get db async {
     if (_db == null) {
       _db = openDatabase(join(await getDatabasesPath(), DB_PATH_PLAYER),
-          onCreate: _dbOnCreate, version: 2);
+          onCreate: _dbOnCreate, onUpgrade: _dbOnUpgrade, version: 3);
     }
     return _db;
   }
 
   Future<Null> _dbOnCreate(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE $DB_TABLE_PLAYER($DB_KEY_PLAYER_ID INTEGER PRIMARY KEY NOT NULL, $DB_KEY_PLAYER_NAME TEXT NOT NULL)");
+        "CREATE TABLE $DB_TABLE_PLAYER($DB_KEY_PLAYER_ID INTEGER PRIMARY KEY NOT NULL, " +
+            "$DB_KEY_PLAYER_NAME TEXT NOT NULL, " +
+            "$DB_KEY_PLAYER_TEAM TEXT NOT NULL, " +
+            "$DB_KEY_PLAYER_POSITION TEXT NOT NULL, " +
+            "$DB_KEY_PLAYER_ACTIVE INTEGER NOT NULL)");
+  }
+
+  Future<Null> _dbOnUpgrade(Database db, int version, int version2) async {
+    await db.execute("DROP TABLE $DB_TABLE_PLAYER");
+    await _dbOnCreate(db, version);
   }
 }

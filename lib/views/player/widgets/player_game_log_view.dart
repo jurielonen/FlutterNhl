@@ -28,44 +28,45 @@ class PlayerGameLogView extends StatelessWidget {
       builder: (ctx, viewModel) {
         print('PlayerGameLogView: BUILD: ${viewModel.loadingStatus} ${viewModel.selectedGameLogs}');
         if (viewModel.loadingStatus == LoadingStatus.IDLE) {
-          return ProgressView('Loading player game logs');
+          return SliverProgressView(msg: 'Loading player game logs');
         } else if (viewModel.loadingStatus == LoadingStatus.LOADING) {
-          return ProgressView('Loading player game logs');
+          return SliverProgressView(msg: 'Loading player game logs');
         } else if (viewModel.loadingStatus == LoadingStatus.ERROR) {
-          return ErrorView(viewModel.error);
+          return SliverErrorView(error: viewModel.error);
         } else {
-          return Column(
-            children: <Widget>[
-              Container(
-                height: 50.0,
-                color: Colors.black12,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CustomYearPicker(
-                      selected: int.parse(viewModel.params.year),
-                      onSelected: (int year) => viewModel.getGameLogs(
-                          viewModel.params.copyWith(year: year.toString())),
-                      maxValue: int.parse(StatParameters.getCurrentSeason()),
-                      minValue:
-                          20182019 /*viewModel.player != null
-                          ? int.parse(viewModel.player.firstSeason)
-                          : int.parse(Config.getCurrentSeason)*/
-                      ,
-                      reducer: 10001,
-                    ),
-                    CustomDropdownButton(
-                      selectedValue: viewModel.params.gameTypeString,
-                      values: PageParam.gameTypes,
-                      onValueChanged: (String type) => viewModel.getGameLogs(
-                          viewModel.params.copyWith(
-                              gameType: PageParam.getGameTypeBoolean(type))),
-                    ),
-                  ],
+          return SliverFillRemaining(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 50.0,
+                  color: Colors.black12,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomYearPicker(
+                        selected: int.parse(viewModel.params.year),
+                        onSelected: (int year) =>
+                            viewModel.getGameLogs(viewModel.params.copyWith(year: year.toString())),
+                        maxValue: int.parse(StatParameters.getCurrentSeason()),
+                        minValue:
+                            20182019 /*viewModel.player != null
+                            ? int.parse(viewModel.player.firstSeason)
+                            : int.parse(Config.getCurrentSeason)*/
+                        ,
+                        reducer: 10001,
+                      ),
+                      CustomDropdownButton(
+                        selectedValue: viewModel.params.gameTypeString,
+                        values: PageParam.gameTypes,
+                        onValueChanged: (String type) => viewModel.getGameLogs(viewModel.params
+                            .copyWith(gameType: PageParam.getGameTypeBoolean(type))),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              _buildGameLogList(viewModel.selectedGameLogs),
-            ],
+                _buildGameLogList(viewModel.selectedGameLogs),
+              ],
+            ),
           );
         }
       },
@@ -91,8 +92,7 @@ class PlayerGameLogView extends StatelessWidget {
 
   Widget _buildGameLogList(List<GameLogsPlayer> logs) {
     if (logs == null) {
-      return ErrorView(
-          UINoDataDownloadedException('player_game_log_view _buildGameLogList'));
+      return ErrorView(UINoDataDownloadedException('player_game_log_view _buildGameLogList'));
     } else if (logs.length < 1) {
       return ErrorView(NoDataException(''));
     } else {
@@ -106,14 +106,15 @@ class PlayerGameLogView extends StatelessWidget {
             ),
           ),*/
           Expanded(
-            child: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return getGameRow(logs[index]);
-                },
-                itemCount: logs.length),
-          )/*,
+        child: ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return getGameRow(logs[index]);
+            },
+            itemCount: logs.length),
+      ) /*,
         ],
-      )*/;
+      )*/
+          ;
     }
   }
 
@@ -139,14 +140,12 @@ class PlayerGameLogView extends StatelessWidget {
     if (isSkater) {
       for (String column in skaterColumns) {
         yield Expanded(
-            child: Text(getColumnAbb(column),
-                style: CustomDataTableSource.headerRowStyle));
+            child: Text(getColumnAbb(column), style: CustomDataTableSource.headerRowStyle));
       }
     } else {
       for (String column in goalieColumns) {
         yield Expanded(
-            child: Text(getColumnAbb(column),
-                style: CustomDataTableSource.headerRowStyle));
+            child: Text(getColumnAbb(column), style: CustomDataTableSource.headerRowStyle));
       }
     }
   }
@@ -154,8 +153,7 @@ class PlayerGameLogView extends StatelessWidget {
   Widget getGameRow(GameLogsPlayer log) {
     List<String> stats = isSkater ? skaterColumns : goalieColumns;
     return Container(
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.white))),
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white))),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -195,13 +193,7 @@ class PlayerGameLogView extends StatelessWidget {
     );
   }
 
-  static const List<String> skaterColumns = [
-    'timeOnIce',
-    'goals',
-    'assists',
-    'plusMinus',
-    'pim'
-  ];
+  static const List<String> skaterColumns = ['timeOnIce', 'goals', 'assists', 'plusMinus', 'pim'];
   static const List<String> goalieColumns = [
     'timeOnIce',
     'shotsAgainst',

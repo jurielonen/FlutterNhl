@@ -18,17 +18,15 @@ class PlayerBioTab extends StatelessWidget {
     return StoreConnector<AppState, PlayerBioTabViewModel>(
         converter: (store) => PlayerBioTabViewModel.fromStore(store),
         builder: (ctx, viewModel) {
-          print(
-              'PLAYERBIOTAB: BUILD: ${viewModel.loadingStatus} ${viewModel.player}');
           if (viewModel.loadingStatus == LoadingStatus.IDLE) {
-            return ProgressView('Loading player bio');
+            return SliverProgressView(msg: 'Loading player bio');
           } else if (viewModel.loadingStatus == LoadingStatus.LOADING) {
-            return ProgressView('Loading player bio');
+            return SliverProgressView(msg: 'Loading player bio');
           } else if (viewModel.loadingStatus == LoadingStatus.ERROR) {
-            return ErrorView(viewModel.error);
+            return SliverErrorView(error: viewModel.error);
           } else {
             if (viewModel.player == null)
-              return ErrorView(NoDataException('PlayerBioTab build'));
+              return SliverErrorView(error: NoDataException('PlayerBioTab build'));
             return PlayerBioWidget(
               player: viewModel.player,
             );
@@ -44,15 +42,16 @@ class PlayerBioWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return bioTiles.elementAt(index);
-        },
-        itemCount: bioTiles.length,
-      ),
-    );
+    return SliverPadding(
+        padding: const EdgeInsets.all(8.0),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return bioTiles.elementAt(index);
+            },
+            childCount: bioTiles.length,
+          ),
+        ));
   }
 
   Iterable<Widget> get bioTiles sync* {
@@ -169,14 +168,11 @@ class PlayerBioWidget extends StatelessWidget {
     return TableRow(children: [
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(
-            child:
-                Text(header.toUpperCase(), style: Styles.infoTableHeaderText)),
+        child: Center(child: Text(header.toUpperCase(), style: Styles.infoTableHeaderText)),
       ),
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(
-            child: Text(value.toUpperCase(), style: Styles.infoTableValueText)),
+        child: Center(child: Text(value.toUpperCase(), style: Styles.infoTableValueText)),
       )
     ]);
   }

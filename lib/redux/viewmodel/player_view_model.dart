@@ -28,14 +28,12 @@ class PlayerAppBarViewModel {
 
   static PlayerAppBarViewModel fromStore(Store<AppState> store) {
     return PlayerAppBarViewModel(
-      player: selectedPlayerSelector(store.state),
+      player: Player.checkIfFoundInCache(store.state.playerState.playerId),
       isStarred: isPlayerStarredSelector(store.state),
       getStats: () => store.dispatch(PlayerStatsTabChangedAction()),
       getGameLogs: () => store.dispatch(PlayerGameLogTabChangedAction()),
-      starredPlayer: (Player player) =>
-          store.dispatch(StarredAddPlayerAction(player)),
-      unstarredPlayer: (Player player) =>
-          store.dispatch(StarredDeletePlayerAction(player)),
+      starredPlayer: (Player player) => store.dispatch(StarredAddPlayerAction(player)),
+      unstarredPlayer: (Player player) => store.dispatch(StarredDeletePlayerAction(player)),
     );
   }
 
@@ -120,8 +118,7 @@ class PlayerBioTabViewModel {
     return PlayerBioTabViewModel(
       loadingStatus: store.state.playerState.loadingStatus,
       error: store.state.playerState.error,
-      player: PlayerBioTabObject.fromPlayerPage(
-          selectedPlayerSelector(store.state)),
+      player: PlayerBioTabObject.fromPlayerPage(selectedPlayerSelector(store.state)),
     );
   }
 
@@ -163,8 +160,7 @@ class PlayerStatsViewModel {
       displayItems: statTypes(store.state),
       error: store.state.playerState.error,
       selectedStats: temp,
-      getStats: (PageStatParams stat) =>
-          store.dispatch(PlayerStatsChangedAction(stat: stat)),
+      getStats: (PageStatParams stat) => store.dispatch(PlayerStatsChangedAction(stat: stat)),
     );
   }
 
@@ -180,10 +176,7 @@ class PlayerStatsViewModel {
 
   @override
   int get hashCode =>
-      loadingStatus.hashCode ^
-      error.hashCode ^
-      selectedStats.hashCode ^
-      selectedStat.hashCode;
+      loadingStatus.hashCode ^ error.hashCode ^ selectedStats.hashCode ^ selectedStat.hashCode;
 }
 
 class PlayerGameLogViewModel {
@@ -208,8 +201,7 @@ class PlayerGameLogViewModel {
       params: store.state.playerState.gameLogParams,
       error: store.state.playerState.error,
       selectedGameLogs: temp,
-      getGameLogs: (PageGameLogParams stat) =>
-          store.dispatch(PlayerGetGameLogsAction(stat)),
+      getGameLogs: (PageGameLogParams stat) => store.dispatch(PlayerGetGameLogsAction(stat)),
     );
   }
 
@@ -225,8 +217,5 @@ class PlayerGameLogViewModel {
 
   @override
   int get hashCode =>
-      loadingStatus.hashCode ^
-      error.hashCode ^
-      selectedGameLogs.hashCode ^
-      params.hashCode;
+      loadingStatus.hashCode ^ error.hashCode ^ selectedGameLogs.hashCode ^ params.hashCode;
 }

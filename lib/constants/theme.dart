@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
 
-IconThemeData _customIconTheme(IconThemeData original) {
-  return original.copyWith(color: kNHL900);
-}
-
 ThemeData buildNHLTheme() {
   final ThemeData base = ThemeData.dark();
   return base.copyWith(
-    cardColor: kCardColor,
+    primaryColor: kNHLPrimary,
+    primaryColorLight: kNHLPrimaryLight,
+    primaryColorDark: kNHLPrimaryDark,
+    backgroundColor: kNHLPrimaryDark,
+    scaffoldBackgroundColor: kNHLPrimaryDark,
+    dividerColor: kNHLSecondaryLight,
+    focusColor: kNHLSecondary,
+    accentColor: kNHLSecondaryLight,
+    highlightColor: kNHLSecondaryLight,
+    selectedRowColor: kNHLSecondary,
+    unselectedWidgetColor: kNHLPrimaryLight,
+    disabledColor: kNHLPrimaryLight,
+    dialogBackgroundColor: kNHLSecondary,
+    indicatorColor: kNHLSecondary,
+    toggleableActiveColor: kNHLSecondary,
+    cardColor: kNHLPrimaryLight,
   );
 }

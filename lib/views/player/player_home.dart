@@ -22,7 +22,11 @@ class CustomTabTemplate {
 ///TODO: continue making player appbar
 class PlayerHome extends StatefulWidget {
   static const String routeName = '/player';
-  static const List<CustomTabTemplate> tabs = [CustomTabTemplate(0, 'Bio'), CustomTabTemplate(1, 'Stats'), CustomTabTemplate(2, 'Game Logs')];
+  static const List<CustomTabTemplate> tabs = [
+    CustomTabTemplate(0, 'Bio'),
+    CustomTabTemplate(1, 'Stats'),
+    CustomTabTemplate(2, 'Game Logs')
+  ];
   final PlayerArguments playerArgs;
 
   const PlayerHome({
@@ -49,229 +53,138 @@ class _PlayerHomeState extends State<PlayerHome> {
   Widget build(BuildContext context) {
     return Material(
       child: StoreConnector<AppState, PlayerAppBarViewModel>(
-          distinct: true,
-          onInit: (store) => store.dispatch(PlayerEntered(widget.playerArgs.playerId, widget.playerArgs.type)),
-          converter: (store) => PlayerAppBarViewModel.fromStore(store),
-          builder: (_, viewModel) {
-            if (viewModel.player == null) {
-              return ProgressView('Downloading ${widget.playerArgs.playerFullName}');
-            } else {
-              return DefaultTabController(
-                  length: PlayerHome.tabs.length,
-                  child: NestedScrollView(
-                    headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                      return <Widget>[
-                        SliverOverlapAbsorber(
-                          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                          sliver: SliverAppBar(
-                            pinned: true,
-                            snap: false,
-                            floating: false,
-                            expandedHeight: appBarHeight,
-                            title: Text(viewModel.player.fullname),
-                            actions: [
-                              IconButton(
-                                  icon: viewModel.isStarred ? const Icon(Icons.star) : const Icon(Icons.star_border),
-                                  onPressed: () => viewModel.isStarred ? viewModel.unstarredPlayer(viewModel.player) : viewModel.starredPlayer(viewModel.player))
-                            ],
-                            flexibleSpace: FlexibleSpaceBar(
-                              collapseMode: CollapseMode.parallax,
-                              background: Stack(
-                                fit: StackFit.expand,
-                                children: [
-                                  Positioned(
-                                    bottom: tabBarHeight,
-                                    child: SizedBox(
-                                      height: appBarHeight - kToolbarHeight * 2,
-                                      width: MediaQuery.of(context).size.width,
-                                      child: DecoratedBox(
-                                        child: Stack(
-                                          fit: StackFit.expand,
-                                          children: [
-                                            const DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment(-0.30,0.1),
-                                                  end: Alignment(-0.31,0.2),
-                                                  colors: <Color>[
-                                                    Colors.white12,
-                                                    Colors.white12,
-                                                    Colors.black,
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                Styles.buildPlayerBoxIcon(viewModel.player),
-                                                Text(viewModel.player.fullname, )
+        distinct: true,
+        onInit: (store) =>
+            store.dispatch(PlayerEntered(widget.playerArgs.playerId, widget.playerArgs.type)),
+        converter: (store) => PlayerAppBarViewModel.fromStore(store),
+        builder: (_, viewModel) {
+          return DefaultTabController(
+              length: PlayerHome.tabs.length,
+              child: NestedScrollView(
+                headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                      sliver: SliverAppBar(
+                        pinned: true,
+                        snap: false,
+                        floating: false,
+                        expandedHeight: appBarHeight,
+                        title: Text(viewModel.player.fullname),
+                        actions: [
+                          IconButton(
+                              icon: viewModel.isStarred
+                                  ? const Icon(Icons.star)
+                                  : const Icon(Icons.star_border),
+                              onPressed: () => viewModel.isStarred
+                                  ? viewModel.unstarredPlayer(viewModel.player)
+                                  : viewModel.starredPlayer(viewModel.player))
+                        ],
+                        flexibleSpace: FlexibleSpaceBar(
+                          collapseMode: CollapseMode.parallax,
+                          background: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Positioned(
+                                bottom: tabBarHeight,
+                                child: SizedBox(
+                                  height: appBarHeight - kToolbarHeight * 2,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: DecoratedBox(
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        const DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment(-0.30, 0.1),
+                                              end: Alignment(-0.31, 0.2),
+                                              colors: <Color>[
+                                                Colors.white12,
+                                                Colors.white12,
+                                                Colors.black,
                                               ],
                                             ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Styles.buildPlayerBoxIcon(viewModel.player),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  viewModel.player.fullname,
+                                                ),
+                                                Text(viewModel.player.currentTeam),
+                                                Text(viewModel.player.position.positionString),
+                                                Text(
+                                                    viewModel.player.active ? "Active" : "Inactive")
+                                              ],
+                                            )
                                           ],
                                         ),
-                                        decoration: BoxDecoration(
-                                          //color: Colors.amber,
-                                        ),
-                                      ),
+                                      ],
                                     ),
+                                    decoration: BoxDecoration(
+                                        //color: Colors.amber,
+                                        ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                            forceElevated: innerBoxIsScrolled,
-                            bottom: PreferredSize(
-                              preferredSize: Size.fromHeight(tabBarHeight),
-                              child: TabBar(
-                                tabs: PlayerHome.tabs
-                                    .map((tab) => Tab(
-                                          text: tab.name,
-                                        ))
-                                    .toList(),
-                              ),
-                            ),
+                            ],
                           ),
                         ),
-                      ];
-                    },
-                    body: TabBarView(
-                      children: PlayerHome.tabs.map((tab) {
-                        print('map ${tab.name}');
-                        return SafeArea(child: Builder(
-                          builder: (BuildContext context) {
-                            print('builder ${tab.name}');
-                            return CustomScrollView(
-                              key: PageStorageKey<String>(tab.name),
-                              slivers: [
-                                SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
-                                SliverPadding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  sliver: SliverFixedExtentList(
-                                    itemExtent: 48.0,
-                                    delegate: SliverChildBuilderDelegate(
-                                      (BuildContext context, int index) {
-                                        return ListTile(
-                                          title: Text('Item ${tab.name} $index'),
-                                        );
-                                      },
-                                      childCount: 30,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ));
-                      }).toList(),
+                        forceElevated: innerBoxIsScrolled,
+                        bottom: PreferredSize(
+                          preferredSize: Size.fromHeight(tabBarHeight),
+                          child: TabBar(
+                            tabs: PlayerHome.tabs
+                                .map((tab) => Tab(
+                                      text: tab.name,
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ),
                     ),
-                  ));
-            }
-            /*if (viewModel.player == null)
-              return Scaffold(
-                appBar: AppBar(
-                  title: Padding(
-                    padding: const EdgeInsets.fromLTRB(38.0, 8.0, 8.0, 8.0),
-                    child: Text(widget.playerArgs.playerFullName),
-                  ),
+                  ];
+                },
+                body: TabBarView(
+                  children: PlayerHome.tabs.map((tab) {
+                    print('map ${tab.name}');
+                    return SafeArea(child: Builder(
+                      builder: (BuildContext context) {
+                        print('builder ${tab.name}');
+                        return CustomScrollView(
+                          key: PageStorageKey<String>(tab.name),
+                          slivers: [
+                            SliverOverlapInjector(
+                                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+                            _buildBody(tab.name),
+                          ],
+                        );
+                      },
+                    ));
+                  }).toList(),
                 ),
-                body: ProgressView('Downloading player ok'),
-              );
-            return Scaffold(
-              appBar: AppBar(
-                automaticallyImplyLeading: true,
-                title: Row(
-                  children: <Widget>[
-                    Styles.buildPlayerCircleIcon(viewModel.player, size: 30.0),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(widget.playerArgs.playerFullName),
-                    ),
-                  ],
-                ),
-                actions: [
-                  IconButton(
-                      icon: viewModel.isStarred
-                          ? const Icon(Icons.star)
-                          : const Icon(Icons.star_border),
-                      onPressed: () => viewModel.isStarred
-                          ? viewModel.unstarredPlayer(viewModel.player)
-                          : viewModel.starredPlayer(viewModel.player))
-                ],
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(50.0),
-                  child: Container(
-                    height: 50.0,
-                    child: Row(
-                      children: PlayerHome.tabs
-                          .map(
-                            (tab) => Expanded(
-                              child: FlatButton(
-                                padding: EdgeInsets.all(0.0),
-                                onPressed: () {
-                                  _currentPage = tab.index;
-                                  _pageController.jumpToPage(_currentPage);
-                                },
-                                child: Column(
-                                  children: [
-                                    Tab(
-                                      child: Text(
-                                        tab.name,
-                                        style: Styles.scaffoldGameWinnerText
-                                            .copyWith(
-                                                color: _currentPage == tab.index
-                                                    ? Colors.orange
-                                                    : Colors.white),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        height: 2,
-                                        color: _currentPage == tab.index
-                                            ? Colors.orange
-                                            : Colors.transparent,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ),
-              ),
-              //body: _buildBody(viewModel.player),
-            );*/
-          }),
+              ));
+        },
+      ),
     );
   }
 
-  Widget _buildBody(PlayerPage player) {
-    return PageView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      controller: _pageController,
-      onPageChanged: (int index) {
-        print('Player _buildbody pageChanged: $index');
-        setState(() {
-          _currentPage = index;
-        });
-      },
-      itemBuilder: (context, position) {
-        print('Player _buildBody position: $position,');
-        switch (PlayerHome.tabs[position].name) {
-          case 'Bio':
-            return PlayerBioTab();
-          case 'Stats':
-            return SingleStatView();
-          case 'Game Logs':
-            return PlayerGameLogView();
-          default:
-            return ErrorView(UIUnknownStateException('player_home _createTab'));
-        }
-      },
-      itemCount: PlayerHome.tabs.length,
-    );
+  Widget _buildBody(String tab) {
+    switch (tab) {
+      case 'Bio':
+        return PlayerBioTab();
+      case 'Stats':
+        return SingleStatView();
+      case 'Game Logs':
+        return PlayerGameLogView();
+      default:
+        return SliverErrorView(error: UIUnknownStateException('player_home _createTab'));
+    }
   }
 
   @override

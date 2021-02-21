@@ -70,7 +70,7 @@ class Player {
         return temp;
       }).toList();
 
-  static Player _checkIfFoundInCache(int id) {
+  static Player checkIfFoundInCache(int id) {
     if (_cache.containsKey(id)) {
       return _cache[id];
     }
@@ -79,7 +79,7 @@ class Player {
 
   factory Player.fromJsonStatsApi(Map<String, dynamic> json) {
     int tId = getJsonInt('id', json);
-    Player temp = _checkIfFoundInCache(tId);
+    Player temp = checkIfFoundInCache(tId);
     if (temp != null) {
       return _cache[tId];
     }
@@ -98,7 +98,7 @@ class Player {
 
   factory Player.fromJsonSearchApi(List<String> values) {
     int tId = int.parse(values[0]);
-    Player temp = _checkIfFoundInCache(tId);
+    Player temp = checkIfFoundInCache(tId);
     if (temp != null) {
       return _cache[tId];
     }
@@ -116,7 +116,7 @@ class Player {
 
   factory Player.fromJsonLastFive(Map<String, dynamic> json, int teamId) {
     int tId = getJsonInt('id', json);
-    Player temp = _checkIfFoundInCache(tId);
+    Player temp = checkIfFoundInCache(tId);
     if (temp != null) {
       return _cache[tId];
     }
@@ -204,7 +204,7 @@ class PlayerPlay extends Player {
 
   factory PlayerPlay.fromJson(Map<String, dynamic> json) {
     return PlayerPlay(
-        player: Player._checkIfFoundInCache(getJsonInt2(['player', 'id'], json)),
+        player: Player.checkIfFoundInCache(getJsonInt2(['player', 'id'], json)),
         playerType: getJsonString('playerType', json));
   }
 
@@ -235,7 +235,7 @@ class PlayerGame extends Player {
     }
 
     return PlayerGame(
-      player: Player._checkIfFoundInCache(getJsonInt2(['person', 'id'], json)),
+      player: Player.checkIfFoundInCache(getJsonInt2(['person', 'id'], json)),
       jerseyNumber: getJsonString('jerseyNumber', json),
       stats: statsTemp,
     );
