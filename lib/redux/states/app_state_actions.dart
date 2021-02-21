@@ -2,6 +2,7 @@ import 'package:FlutterNhl/constants/route.dart';
 import 'package:FlutterNhl/redux/api/stat_parameter.dart';
 import 'package:FlutterNhl/redux/models/game/game.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
+import 'package:FlutterNhl/redux/states/settings/settings_middleware.dart';
 
 /*
 AppState actions
@@ -14,6 +15,9 @@ class DownloadAction {}
 class ConfigReceived {}
 
 class SeasonConfigReceived {}
+
+///Fires in [SettingsMiddleware]
+class InitActionFinished {}
 
 class ErrorAction {
   final Exception error;
@@ -32,10 +36,8 @@ class ShowSnackBar {
 
 class CloseSnackBar {}
 
-/*
-Other states abstract classes
- */
 
+///Other states abstract classes
 abstract class FirebaseAction {}
 
 abstract class ScheduleAction {}
@@ -61,6 +63,8 @@ abstract class PlayoffsAction {}
 abstract class SeriesAction {}
 
 abstract class StarredAction {}
+
+abstract class SettingsAction {}
 
 class ScheduleEntered extends ScheduleAction {}
 

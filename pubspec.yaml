@@ -47,6 +47,7 @@ dependencies:
   touchable: 0.2.0
   memoize: 2.0.0
   wakelock: 0.2.1+1
+  shared_preferences: 0.5.12+4
 
 
 dev_dependencies:

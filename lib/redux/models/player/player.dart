@@ -50,8 +50,7 @@ class Player {
     };
   }
 
-  static List<Player> fromDatabase(List<Map<String, dynamic>> players) =>
-      players.map((e) {
+  static List<Player> fromDatabase(List<Map<String, dynamic>> players) => players.map((e) {
         Player temp = Player(
           id: getJsonInt(DB_KEY_PLAYER_ID, e),
           fullname: getJsonString(DB_KEY_PLAYER_NAME, e),
@@ -81,9 +80,8 @@ class Player {
       id: tId,
       fullname: getJsonString('fullName', json),
       currentTeam: Team.getTeamAbb(getJsonInt2(['currentTeam', 'id'], json)),
-      position: PersonPosition.fromJson(getJsonObject([
-        'primaryPosition'
-      ], json)), //positionFromString(getJsonString2(['primaryPosition', 'code'], json)),
+      position: PersonPosition.fromJson(getJsonObject(['primaryPosition'],
+          json)), //positionFromString(getJsonString2(['primaryPosition', 'code'], json)),
       active: getJsonBoolean('active', json),
     );
     _cache[temp.id] = temp;
@@ -101,8 +99,7 @@ class Player {
         id: tId,
         fullname: '${values[2]} ${values[1]}',
         currentTeam: values[11],
-        position: PersonPosition(
-            code: positionFromString(values[12]), name: values[12]),
+        position: PersonPosition(code: positionFromString(values[12]), name: values[12]),
         active: int.parse(values[3]) == 1);
 
     _cache[temp.id] = temp;
@@ -120,8 +117,7 @@ class Player {
       id: tId,
       fullname: getJsonString('fullName', json),
       currentTeam: Team.getTeamAbb(teamId),
-      position:
-          PersonPosition.fromJson(getJsonObject(['primaryPosition'], json)),
+      position: PersonPosition.fromJson(getJsonObject(['primaryPosition'], json)),
       active: true,
     );
     _cache[temp.id] = temp;
@@ -139,7 +135,7 @@ class Player {
   }
 
   String get headShotUrl {
-    if(active)
+    if (active ?? false)
       return 'https://assets.nhle.com/mugs/nhl/${Config.getCurrentSeason}/$currentTeam/$id.png';
     return 'https://cms.nhl.bamgrid.com/images/headshots/current/168x168/$id.jpg';
   }
@@ -181,8 +177,7 @@ class PlayerLastFive extends Player {
     @required this.number,
   }) : super.clone(player);
 
-  factory PlayerLastFive.fromJson(
-      int teamId, String stat, Map<String, dynamic> json) {
+  factory PlayerLastFive.fromJson(int teamId, String stat, Map<String, dynamic> json) {
     Map<String, dynamic> player = getJsonObject(['players', 0], json);
     return PlayerLastFive(
       player: Player.fromJsonLastFive(json, teamId),
@@ -201,8 +196,7 @@ class PlayerPlay extends Player {
 
   factory PlayerPlay.fromJson(Map<String, dynamic> json) {
     return PlayerPlay(
-        player:
-            Player._checkIfFoundInCache(getJsonInt2(['player', 'id'], json)),
+        player: Player._checkIfFoundInCache(getJsonInt2(['player', 'id'], json)),
         playerType: getJsonString('playerType', json));
   }
 
@@ -223,15 +217,13 @@ class PlayerGame extends Player {
   }) : super.clone(player);
 
   factory PlayerGame.fromJsonFinal(Map<String, dynamic> json) {
-    PersonPosition posTemp =
-        PersonPosition.fromJson(getJsonObject(['position'], json));
+    PersonPosition posTemp = PersonPosition.fromJson(getJsonObject(['position'], json));
     Map<String, dynamic> statsTemp = {};
     if (posTemp.isGoalie()) {
       statsTemp = getJsonObject(['stats', 'goalieStats'], json);
     } else if (posTemp.isPlayer()) {
       statsTemp = getJsonObject(['stats', 'skaterStats'], json);
-      statsTemp['points'] =
-          getJsonInt('goals', statsTemp) + getJsonInt('assists', statsTemp);
+      statsTemp['points'] = getJsonInt('goals', statsTemp) + getJsonInt('assists', statsTemp);
     }
 
     return PlayerGame(
@@ -253,21 +245,13 @@ class PlayerGame extends Player {
     List<TextSpan> temp = [];
     if (position.isPlayer()) {
       skaterStats.forEach((stat) {
-        temp.add(TextSpan(
-            text: '${getColumnTooltip(stat)}: ',
-            style: Styles.decisionStatAbbText));
-        temp.add(TextSpan(
-            text: '${getStatFromMap(stat, stats)} ',
-            style: Styles.decisionStatText));
+        temp.add(TextSpan(text: '${getColumnTooltip(stat)}: ', style: Styles.decisionStatAbbText));
+        temp.add(TextSpan(text: '${getStatFromMap(stat, stats)} ', style: Styles.decisionStatText));
       });
     } else if (position.isGoalie()) {
       goalieStats.forEach((stat) {
-        temp.add(TextSpan(
-            text: '${getColumnTooltip(stat)}: ',
-            style: Styles.decisionStatAbbText));
-        temp.add(TextSpan(
-            text: '${getStatFromMap(stat, stats)} ',
-            style: Styles.decisionStatText));
+        temp.add(TextSpan(text: '${getColumnTooltip(stat)}: ', style: Styles.decisionStatAbbText));
+        temp.add(TextSpan(text: '${getStatFromMap(stat, stats)} ', style: Styles.decisionStatText));
       });
     }
     return RichText(text: TextSpan(children: temp));
@@ -297,8 +281,7 @@ class PersonPosition {
   });
 
   factory PersonPosition.fromDatabase(Map<String, dynamic> json) {
-    Position pos =
-        positionFromString(getJsonString(DB_KEY_PLAYER_POSITION, json));
+    Position pos = positionFromString(getJsonString(DB_KEY_PLAYER_POSITION, json));
     return PersonPosition(code: pos, name: positionToFullString(pos));
   }
 
@@ -316,10 +299,8 @@ class PersonPosition {
   }
 
   bool isPlayer() {
-    if (code == Position.C ||
-        code == Position.D ||
-        code == Position.L ||
-        code == Position.R) return true;
+    if (code == Position.C || code == Position.D || code == Position.L || code == Position.R)
+      return true;
     return false;
   }
 
@@ -494,17 +475,13 @@ abstract class PlayerStat {
     String type = getJsonString2(['type', 'displayName'], json);
     switch (type) {
       case 'careerRegularSeason':
-        return PlayerAllTimeStat.fromJson(
-            getJsonList(['splits'], json), true, skater);
+        return PlayerAllTimeStat.fromJson(getJsonList(['splits'], json), true, skater);
       case 'careerPlayoffs':
-        return PlayerAllTimeStat.fromJson(
-            getJsonList(['splits'], json), false, skater);
+        return PlayerAllTimeStat.fromJson(getJsonList(['splits'], json), false, skater);
       case 'yearByYear':
-        return PlayerYearByYearStats.fromJson(
-            getJsonList(['splits'], json), true, skater);
+        return PlayerYearByYearStats.fromJson(getJsonList(['splits'], json), true, skater);
       case 'yearByYearPlayoffs':
-        return PlayerYearByYearStats.fromJson(
-            getJsonList(['splits'], json), false, skater);
+        return PlayerYearByYearStats.fromJson(getJsonList(['splits'], json), false, skater);
       default:
         return null;
     }
@@ -559,8 +536,7 @@ abstract class PlayerStat {
     return Row(
       children: [
         CustomDataTableSource.createTableCorner('Season'),
-        ...goalieStats.map((stat) =>
-            CustomDataTableSource.createColumnBasic(getColumnAbb(stat)))
+        ...goalieStats.map((stat) => CustomDataTableSource.createColumnBasic(getColumnAbb(stat)))
       ],
     );
   }
@@ -570,8 +546,7 @@ abstract class PlayerStat {
       children: [
         CustomDataTableSource.createTableCorner('Season'),
         ...playerStats
-            .map((stat) =>
-                CustomDataTableSource.createColumnBasic(getColumnAbb(stat)))
+            .map((stat) => CustomDataTableSource.createColumnBasic(getColumnAbb(stat)))
             .toList()
       ],
     );
@@ -583,17 +558,11 @@ class PlayerAllTimeStat implements PlayerStat {
   final bool regularSeason;
   final Map<String, dynamic> stat;
 
-  PlayerAllTimeStat(
-      {@required this.stat,
-      @required this.regularSeason,
-      @required this.skater});
+  PlayerAllTimeStat({@required this.stat, @required this.regularSeason, @required this.skater});
 
-  factory PlayerAllTimeStat.fromJson(
-      List<dynamic> json, bool regularSeason, bool skater) {
+  factory PlayerAllTimeStat.fromJson(List<dynamic> json, bool regularSeason, bool skater) {
     return PlayerAllTimeStat(
-        stat: getJsonObject(['stat'], json.first),
-        regularSeason: regularSeason,
-        skater: skater);
+        stat: getJsonObject(['stat'], json.first), regularSeason: regularSeason, skater: skater);
   }
 
   @override
@@ -606,12 +575,12 @@ class PlayerAllTimeStat implements PlayerStat {
     ];
     cells.addAll(skater
         ? PlayerStat.playerStats
-            .map((statName) => CustomDataTableSource.createSizedCell(
-                getJsonDynamic(statName, stat).toString()))
+            .map((statName) =>
+                CustomDataTableSource.createSizedCell(getJsonDynamic(statName, stat).toString()))
             .toList()
         : PlayerStat.goalieStats
-            .map((statName) => CustomDataTableSource.createSizedCell(
-                getJsonDynamic(statName, stat).toString()))
+            .map((statName) =>
+                CustomDataTableSource.createSizedCell(getJsonDynamic(statName, stat).toString()))
             .toList());
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -630,8 +599,7 @@ class PlayerAllTimeStat implements PlayerStat {
   String get header => regularSeason ? 'Career' : 'Career Playoffs';
 
   @override
-  List<String> get statList =>
-      skater ? PlayerStat.playerStats : PlayerStat.goalieStats;
+  List<String> get statList => skater ? PlayerStat.playerStats : PlayerStat.goalieStats;
 }
 
 class PlayerYearByYearStats implements PlayerStat {
@@ -640,20 +608,15 @@ class PlayerYearByYearStats implements PlayerStat {
   final bool skater;
   String _firstSeason;
   PlayerYearByYearStats(
-      {@required this.regularSeason,
-      @required this.seasons,
-      @required this.skater});
+      {@required this.regularSeason, @required this.seasons, @required this.skater});
 
-  factory PlayerYearByYearStats.fromJson(
-      List<dynamic> json, bool regularSeason, bool skater) {
+  factory PlayerYearByYearStats.fromJson(List<dynamic> json, bool regularSeason, bool skater) {
     List<PlayerYearByYearStatsSeason> seasons = [];
     json.forEach((value) {
       int leagueId = getJsonInt2(['league', 'id'], value);
-      if (leagueId == 133)
-        seasons.add(PlayerYearByYearStatsSeason.fromJson(value));
+      if (leagueId == 133) seasons.add(PlayerYearByYearStatsSeason.fromJson(value));
     });
-    return PlayerYearByYearStats(
-        regularSeason: regularSeason, seasons: seasons, skater: skater);
+    return PlayerYearByYearStats(regularSeason: regularSeason, seasons: seasons, skater: skater);
   }
 
   String get firstSeason {
@@ -662,8 +625,7 @@ class PlayerYearByYearStats implements PlayerStat {
         if (_firstSeason == null) {
           _firstSeason = season.season;
         } else {
-          if (int.parse(_firstSeason) > int.parse(season.season))
-            _firstSeason = season.season;
+          if (int.parse(_firstSeason) > int.parse(season.season)) _firstSeason = season.season;
         }
       });
     }
@@ -706,12 +668,10 @@ class PlayerYearByYearStats implements PlayerStat {
   }
 
   @override
-  List<String> get statList =>
-      skater ? PlayerStat.playerStats : PlayerStat.goalieStats;
+  List<String> get statList => skater ? PlayerStat.playerStats : PlayerStat.goalieStats;
 
   @override
-  String get header =>
-      regularSeason ? 'Regular season stats' : 'Playoffs stats';
+  String get header => regularSeason ? 'Regular season stats' : 'Playoffs stats';
 }
 
 class PlayerYearByYearStatsSeason {
@@ -719,8 +679,7 @@ class PlayerYearByYearStatsSeason {
   final String teamAbb;
   final String season;
 
-  PlayerYearByYearStatsSeason(
-      {@required this.stat, @required this.teamAbb, @required this.season});
+  PlayerYearByYearStatsSeason({@required this.stat, @required this.teamAbb, @required this.season});
 
   factory PlayerYearByYearStatsSeason.fromJson(Map<String, dynamic> json) {
     return PlayerYearByYearStatsSeason(
@@ -740,9 +699,7 @@ class PlayerDraft {
 
   factory PlayerDraft.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> draftJson = getJsonList(['data'], json).first;
-    return PlayerDraft(
-        getJsonInt('draftYear', draftJson),
-        getJsonInt('draftRound', draftJson),
+    return PlayerDraft(getJsonInt('draftYear', draftJson), getJsonInt('draftRound', draftJson),
         getJsonInt('draftOverall', draftJson));
   }
 }

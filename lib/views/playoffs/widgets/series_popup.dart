@@ -89,7 +89,7 @@ class SeriesPopup extends StatelessWidget {
             itemExtent: 140.0,
             itemCount: series.games.length,
             itemBuilder: (BuildContext context, int index) {
-              return ScheduleGameCard(series.games[index], true);
+              return getScheduleGameCard(series.games[index], true);
             }
             //),
             );

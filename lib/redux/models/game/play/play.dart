@@ -7,6 +7,7 @@ import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
+import 'package:FlutterNhl/redux/models/content/content.dart';
 
 class Play {
   final PlayEnum type;
@@ -23,16 +24,15 @@ class Play {
         about: About.fromJson(getJsonObject(['about'], json)));
     if (json != null && json.containsKey('players')) {
       List<PlayerPlay> players = List<PlayerPlay>.from(
-          getJsonList(['players'], json)
-              .map<Player>((player) => PlayerPlay.fromJson(player)));
+          getJsonList(['players'], json).map<Player>((player) => PlayerPlay.fromJson(player)));
       Team team = Team.fromJson(getJsonObject(['team'], json));
       String desc = getJsonString2(['result', 'description'], json);
       String strength = getJsonString2(['result', 'strength', 'code'], json);
       if (tPlay.type == PlayEnum.GOAL ||
           tPlay.type == PlayEnum.MISSED_SHOT ||
           tPlay.type == PlayEnum.SHOT) {
-        ShotTypeEnum shotType = shotTypeEnumFromString(
-            getJsonString2(['result', 'secondaryType'], json));
+        ShotTypeEnum shotType =
+            shotTypeEnumFromString(getJsonString2(['result', 'secondaryType'], json));
         if (shotType == ShotTypeEnum.UNK) {
           shotType = shotTypeEnumFromString(playEnumToString(tPlay.type));
         }
@@ -42,8 +42,7 @@ class Play {
             team: team,
             desc: desc,
             strength: strength,
-            coordinates:
-                Coordinates.fromJson(getJsonObject(['coordinates'], json)),
+            coordinates: Coordinates.fromJson(getJsonObject(['coordinates'], json)),
             shotType: shotType);
       }
       return PlayWithPlayers(
@@ -87,6 +86,17 @@ class PlayWithPlayers extends Play {
   }
 }
 
+class ScoringPlay extends PlayWithPlayers {
+  Video video;
+  ScoringPlay({@required PlayWithPlayers play, this.video})
+      : super(
+            play: Play(type: play.type, event: play.event, about: play.about),
+            players: play.players,
+            team: play.team,
+            desc: play.desc,
+            strength: play.strength);
+}
+
 ///Class for shot plays
 ///used for shot map view
 class ShotPlay extends PlayWithPlayers {
@@ -102,12 +112,7 @@ class ShotPlay extends PlayWithPlayers {
     @required String strength,
     @required this.coordinates,
     @required this.shotType,
-  }) : super(
-            play: play,
-            players: players,
-            team: team,
-            desc: desc,
-            strength: strength);
+  }) : super(play: play, players: players, team: team, desc: desc, strength: strength);
 
   String get playHeader {
     if (type == PlayEnum.GOAL)
@@ -150,15 +155,15 @@ class ShotPlay extends PlayWithPlayers {
         path.addOval(Rect.fromCircle(center: _offset, radius: _radius));
         break;
       case ShotTypeEnum.SLAP:
-        path.addRect(Rect.fromCenter(
-            center: _offset, height: 2 * _radius, width: 2 * _radius));
+        path.addRect(Rect.fromCenter(center: _offset, height: 2 * _radius, width: 2 * _radius));
         break;
+      case ShotTypeEnum.DEFLECTED:
       case ShotTypeEnum.TIP:
         double angle = ((pi * 2) / 4);
         List<Offset> offsets = [];
         for (int i = 1; i <= 4; i++) {
-          offsets.add(Offset(_offset.dx + _radius * cos((angle * i)),
-              _offset.dy + _radius * sin((angle * i))));
+          offsets.add(Offset(
+              _offset.dx + _radius * cos((angle * i)), _offset.dy + _radius * sin((angle * i))));
         }
         path.addPolygon(offsets, true);
         break;
@@ -166,8 +171,8 @@ class ShotPlay extends PlayWithPlayers {
         double angle = ((pi * 2) / 5);
         List<Offset> offsets = [];
         for (int i = 1; i <= 5; i++) {
-          offsets.add(Offset(_offset.dx + _radius * cos((angle * i)),
-              _offset.dy + _radius * sin((angle * i))));
+          offsets.add(Offset(
+              _offset.dx + _radius * cos((angle * i)), _offset.dy + _radius * sin((angle * i))));
         }
         path.addPolygon(offsets, true);
         break;
@@ -175,8 +180,8 @@ class ShotPlay extends PlayWithPlayers {
         double angle = ((pi * 2) / 6);
         List<Offset> offsets = [];
         for (int i = 1; i <= 6; i++) {
-          offsets.add(Offset(_offset.dx + _radius * cos((angle * i)),
-              _offset.dy + _radius * sin((angle * i))));
+          offsets.add(Offset(
+              _offset.dx + _radius * cos((angle * i)), _offset.dy + _radius * sin((angle * i))));
         }
         path.addPolygon(offsets, true);
         break;
@@ -184,8 +189,8 @@ class ShotPlay extends PlayWithPlayers {
         double angle = ((pi * 2) / 3);
         List<Offset> offsets = [];
         for (int i = 1; i <= 3; i++) {
-          offsets.add(Offset(_offset.dx + _radius * cos((angle * i)),
-              _offset.dy + _radius * sin((angle * i))));
+          offsets.add(Offset(
+              _offset.dx + _radius * cos((angle * i)), _offset.dy + _radius * sin((angle * i))));
         }
         path.addPolygon(offsets, true);
         break;
@@ -193,8 +198,8 @@ class ShotPlay extends PlayWithPlayers {
         double angle = ((pi * 2) / 3);
         List<Offset> offsets = [];
         for (int i = 1; i <= 3; i++) {
-          offsets.add(Offset(_offset.dx + _radius * cos((angle * i)),
-              _offset.dy + _radius * sin((angle * i))));
+          offsets.add(Offset(
+              _offset.dx + _radius * cos((angle * i)), _offset.dy + _radius * sin((angle * i))));
         }
         path.addPolygon(offsets, true);
         break;
@@ -202,8 +207,8 @@ class ShotPlay extends PlayWithPlayers {
         double angle = ((pi * 2) / 3);
         List<Offset> offsets = [];
         for (int i = 1; i <= 3; i++) {
-          offsets.add(Offset(_offset.dx + _radius * cos((angle * i)),
-              _offset.dy + _radius * sin((angle * i))));
+          offsets.add(Offset(
+              _offset.dx + _radius * cos((angle * i)), _offset.dy + _radius * sin((angle * i))));
         }
         path.addPolygon(offsets, true);
         break;
@@ -232,7 +237,7 @@ class Coordinates {
 }
 
 class About {
-  int eventIdx;
+  int eventId;
   int period;
   String periodType;
   String ordinalNum;
@@ -241,7 +246,7 @@ class About {
   Goals goals;
 
   About({
-    this.eventIdx,
+    this.eventId,
     this.period,
     this.periodType,
     this.ordinalNum,
@@ -251,7 +256,7 @@ class About {
   });
 
   factory About.fromJson(Map<String, dynamic> json) => About(
-      eventIdx: getJsonInt('eventIdx', json),
+      eventId: getJsonInt('eventId', json),
       period: getJsonInt('period', json),
       periodType: getJsonString('periodType', json),
       ordinalNum: getJsonString('ordinalNum', json),

@@ -8,7 +8,6 @@ import 'test_functions.ignore.dart';
 
 void main() {
   group('play', () {
-
     test('play/playWithPlayers/About unit tests', () {
       checkPlay(Play.fromJson(null), empty);
       checkPlay(Play.fromJson({}), empty);
@@ -18,11 +17,12 @@ void main() {
     });
   });
 }
+
 final Play empty = Play(
     type: PlayEnum.UNKNOWN,
     event: '',
     about: About(
-        eventIdx: -1,
+        eventId: -1,
         period: -1,
         periodType: '',
         ordinalNum: '',
@@ -33,7 +33,7 @@ final Play periodPlay = Play(
     type: PlayEnum.PERIOD_READY,
     event: 'Period Ready',
     about: About(
-        eventIdx: 1,
+        eventId: 1,
         period: 1,
         periodType: 'REGULAR',
         ordinalNum: '1st',
@@ -72,7 +72,7 @@ final PlayWithPlayers shotPlay = PlayWithPlayers(
         type: PlayEnum.SHOT,
         event: 'Shot',
         about: About(
-            eventIdx: 8,
+            eventId: 8,
             period: 1,
             periodType: 'REGULAR',
             ordinalNum: '1st',
@@ -83,19 +83,11 @@ final PlayWithPlayers shotPlay = PlayWithPlayers(
 const Map<String, dynamic> shotPlayJson = {
   "players": [
     {
-      "player": {
-        "id": 8475169,
-        "fullName": "Evander Kane",
-        "link": "/api/v1/people/8475169"
-      },
+      "player": {"id": 8475169, "fullName": "Evander Kane", "link": "/api/v1/people/8475169"},
       "playerType": "Shooter"
     },
     {
-      "player": {
-        "id": 8470645,
-        "fullName": "Corey Crawford",
-        "link": "/api/v1/people/8470645"
-      },
+      "player": {"id": 8470645, "fullName": "Corey Crawford", "link": "/api/v1/people/8470645"},
       "playerType": "Goalie"
     }
   ],
@@ -118,10 +110,5 @@ const Map<String, dynamic> shotPlayJson = {
     "goals": {"away": 25, "home": 1}
   },
   "coordinates": {"x": 81, "y": -2},
-  "team": {
-    "id": 28,
-    "name": "San Jose Sharks",
-    "link": "/api/v1/teams/28",
-    "triCode": "SJS"
-  }
+  "team": {"id": 28, "name": "San Jose Sharks", "link": "/api/v1/teams/28", "triCode": "SJS"}
 };

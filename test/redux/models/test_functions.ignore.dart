@@ -30,7 +30,7 @@ checkGoals(Goals actual, Goals expected) {
 }
 
 checkAbout(About actual, About expected) {
-  expect(actual.eventIdx, expected.eventIdx);
+  expect(actual.eventId, expected.eventId);
   expect(actual.period, expected.period);
   expect(actual.periodType, expected.periodType);
   expect(actual.ordinalNum, expected.ordinalNum);
@@ -116,7 +116,7 @@ checkTeamPreview(TeamPreview actual, TeamPreview expected) {
 }
 
 ///Game classes unit tests
-checkGame(Game actual, Game expected){
+checkGame(Game actual, Game expected) {
   expect(actual.type, expected.type);
   expect(actual.id, expected.id);
   expect(actual.dateTime, expected.dateTime);
@@ -139,13 +139,13 @@ checkGame(Game actual, Game expected){
   });
 }
 
-checkGamePreview(GamePreview actual, GamePreview expected){
+checkGamePreview(GamePreview actual, GamePreview expected) {
   checkGame(actual, expected);
   checkTeamPreview(actual.home, expected.home);
   checkTeamPreview(actual.away, expected.away);
 }
 
-checkGameFinal(GameFinal actual, GameFinal expected){
+checkGameFinal(GameFinal actual, GameFinal expected) {
   checkGame(actual, expected);
   checkTeamFinal(actual.home, expected.home);
   checkTeamFinal(actual.away, expected.away);
@@ -161,7 +161,7 @@ checkSchedule(Schedule actual, Schedule expected) {
   expect(actual.date, expected.date);
 }
 
-checkScheduleGame(ScheduleGames actual, ScheduleGames expected){
+checkScheduleGame(ScheduleGames actual, ScheduleGames expected) {
   checkSchedule(actual, expected);
   expect(actual.games.length, expected.games.length);
   actual.games.asMap().forEach((key, value) {
@@ -170,7 +170,7 @@ checkScheduleGame(ScheduleGames actual, ScheduleGames expected){
 }
 
 ///Season classes unit tests
-checkSeason(Season actual, Season expected){
+checkSeason(Season actual, Season expected) {
   expect(actual.season, expected.season);
   expect(actual.regularSeasonStartDate, expected.regularSeasonStartDate);
   expect(actual.regularSeasonEndDate, expected.regularSeasonEndDate);

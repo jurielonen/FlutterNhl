@@ -1,34 +1,16 @@
+import 'package:FlutterNhl/database/starred_database.dart';
 import 'package:FlutterNhl/redux/models/player/player.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/states/starred/starred_action.dart';
-import 'package:path/path.dart';
 import 'package:redux/redux.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:FlutterNhl/constants/constants.dart';
 
 class StarredMiddleware extends MiddlewareClass<AppState> {
-  Future<Database> database;
-
-  StarredMiddleware();
-
   @override
   call(Store<AppState> store, dynamic action, NextDispatcher next) async {
     next(action);
     if (action is StarredEntered) {
-      database = openDatabase(join(await getDatabasesPath(), DB_PATH),
-          onCreate: (db, version) {
-        print('StarredMiddleware onCreate');
-        db.execute(
-          "CREATE TABLE $DB_TABLE($DB_KEY_PLAYER_ID INTEGER PRIMARY KEY, $DB_KEY_PLAYER_NAME TEXT, $DB_KEY_PLAYER_TEAM TEXT, $DB_KEY_PLAYER_POSITION TEXT, $DB_KEY_PLAYER_ACTIVE INTEGER)",
-        );
-        _getStarredPlayers(next);
-      }, onUpgrade: (db, v, v2) {
-        print('StarredMiddleware onUpgrade');
-      }, onOpen: (db) {
-        print('StarredMiddleware onOpen');
-        _getStarredPlayers(next);
-      }, version: 3);
+      _getStarredPlayers(next);
     } else if (action is StarredLoadingPlayersAction) {
       await _getStarredPlayers(next);
     } else if (action is StarredAddPlayerAction) {
@@ -41,44 +23,35 @@ class StarredMiddleware extends MiddlewareClass<AppState> {
   Future<Null> _getStarredPlayers(NextDispatcher next) async {
     next(StarredLoadingPlayersAction());
     try {
-      final Database db = await database;
-      final List<Map<String, dynamic>> value = await db.query(DB_TABLE);
-      next(StarredReceivedPlayersAction(Player.fromDatabase(value)));
+      List<Player> players = await PlayerDatabase().get();
+      next(StarredReceivedPlayersAction(players));
     } catch (e) {
-      print(e.toString());
-      if (e is Exception)
-        next(StarredErrorAction(e));
-      else
-        next(StarredErrorAction(Exception(e.toString())));
+      _handleException(next, e);
     }
   }
 
   Future<Null> _addPlayer(NextDispatcher next, Player player) async {
-    final Database db = await database;
     try {
-      await db.insert(DB_TABLE, player.toMap());
+      await PlayerDatabase().insert(player);
       next(StarredAddPlayerAddedAction(player));
     } catch (e) {
-      print(e.toString());
-      if (e is Exception)
-        next(StarredErrorAction(e));
-      else
-        next(StarredErrorAction(Exception(e.toString())));
+      _handleException(next, e);
     }
   }
 
   Future<Null> _deletePlayer(NextDispatcher next, Player player) async {
-    final Database db = await database;
     try {
-      await db.delete(DB_TABLE,
-          where: '$DB_KEY_PLAYER_ID = ?', whereArgs: [player.id]);
+      await PlayerDatabase().delete(player);
       next(StarredDeletePlayerDeletedAction(player));
     } catch (e) {
-      print(e.toString());
-      if (e is Exception)
-        next(StarredErrorAction(e));
-      else
-        next(StarredErrorAction(Exception(e.toString())));
+      _handleException(next, e);
     }
+  }
+
+  void _handleException(NextDispatcher next, dynamic error) {
+    if (error is Exception)
+      next(StarredErrorAction(error));
+    else
+      next(StarredErrorAction(Exception(error.toString())));
   }
 }

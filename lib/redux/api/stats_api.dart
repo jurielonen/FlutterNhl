@@ -37,7 +37,7 @@ class StatsApi {
         throw NetworkParseException(
             'Failed to parse data.\nCall: fetchTeams.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
       }
-    }); //.catchError((error) => throw Exception(error.toString()));
+    });
   }
 
   Future<Null> fetchCurrentSeason() async {
@@ -57,8 +57,7 @@ class StatsApi {
     }
 
     if (!Config().checkForCurrentSeason()) {
-      Map<String, dynamic> value =
-          await fetchSeason(Season.currentSeasonString());
+      Map<String, dynamic> value = await fetchSeason(Season.currentSeasonString());
       try {
         for (dynamic obj in getJsonList(['seasons'], value)) {
           if (obj is Map<String, dynamic>) Season.fromJson(obj);
@@ -89,8 +88,7 @@ class StatsApi {
         for (dynamic obj in getJsonList(['seasons'], value)) {
           if (obj is Map<String, dynamic>) {
             Season parsedSeason = Season.fromJson(obj);
-            if (parsedSeason.season == season)
-              Config().setCurrentSeason(parsedSeason);
+            if (parsedSeason.season == season) Config().setCurrentSeason(parsedSeason);
           }
         }
       } catch (error) {
@@ -115,7 +113,7 @@ class StatsApi {
     final searchUri = Uri.https(baseUrl, '/api/v1/schedule', {
       'date': date,
       'hydrate':
-          'team,linescore,game(content(media(epg)),seriesSummary),decisions,scoringplays,boxscore'
+          'team,linescore,game(content(media(epg),highlights(all)),seriesSummary),decisions,scoringplays,boxscore'
     });
     print('$printMsg fetchSchedule: $searchUri');
     return await fetch(searchUri, client).then((value) {
@@ -142,13 +140,11 @@ class StatsApi {
   }
 
   Future<GamePreview> fetchGamePreview(Game game) async {
-    final searchUri2 = Uri.https(
-        baseUrl2, '/perseus/lastFive/v1/all/${game.homeTeam.id}.json');
+    final searchUri2 = Uri.https(baseUrl2, '/perseus/lastFive/v1/all/${game.homeTeam.id}.json');
     Map<String, dynamic> homeLastFive = {};
     await fetch(searchUri2, client).then((value) => homeLastFive = value);
 
-    final searchUri3 = Uri.https(
-        baseUrl2, '/perseus/lastFive/v1/all/${game.awayTeam.id}.json');
+    final searchUri3 = Uri.https(baseUrl2, '/perseus/lastFive/v1/all/${game.awayTeam.id}.json');
     Map<String, dynamic> awayLastFive = {};
     await fetch(searchUri3, client).then((value) => awayLastFive = value);
 
@@ -184,13 +180,9 @@ class StatsApi {
     });
   }
 
-  Future<List<GameLogsPlayer>> fetchPlayerGameLogs(
-      int playerId, String year, bool regular) async {
-    final searchUri = Uri.https(baseUrl, '/api/v1/people/$playerId/stats', {
-      'stats': regular ? 'gameLog' : 'playoffGameLog',
-      'expand': 'stats.team',
-      'season': year
-    });
+  Future<List<GameLogsPlayer>> fetchPlayerGameLogs(int playerId, String year, bool regular) async {
+    final searchUri = Uri.https(baseUrl, '/api/v1/people/$playerId/stats',
+        {'stats': regular ? 'gameLog' : 'playoffGameLog', 'expand': 'stats.team', 'season': year});
     print('$printMsg fetchPlayerGameLogs: $searchUri');
     return await fetch(searchUri, client).then((value) {
       try {
@@ -224,17 +216,14 @@ class StatsApi {
   }
 
   Future<List<PlayerGame>> fetchTeamRoster(int teamId) async {
-    final searchUri = Uri.https(baseUrl, 'api/v1/teams/$teamId', {
-      'expand': 'team.roster,roster.person,person.stats',
-      'stats': 'statsSingleSeason'
-    });
+    final searchUri = Uri.https(baseUrl, 'api/v1/teams/$teamId',
+        {'expand': 'team.roster,roster.person,person.stats', 'stats': 'statsSingleSeason'});
     print('$printMsg fetchTeamRoster: $searchUri');
 
     return await fetch(searchUri, client).then((value) {
       try {
-        return List<PlayerGame>.from(
-            getJsonList(['teams', 0, 'roster', 'roster'], value)
-                .map((player) => PlayerGame.fromJsonPreview(player)));
+        return List<PlayerGame>.from(getJsonList(['teams', 0, 'roster', 'roster'], value)
+            .map((player) => PlayerGame.fromJsonPreview(player)));
       } catch (error) {
         throw NetworkParseException(
             'Failed to parse data.\nCall: fetchTeamRoster.\nUrl: ${searchUri.toString()}\nError: ${error.toString()}');
@@ -242,8 +231,7 @@ class StatsApi {
     }); //.catchError((error) => throw Exception(error.toString()));
   }
 
-  Future<List<Game>> fetchTeamGameLog(
-      int teamId, String season, bool regular) async {
+  Future<List<Game>> fetchTeamGameLog(int teamId, String season, bool regular) async {
     final searchUri = Uri.https(baseUrl, 'api/v1/schedule', {
       'teamId': teamId.toString(),
       'season': season,
@@ -272,8 +260,7 @@ class StatsApi {
   }
 
   Future<Draft> fetchDraft(int year) async {
-    final searchUri =
-        Uri.https(baseUrl, 'api/v1/draft/$year', {'hydrate': 'prospects'});
+    final searchUri = Uri.https(baseUrl, 'api/v1/draft/$year', {'hydrate': 'prospects'});
     print('$printMsg fetchDraft: $searchUri');
     return await fetch(searchUri, client).then((value) {
       try {
@@ -286,9 +273,7 @@ class StatsApi {
   }
 
   Future<Standing> fetchStandings({String season}) async {
-    Map<String, String> query = {
-      'hydrate': 'record(overall),division,conference,team'
-    };
+    Map<String, String> query = {'hydrate': 'record(overall),division,conference,team'};
     if (season != null) query['season'] = season;
     final searchUri = Uri.https(baseUrl, 'api/v1/standings', query);
     print('$printMsg fetchStandings: $searchUri');
@@ -303,10 +288,8 @@ class StatsApi {
   }
 
   Future<Playoff> fetchPlayoff(String season) async {
-    final searchUri = Uri.https(baseUrl, 'api/v1/tournaments/playoffs', {
-      'expand': 'round.series,schedule.game.seriesSummary',
-      'season': season
-    });
+    final searchUri = Uri.https(baseUrl, 'api/v1/tournaments/playoffs',
+        {'expand': 'round.series,schedule.game.seriesSummary', 'season': season});
     print('$printMsg fetchPlayoff: $searchUri');
     return await fetch(searchUri, client).then((value) {
       try {
@@ -318,8 +301,7 @@ class StatsApi {
     });
   }
 
-  Future<List<Game>> fetchPlayoffGames(
-      int teamId, int opponentId, String season) async {
+  Future<List<Game>> fetchPlayoffGames(int teamId, int opponentId, String season) async {
     final searchUri = Uri.https(baseUrl, 'api/v1/schedule', {
       'teamId': teamId.toString(),
       'opponentId': opponentId.toString(),
@@ -343,8 +325,7 @@ class StatsApi {
   Future<PlayerPage> fetchPlayerSummary(int id) async {
     final searchUri = Uri.https(baseUrl, 'api/v1/people/$id', {
       'expand': 'person.stats,stats.team',
-      'stats':
-          'yearByYear,yearByYearPlayoffs,careerRegularSeason,careerPlayoffs',
+      'stats': 'yearByYear,yearByYearPlayoffs,careerRegularSeason,careerPlayoffs',
     });
     print('$printMsg fetchPlayerSummary: $searchUri');
     return await fetch(searchUri, client).then((value) {
