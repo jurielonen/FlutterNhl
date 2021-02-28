@@ -1,3 +1,4 @@
+
 enum Position { D, C, R, G, L, HC, N_A }
 
 Position positionFromString(String value) {
@@ -69,17 +70,23 @@ String positionToApiString(Position position) {
       return 'C';
     case Position.D:
       return 'D';
+    case Position.L:
+      return 'L';
+    case Position.R:
+      return 'R';
     case Position.G:
       return 'G';
     case Position.HC:
       return 'HC';
-    case Position.L:
-      return 'L';
     case Position.N_A:
-      return 'N/A';
-    case Position.R:
-      return 'R';
+      return 'N_A';
     default:
-      return 'N/A';
+      return 'N_A';
   }
 }
+
+bool isSkater(Position position) =>
+    position == Position.C ||
+    position == Position.R ||
+    position == Position.L ||
+    position == Position.D;

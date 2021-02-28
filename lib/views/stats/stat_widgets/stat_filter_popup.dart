@@ -36,7 +36,7 @@ class _StatFilterPageState extends State<StatFilterPage> {
   void initState() {
     super.initState();
     showPosition = widget.arguments.currentParams.paramType.type == StatType.PLAYER;
-    if(showPosition) {
+    if (showPosition) {
       _selectedPosition = widget.arguments.currentParams.position;
     } else {
       filters.removeWhere((item) {
@@ -84,40 +84,38 @@ class _StatFilterPageState extends State<StatFilterPage> {
         title: Text('Select filters'),
       ),
       body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: ExpansionPanelList(
-              expansionCallback: (int index, bool isExpanded) {
-                setState(() {
-                  filters[index].isExpanded = !isExpanded;
-                });
-              },
-              children: filters.map<ExpansionPanel>((FilterItem item) {
-                return ExpansionPanel(
-                  headerBuilder: (BuildContext context, bool isExpanded) {
-                    return ListTile(
-                      title: Text(item.header),
-                    );
-                  },
-                  isExpanded: item.isExpanded,
-                  body: new Builder(builder: (BuildContext context) {
-                    return _bodyBuilder(context, item.header);
-                  }),
+        scrollDirection: Axis.vertical,
+        child: ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              filters[index].isExpanded = !isExpanded;
+            });
+          },
+          children: filters.map<ExpansionPanel>((FilterItem item) {
+            return ExpansionPanel(
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                return ListTile(
+                  title: Text(item.header),
                 );
-              }).toList(),
-            ),
-          ),
+              },
+              isExpanded: item.isExpanded,
+              body: new Builder(builder: (BuildContext context) {
+                return _bodyBuilder(context, item.header);
+              }),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
   void applyFilters() {
-    StatParameters newParams =
-        StatParameters.clone(widget.arguments.currentParams);
+    StatParameters newParams = StatParameters.clone(widget.arguments.currentParams);
     newParams.franchiseId = _selectedTeam;
     newParams.position = _selectedPosition;
     newParams.gameType = _selectedGameType;
     newParams.startSeason = _selectedStartSeason;
-    newParams.endSeason =
-        _seasonConfig ? _selectedEndSeason : _selectedStartSeason;
+    newParams.endSeason = _seasonConfig ? _selectedEndSeason : _selectedStartSeason;
     Navigator.pop(context, newParams);
   }
 
@@ -185,90 +183,76 @@ class _StatFilterPageState extends State<StatFilterPage> {
   }
 
   Iterable<Widget> get _getPositionFilter sync* {
-    yield ListTile(
+    yield RadioListTile(
       title: Text('All skaters'),
-      leading: Radio(
-        value: Position.N_A,
-        groupValue: _selectedPosition,
-        onChanged: (Position value) {
-          setState(() {
-            _selectedPosition = value;
-          });
-        },
-      ),
+      value: Position.N_A,
+      groupValue: _selectedPosition,
+      onChanged: (Position value) {
+        setState(() {
+          _selectedPosition = value;
+        });
+      },
     );
     for (Position position in Position.values) {
-      if (position != Position.HC &&
-          position != Position.N_A &&
-          position != Position.G) {
-        yield ListTile(
+      if (position != Position.HC && position != Position.N_A && position != Position.G) {
+        yield RadioListTile(
           title: Text(positionToFullString(position)),
-          leading: Radio(
-            value: position,
-            groupValue: _selectedPosition,
-            onChanged: (Position value) {
-              setState(() {
-                _selectedPosition = value;
-              });
-            },
-          ),
+          value: position,
+          groupValue: _selectedPosition,
+          onChanged: (Position value) {
+            setState(() {
+              _selectedPosition = value;
+            });
+          },
         );
       }
     }
   }
 
   Iterable<Widget> get _getGameTypeFilter sync* {
-    yield ListTile(
-      title: Text('Regular'),
-      leading: Radio(
-        value: 2,
-        groupValue: _selectedGameType,
-        onChanged: (int value) {
-          setState(() {
-            _selectedGameType = value;
-          });
-        },
-      ),
+    yield RadioListTile(
+      title: const Text('Regular'),
+      value: 2,
+      groupValue: _selectedGameType,
+      onChanged: (int value) {
+        setState(() {
+          _selectedGameType = value;
+        });
+      },
     );
-    yield ListTile(
-      title: Text('Playoffs'),
-      leading: Radio(
-        value: 3,
-        groupValue: _selectedGameType,
-        onChanged: (int value) {
-          setState(() {
-            _selectedGameType = value;
-          });
-        },
-      ),
+    yield RadioListTile(
+      title: const Text('Playoffs'),
+      value: 3,
+      groupValue: _selectedGameType,
+      onChanged: (int value) {
+        setState(() {
+          _selectedGameType = value;
+        });
+      },
     );
   }
 
   Iterable<Widget> get _getTeamFilter sync* {
-    yield ListTile(
-      title: Text('All teams'),
-      leading: Radio(
-        value: -1,
+    yield RadioListTile(
+      title: const Text('All teams'),
+      value: -1,
+      groupValue: _selectedTeam,
+      onChanged: (int value) {
+        setState(() {
+          _selectedTeam = value;
+        });
+      },
+    );
+    for (Team team in Team.teams) {
+      yield RadioListTile(
+        title: Text(team.name),
+        value: team.franchiseId,
         groupValue: _selectedTeam,
         onChanged: (int value) {
           setState(() {
             _selectedTeam = value;
           });
         },
-      ),
-    );
-    for (Team team in Team.teams.values) {
-      yield ListTile(
-        title: Text(team.name),
-        leading: Radio(
-          value: team.franchiseId,
-          groupValue: _selectedTeam,
-          onChanged: (int value) {
-            setState(() {
-              _selectedTeam = value;
-            });
-          },
-        ),
       );
     }
   }

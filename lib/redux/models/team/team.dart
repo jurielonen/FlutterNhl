@@ -18,10 +18,15 @@ class Team {
   final String abb;
 
   Team({@required this.id, @required this.name, @required this.abb, @required this.franchiseId});
+
   Team.clone(Team team)
       : this(id: team.id, name: team.name, abb: team.abb, franchiseId: team.franchiseId);
 
-  static Map<int, Team> get teams => _cache;
+  static List<Team> get teams {
+    var teamList = _cache.values.toList();
+    teamList.sort((Team a, Team b) => a.name.compareTo(b.name));
+    return teamList;
+  }
 
   static final Map<int, Team> _cache = <int, Team>{};
 
@@ -63,7 +68,7 @@ class Team {
     }
   }
 
-  static String getTeamLogoUrl(String abb) {
+  static getTeamLogoUrl(String abb) {
     return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
   }
 
@@ -82,7 +87,10 @@ class Team {
   }
 
   String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
+
   String get logoSvg => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
+
+  static String logoSvgUrl(String abb) => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
 
   static getTeamAbb(int teamId) {
     if (_cache.containsKey(teamId)) {
