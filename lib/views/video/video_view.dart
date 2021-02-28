@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
@@ -12,15 +13,11 @@ import 'package:wakelock/wakelock.dart';
 class VideoView extends StatefulWidget {
   static const String routeName = '/video';
   final VideoArguments arguments;
+
   VideoView({Key key, this.arguments}) : super(key: key);
 
   @override
   _VideoViewState createState() => _VideoViewState();
-
-  static String twoDigits(int n) {
-    if (n >= 10) return "$n";
-    return "0$n";
-  }
 }
 
 class _VideoViewState extends State<VideoView> with SingleTickerProviderStateMixin {
@@ -29,6 +26,7 @@ class _VideoViewState extends State<VideoView> with SingleTickerProviderStateMix
   Duration _currentPosition = Duration(seconds: 0);
   Duration _videoDuration = Duration(seconds: 0);
   bool _initialized = false;
+
   //bool _visible = false;
   String _currentPositionString = '00:00';
   String _videoDurationString = '00:00';
@@ -54,12 +52,12 @@ class _VideoViewState extends State<VideoView> with SingleTickerProviderStateMix
           if (!_animationController.isAnimating && _animationController.value < 1.0)
             _animationController.forward();
           _videoDuration = _controller.value.duration;
-          _videoDurationString = _parseDuration(_videoDuration);
+          _videoDurationString = parseDuration(_videoDuration);
           _controller.play();
         }
         setState(() {
           _currentPosition = _controller.value.position;
-          _currentPositionString = _parseDuration(_currentPosition);
+          _currentPositionString = parseDuration(_currentPosition);
         });
       }
     });
@@ -220,9 +218,5 @@ class _VideoViewState extends State<VideoView> with SingleTickerProviderStateMix
         ],
       ),
     );
-  }
-
-  static String _parseDuration(Duration duration) {
-    return '${VideoView.twoDigits(duration.inMinutes)}:${VideoView.twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute))}';
   }
 }

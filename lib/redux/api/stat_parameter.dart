@@ -89,9 +89,6 @@ class StatParameters {
   Position position = Position.N_A;
   int franchiseId = 0;
 
-  /*static final Map<ParamType, StatParameters> _cache =
-      <ParamType, StatParameters>{};*/
-
   StatParameters(this.paramType);
 
   StatParameters.copy(
@@ -120,13 +117,6 @@ class StatParameters {
   }
 
   factory StatParameters.create(ParamType paramType) {
-    /*if (_cache.containsKey(paramType)) {
-      return _cache[paramType];
-    } else {
-      StatParameters temp = StatParameters(paramType);
-      _cache[paramType] = temp;
-      return temp;
-    }*/
     return StatParameters(paramType);
   }
 
@@ -202,6 +192,11 @@ class StatParameters {
   }
 
   Map<String, String> getParams() {
+    var cayenneExpString =
+        'gameTypeId=${gameType.toString()} and seasonId>=${startSeason.toString()} and seasonId<=${endSeason.toString()}';
+    if (paramType.type == StatType.PLAYER && isSkater(position)) {
+      cayenneExpString += ' and positionCode=\"${positionToApiString(position)}\"';
+    }
     Map<String, String> temp = {
       'isAggregate': isAggregated.toString(),
       'isGame': isGame.toString(),
@@ -209,8 +204,7 @@ class StatParameters {
       'start': start.toString(),
       'limit': limit.toString(),
       'factCayenneExp': 'gamesPlayed>=${gamesPlayed.toString()}',
-      'cayenneExp':
-          'gameTypeId=${gameType.toString()} and seasonId>=${startSeason.toString()} and seasonId<=${endSeason.toString()}'
+      'cayenneExp': cayenneExpString
     };
     switch (paramType.stat) {
       case 'shootout':
@@ -221,7 +215,7 @@ class StatParameters {
         break;
     }
 
-    if(franchiseId > 0){
+    if (franchiseId > 0) {
       temp['cayenneExp'] += ' and franchiseId=$franchiseId';
     }
 
@@ -233,33 +227,33 @@ class StatParameters {
   }
 
   bool get isThereNextPage {
-    if(total == null) return false;
-    if(total > 0){
+    if (total == null) return false;
+    if (total > 0) {
       return total > (start + limit);
     }
     return true;
   }
 
-  void setSort(String stat, bool ascending){
+  void setSort(String stat, bool ascending) {
     paramType.sort = {stat: ascending};
   }
 
   String get getSortColumn {
-    if(paramType.sort != null && paramType.sort.isNotEmpty){
+    if (paramType.sort != null && paramType.sort.isNotEmpty) {
       return paramType.sort.keys.first;
     }
     return null;
   }
 
   bool get getAscending {
-    if(paramType.sort != null && paramType.sort.isNotEmpty){
+    if (paramType.sort != null && paramType.sort.isNotEmpty) {
       return paramType.sort.values.first;
     }
     return null;
   }
 
   @override
-  int get hashCode  =>
+  int get hashCode =>
       paramType.hashCode ^
       start.hashCode ^
       gamesPlayed.hashCode ^
@@ -273,15 +267,15 @@ class StatParameters {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is StatParameters &&
-              runtimeType == other.runtimeType &&
-              paramType == other.paramType &&
-              start == other.start &&
-              gamesPlayed == other.gamesPlayed &&
-              gameType == other.gameType &&
-              startSeason == other.startSeason &&
-              endSeason == other.endSeason &&
-              position == other.position &&
-              franchiseId == other.franchiseId &&
-              total == other.total;
+      other is StatParameters &&
+          runtimeType == other.runtimeType &&
+          paramType == other.paramType &&
+          start == other.start &&
+          gamesPlayed == other.gamesPlayed &&
+          gameType == other.gameType &&
+          startSeason == other.startSeason &&
+          endSeason == other.endSeason &&
+          position == other.position &&
+          franchiseId == other.franchiseId &&
+          total == other.total;
 }
