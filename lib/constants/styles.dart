@@ -261,7 +261,31 @@ abstract class Styles {
   );
 
   static const playSubtitleText = TextStyle(
+    color: kNHLPrimaryDark,
+    fontFamily: 'NotoSans',
+    fontSize: 13,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
+  static const playerAppbarLegendText = TextStyle(
+    color: kSecondaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 13,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
+  static const playerAppbarNameText = TextStyle(
     color: kPrimaryTextColor,
+    fontFamily: 'NotoSans',
+    fontSize: 25,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const playerAppbarOtherText = TextStyle(
+    color: kSecondaryTextColor,
     fontFamily: 'NotoSans',
     fontSize: 13,
     fontStyle: FontStyle.normal,

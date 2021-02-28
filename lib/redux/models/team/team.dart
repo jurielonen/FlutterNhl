@@ -92,18 +92,25 @@ class Team {
 
   static String logoSvgUrl(String abb) => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
 
-  static getTeamAbb(int teamId) {
+  static String getTeamAbb(int teamId) {
     if (_cache.containsKey(teamId)) {
       return _cache[teamId].abb;
     }
     return null;
   }
 
-  static getTeamAbbFromFranchiseId(int franchiseId) {
+  static String getTeamAbbFromFranchiseId(int franchiseId) {
     Team team =
         _cache.values.firstWhere((team) => team.franchiseId == franchiseId, orElse: () => null);
     if (team != null) return team.abb;
     return '';
+  }
+
+  static String getTeamNameFromAbb(String abb){
+    Team team =
+    _cache.values.firstWhere((team) => team.abb == abb, orElse: () => null);
+    if (team != null) return team.name;
+    return abb;
   }
 
   Color get teamColor => getTeamColor(name);

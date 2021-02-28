@@ -313,22 +313,11 @@ class PersonPosition {
   }
 
   String get positionString {
-    switch (code) {
-      case Position.C:
-        return 'C';
-      case Position.L:
-        return 'LW';
-      case Position.R:
-        return 'RW';
-      case Position.D:
-        return 'D';
-      case Position.G:
-        return 'G';
-      case Position.HC:
-        return 'HC';
-      default:
-        return 'NA';
-    }
+    return positionToAbbString(code);
+  }
+
+  String get positionFullString {
+    return positionToFullString(code);
   }
 }
 

@@ -1,6 +1,7 @@
+import 'package:FlutterNhl/constants/colors.dart';
 import 'package:FlutterNhl/constants/styles.dart';
 import 'package:FlutterNhl/redux/enums.dart';
-import 'package:FlutterNhl/redux/models/player/player.dart';
+import 'package:FlutterNhl/redux/models/team/team.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/states/app_state_actions.dart';
 import 'package:FlutterNhl/redux/viewmodel/player_view_model.dart';
@@ -8,7 +9,6 @@ import 'package:FlutterNhl/views/navigation/arguments.dart';
 import 'package:FlutterNhl/views/player/widgets/player_bio.dart';
 import 'package:FlutterNhl/views/player/widgets/player_game_log_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
-import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:FlutterNhl/widgets/single_stat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -16,10 +16,10 @@ import 'package:flutter_redux/flutter_redux.dart';
 class CustomTabTemplate {
   final int index;
   final String name;
+
   const CustomTabTemplate(this.index, this.name);
 }
 
-///TODO: continue making player appbar
 class PlayerHome extends StatefulWidget {
   static const String routeName = '/player';
   static const List<CustomTabTemplate> tabs = [
@@ -62,6 +62,7 @@ class _PlayerHomeState extends State<PlayerHome> {
               length: PlayerHome.tabs.length,
               child: NestedScrollView(
                 headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                  print('is inner: $innerBoxIsScrolled');
                   return <Widget>[
                     SliverOverlapAbsorber(
                       handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -70,7 +71,21 @@ class _PlayerHomeState extends State<PlayerHome> {
                         snap: false,
                         floating: false,
                         expandedHeight: appBarHeight,
-                        title: Text(viewModel.player.fullname),
+                        title: Opacity(
+                          opacity: innerBoxIsScrolled ? 1.0 : 0.0,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: SizedBox(
+                                    height: 30,
+                                    width: 30,
+                                    child: Styles.buildPlayerBoxIcon(viewModel.player)),
+                              ),
+                              Text(viewModel.player.fullname),
+                            ],
+                          ),
+                        ),
                         actions: [
                           IconButton(
                               icon: viewModel.isStarred
@@ -88,7 +103,7 @@ class _PlayerHomeState extends State<PlayerHome> {
                               Positioned(
                                 bottom: tabBarHeight,
                                 child: SizedBox(
-                                  height: appBarHeight - kToolbarHeight * 2,
+                                  height: appBarHeight - kToolbarHeight,
                                   width: MediaQuery.of(context).size.width,
                                   child: DecoratedBox(
                                     child: Stack(
@@ -97,32 +112,102 @@ class _PlayerHomeState extends State<PlayerHome> {
                                         const DecoratedBox(
                                           decoration: BoxDecoration(
                                             gradient: LinearGradient(
-                                              begin: Alignment(-0.30, 0.1),
-                                              end: Alignment(-0.31, 0.2),
+                                              begin: Alignment(0.0, 0.19999),
+                                              end: Alignment(0.0, 0.2),
                                               colors: <Color>[
-                                                Colors.white12,
-                                                Colors.white12,
-                                                Colors.black,
+                                                kNHLPrimary,
+                                                kNHLSecondaryLight,
                                               ],
                                             ),
                                           ),
                                         ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Styles.buildPlayerBoxIcon(viewModel.player),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  viewModel.player.fullname,
+                                        Positioned(
+                                          top: kToolbarHeight,
+                                          left: -50.0,
+                                          child: Opacity(
+                                              opacity: 0.5,
+                                              child: Styles.buildTeamSvgImageAbb(
+                                                  Team.logoSvgUrl(viewModel.player.currentTeam),
+                                                  size: 100)),
+                                        ),
+                                        Positioned(
+                                          bottom: 0.0,
+                                          height: appBarHeight - kToolbarHeight * 2,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Styles.buildPlayerBoxIcon(viewModel.player),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 16.0),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: '',
+                                                        style: Styles.playerAppbarLegendText,
+                                                        children: [
+                                                          TextSpan(
+                                                            text: viewModel.player.fullname
+                                                                .toUpperCase(),
+                                                            style: Styles.playerAppbarNameText,
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      Team.getTeamNameFromAbb(
+                                                              viewModel.player.currentTeam)
+                                                          .toUpperCase(),
+                                                      style: Styles.playerAppbarOtherText,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(
+                                                              'POSITION',
+                                                              style: Styles.playerAppbarLegendText,
+                                                            ),
+                                                            Text(
+                                                              'STATUS',
+                                                              style: Styles.playerAppbarLegendText,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(left: 16.0),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                viewModel.player.position
+                                                                    .positionFullString
+                                                                    .toUpperCase(),
+                                                                style: Styles.playerAppbarOtherText,
+                                                              ),
+                                                              Text(
+                                                                viewModel.player.active
+                                                                    ? "ACTIVE"
+                                                                    : "INACTIVE",
+                                                                style: Styles.playerAppbarOtherText,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
-                                                Text(viewModel.player.currentTeam),
-                                                Text(viewModel.player.position.positionString),
-                                                Text(
-                                                    viewModel.player.active ? "Active" : "Inactive")
-                                              ],
-                                            )
-                                          ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
