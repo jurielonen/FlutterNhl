@@ -19,19 +19,16 @@ class Team {
   final String name;
   final String abb;
 
-  Team(
-      {@required this.id,
-      @required this.name,
-      @required this.abb,
-      @required this.franchiseId});
-  Team.clone(Team team)
-      : this(
-            id: team.id,
-            name: team.name,
-            abb: team.abb,
-            franchiseId: team.franchiseId);
+  Team({@required this.id, @required this.name, @required this.abb, @required this.franchiseId});
 
-  static Map<int, Team> get teams => _cache;
+  Team.clone(Team team)
+      : this(id: team.id, name: team.name, abb: team.abb, franchiseId: team.franchiseId);
+
+  static List<Team> get teams {
+    var teamList = _cache.values.toList();
+    teamList.sort((Team a, Team b) => a.name.compareTo(b.name));
+    return teamList;
+  }
 
   static final Map<int, Team> _cache = <int, Team>{};
 
@@ -92,15 +89,17 @@ class Team {
   }
 
   String get logoUrl => 'assets/logos/logo_${abb.toLowerCase()}.png';
+
   String get logoSvg => 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
+
   static String logoSvgUrl(String abb) {
     return 'https://assets.nhle.com/logos/nhl/svg/${abb}_dark.svg';
   }
 
   Color get teamColor => getTeamColor(name);
 
-  static parsePlayerStats(List<PlayerGame> players, List<PlayerGame> skaters,
-      List<PlayerGame> goalies) {
+  static parsePlayerStats(
+      List<PlayerGame> players, List<PlayerGame> skaters, List<PlayerGame> goalies) {
     players.forEach((player) {
       if (player.stats.isNotEmpty) {
         if (player.position.isGoalie())
@@ -117,11 +116,9 @@ class Team {
       if ((bG + bA).compareTo(aG + aA) == 0) {
         if (bG.compareTo(aG) == 0) {
           return DateFormat.Hm()
-              .parse(
-                  getStatFromMap('timeOnIce', b.stats, defaultString: '00:00'))
-              .compareTo(DateFormat.Hm().parse(getStatFromMap(
-                  'timeOnIce', a.stats,
-                  defaultString: '00:00')));
+              .parse(getStatFromMap('timeOnIce', b.stats, defaultString: '00:00'))
+              .compareTo(DateFormat.Hm()
+                  .parse(getStatFromMap('timeOnIce', a.stats, defaultString: '00:00')));
         } else {
           return bG.compareTo(aG);
         }
@@ -133,8 +130,8 @@ class Team {
     goalies.sort((a, b) {
       return DateFormat.Hm()
           .parse(getStatFromMap('timeOnIce', b.stats, defaultString: '00:00'))
-          .compareTo(DateFormat.Hm().parse(
-              getStatFromMap('timeOnIce', a.stats, defaultString: '00:00')));
+          .compareTo(
+              DateFormat.Hm().parse(getStatFromMap('timeOnIce', a.stats, defaultString: '00:00')));
     });
   }
 }
@@ -143,8 +140,7 @@ class TeamSchedule extends Team {
   Map<String, dynamic> record;
   int score;
 
-  TeamSchedule({@required Team team, this.record, this.score})
-      : super.clone(team);
+  TeamSchedule({@required Team team, this.record, this.score}) : super.clone(team);
 
   factory TeamSchedule.fromJson(Map<String, dynamic> json) {
     return TeamSchedule(
@@ -165,13 +161,8 @@ class TeamPreview extends Team {
   final Map<String, PlayerLastFive> leadersLastFive;
 
   static final Map<int, TeamPreview> _cache = <int, TeamPreview>{};
-  static const List<String> lastFiveKeys = [
-    'points',
-    'assists',
-    'goals',
-    'plusMinus',
-    'timeOnIce'
-  ];
+  static const List<String> lastFiveKeys = ['points', 'assists', 'goals', 'plusMinus', 'timeOnIce'];
+
   static bool teamStatsDownloaded(int teamId) {
     return _cache.containsKey(teamId);
   }
@@ -185,8 +176,7 @@ class TeamPreview extends Team {
       this.previousGames})
       : super.clone(team);
 
-  factory TeamPreview.fromJson(Map<String, dynamic> json,
-      {Map<String, dynamic> lastFive}) {
+  factory TeamPreview.fromJson(Map<String, dynamic> json, {Map<String, dynamic> lastFive}) {
     int tId = getJsonInt('id', json);
     if (_cache.containsKey(tId)) {
       return _cache[tId];
@@ -195,20 +185,17 @@ class TeamPreview extends Team {
       if (lastFive != null) {
         lastFiveKeys.forEach((stat) {
           if (lastFive.containsKey(stat)) {
-            leadersLastFive[stat] =
-                PlayerLastFive.fromJson(stat, getJsonObject([stat], lastFive));
+            leadersLastFive[stat] = PlayerLastFive.fromJson(stat, getJsonObject([stat], lastFive));
           }
         });
       }
       List<PlayerGame> players = List<PlayerGame>.from(
-          getJsonList(['roster', 'roster'], json)
-              .map((e) => PlayerGame.fromJsonPreview(e)));
+          getJsonList(['roster', 'roster'], json).map((e) => PlayerGame.fromJsonPreview(e)));
       List<PlayerGame> skaters = [], goalies = [];
       Team.parsePlayerStats(players, skaters, goalies);
 
-      List<Game> games = List<Game>.from(
-          getJsonList(['previousSchedule', 'dates'], json)
-              .map((date) => Game.fromJson(getJsonObject(['games', 0], date))));
+      List<Game> games = List<Game>.from(getJsonList(['previousSchedule', 'dates'], json)
+          .map((date) => Game.fromJson(getJsonObject(['games', 0], date))));
       games.sort((a, b) {
         return -a.dateTime.compareTo(b.dateTime);
       });
@@ -216,10 +203,8 @@ class TeamPreview extends Team {
       return TeamPreview(
         team: Team.fromJson(json),
         teamStats: getJsonObject(['teamStats', 0, 'splits', 0, 'stat'], json),
-        playerTableSource:
-            PlayerGameTableSource(type: StatType.PLAYER, players: skaters),
-        goalieTableSource:
-            PlayerGameTableSource(type: StatType.GOALIE, players: goalies),
+        playerTableSource: PlayerGameTableSource(type: StatType.PLAYER, players: skaters),
+        goalieTableSource: PlayerGameTableSource(type: StatType.GOALIE, players: goalies),
         leadersLastFive: leadersLastFive,
         previousGames: games,
       );
@@ -232,11 +217,7 @@ class TeamFinal extends Team {
   PlayerGameTableSource playerTableSource;
   PlayerGameTableSource goalieTableSource;
 
-  TeamFinal(
-      {Team team,
-      this.teamStats,
-      this.playerTableSource,
-      this.goalieTableSource})
+  TeamFinal({Team team, this.teamStats, this.playerTableSource, this.goalieTableSource})
       : super.clone(team);
 
   factory TeamFinal.fromJson(Map<String, dynamic> json) {
@@ -250,21 +231,19 @@ class TeamFinal extends Team {
     return TeamFinal(
       team: Team.fromJson(getJsonObject(['team'], json)),
       teamStats: getJsonObject(['teamStats', 'teamSkaterStats'], json),
-      playerTableSource: PlayerGameTableSource(
-          type: StatType.PLAYER, players: skaters, preview: false),
-      goalieTableSource: PlayerGameTableSource(
-          type: StatType.GOALIE, players: goalies, preview: false),
+      playerTableSource:
+          PlayerGameTableSource(type: StatType.PLAYER, players: skaters, preview: false),
+      goalieTableSource:
+          PlayerGameTableSource(type: StatType.GOALIE, players: goalies, preview: false),
     );
   }
 
   PlayerGame getPlayer(Player player) {
-    PlayerGame temp = playerTableSource.players.firstWhere(
-        (playerGame) => playerGame.id == player.id,
-        orElse: () => null);
+    PlayerGame temp = playerTableSource.players
+        .firstWhere((playerGame) => playerGame.id == player.id, orElse: () => null);
     if (temp == null)
-      temp = goalieTableSource.players.firstWhere(
-          (playerGame) => playerGame.id == player.id,
-          orElse: () => null);
+      temp = goalieTableSource.players
+          .firstWhere((playerGame) => playerGame.id == player.id, orElse: () => null);
     return temp;
   }
 }
@@ -306,7 +285,7 @@ class TeamPage extends Team {
   factory TeamPage.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> team = getJsonObject(['teams', 0], json);
     String firstYear = getJsonString('firstYearOfPlay', team);
-    if(firstYear != ''){
+    if (firstYear != '') {
       firstYear = '$firstYear${int.parse(firstYear) + 1}';
     } else {
       firstYear = '20172018';
@@ -317,9 +296,8 @@ class TeamPage extends Team {
       firstYear: firstYear,
       division: getJsonString2(['division', 'name'], team),
       conference: getJsonString2(['conference', 'name'], team),
-      previousGame: List<Game>.from(
-          getJsonList(['previousSchedule', 'dates'], team)
-              .map((date) => Game.fromJson(getJsonObject(['games', 0], date)))),
+      previousGame: List<Game>.from(getJsonList(['previousSchedule', 'dates'], team)
+          .map((date) => Game.fromJson(getJsonObject(['games', 0], date)))),
       nextGame: List<Game>.from(getJsonList(['nextSchedule', 'dates'], team)
           .map((date) => Game.fromJson(getJsonObject(['games', 0], date)))),
       currentStats: getJsonObject(['teamStats', 0, 'splits', 0, 'stat'], team),
@@ -339,10 +317,8 @@ class TeamPage extends Team {
     List<PlayerGame> player = [];
     List<PlayerGame> goalie = [];
     Team.parsePlayerStats(skaters, player, goalie);
-    playerTableSource =
-        PlayerGameTableSource(type: StatType.PLAYER, players: player);
-    goalieTableSource =
-        PlayerGameTableSource(type: StatType.GOALIE, players: goalie);
+    playerTableSource = PlayerGameTableSource(type: StatType.PLAYER, players: player);
+    goalieTableSource = PlayerGameTableSource(type: StatType.GOALIE, players: goalie);
   }
 
   bool containsRosterStats() {

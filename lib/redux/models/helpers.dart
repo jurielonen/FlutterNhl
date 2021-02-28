@@ -91,8 +91,7 @@ double getJsonDouble(String key, Map<String, dynamic> json) {
   return 0.0;
 }
 
-String getJsonString(String key, Map<String, dynamic> json,
-    {String defaultString = ''}) {
+String getJsonString(String key, Map<String, dynamic> json, {String defaultString = ''}) {
   if (json != null) {
     if (json.containsKey(key)) {
       if (json[key] is String) {
@@ -174,8 +173,7 @@ dynamic _getJsonItem(List<dynamic> keys, dynamic json) {
   return obj;
 }
 
-int compareDynamicFromMap(
-    String key, Map<String, dynamic> aJson, Map<String, dynamic> bJson) {
+int compareDynamicFromMap(String key, Map<String, dynamic> aJson, Map<String, dynamic> bJson) {
   dynamic aValue = _getJsonItem([key], aJson);
   dynamic bValue = _getJsonItem([key], bJson);
   if (aValue != null && bValue != null) {
@@ -215,14 +213,29 @@ int compareStrings(String a, String b) {
   }
 }
 
-String getStatFromMap(String key, Map<String, dynamic> json,
-    {defaultString = '0'}) {
+String getStatFromMap(String key, Map<String, dynamic> json, {defaultString = '0'}) {
   if (json != null && json.containsKey(key)) {
     dynamic value = json[key];
-    if (value is double)
+
+    if (value is num &&
+        (key.contains('Time') || key.contains('time')) &&
+        (!key.contains('shift') && !key.contains('Shift'))) {
+      return parseDuration(Duration(milliseconds: (value * 1000).toInt()));
+    }
+    if (value is double) {
       return value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 2);
+    }
     return value.toString();
   }
 
   return defaultString;
+}
+
+String twoDigits(int n) {
+  if (n >= 10) return "$n";
+  return "0$n";
+}
+
+String parseDuration(Duration duration) {
+  return '${twoDigits(duration.inMinutes)}:${twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute))}';
 }

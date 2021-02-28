@@ -1,8 +1,8 @@
 import 'package:FlutterNhl/redux/enums.dart';
+import 'package:FlutterNhl/redux/models/helpers.dart';
 import 'package:FlutterNhl/redux/models/settings/settings.dart';
 import 'package:FlutterNhl/redux/states/app_state.dart';
 import 'package:FlutterNhl/redux/viewmodel/settings_view_model.dart';
-import 'package:FlutterNhl/views/video/video_view.dart';
 import 'package:FlutterNhl/widgets/error_view.dart';
 import 'package:FlutterNhl/widgets/progress_view.dart';
 import 'package:flutter/material.dart';
@@ -62,8 +62,37 @@ class _SettingsBodyState extends State<SettingsBody> {
           title: const Text('Show yesterday\'s game'),
           subtitle: const Text('When to change date to current'),
           trailing: DropdownButton<int>(
-              items: <int>[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
-                  .map((e) => DropdownMenuItem(child: Text('${VideoView.twoDigits(e)}:00'), value: e,)).toList(),
+              items: <int>[
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23
+              ]
+                  .map((e) => DropdownMenuItem(
+                        child: Text('${twoDigits(e)}:00'),
+                        value: e,
+                      ))
+                  .toList(),
               value: _setSettings.yesterdayGame,
               icon: Icon(
                 Icons.arrow_downward,

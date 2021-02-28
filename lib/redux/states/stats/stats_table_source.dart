@@ -18,21 +18,21 @@ class StatTableSource extends CustomDataTableSource {
   final List<dynamic> stats;
   final int startIndex;
   DataColumnSortCallback _dataColumnSortCallback =
-      (int columnIndex, bool ascending) =>
-          print('Pressed $columnIndex $ascending');
-  DataRowTapCallBack _dataRowTapCallBack =
-      (args, route) => print('pressed row: $args, $route');
+      (int columnIndex, bool ascending) => print('Pressed $columnIndex $ascending');
+  DataRowTapCallBack _dataRowTapCallBack = (args, route) => print('pressed row: $args, $route');
   final String _sortColumn;
   final bool _ascending;
   Function(String stat, bool ascending) columnCallBack;
 
-  StatTableSource(
-      {@required this.type,
-      @required this.displayItems,
-      @required this.stats,
-        String sortColumn,
-        bool ascending = false,
-      this.startIndex = 0,}) : _sortColumn = sortColumn, _ascending = ascending;
+  StatTableSource({
+    @required this.type,
+    @required this.displayItems,
+    @required this.stats,
+    String sortColumn,
+    bool ascending = false,
+    this.startIndex = 0,
+  })  : _sortColumn = sortColumn,
+        _ascending = ascending;
 
   @override
   List<DataRow> get rows {
@@ -58,17 +58,13 @@ class StatTableSource extends CustomDataTableSource {
     stats.asMap().forEach((index, stat) {
       if (stat is Map<String, dynamic>) _rows.add(_getRow(stat, index));
     });
-    /*stats.forEach((stat) {
-      if (stat is Map<String, dynamic>) _rows.add(_getRow(stat));
-    });*/
   }
 
   DataRow _getRow(Map<String, dynamic> stat, int index) {
     Color rowColor = index % 2 == 0 ? Colors.grey.withOpacity(0.3) : null;
     _firstColumn.add(
       GestureDetector(
-        onTap: () => _dataRowTapCallBack(
-            _getArgument(stat), _isTeam ? Routes.team : Routes.player),
+        onTap: () => _dataRowTapCallBack(_getArgument(stat), _isTeam ? Routes.team : Routes.player),
         child: Container(
           decoration: BoxDecoration(color: rowColor),
           child: SizedBox(
@@ -76,9 +72,7 @@ class StatTableSource extends CustomDataTableSource {
             height: CustomDataTableSource.dataRowHeight,
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0),
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: _getNameCell(stat, index)),
+              child: Align(alignment: Alignment.centerLeft, child: _getNameCell(stat, index)),
             ),
           ),
         ),
@@ -96,9 +90,12 @@ class StatTableSource extends CustomDataTableSource {
         )
         .toList();
 
-    return DataRow( cells: cells, color: MaterialStateProperty.resolveWith<Color>((_) {
-      return rowColor;
-    }),);
+    return DataRow(
+      cells: cells,
+      color: MaterialStateProperty.resolveWith<Color>((_) {
+        return rowColor;
+      }),
+    );
   }
 
   Argument _getArgument(Map<String, dynamic> json) {
@@ -116,8 +113,8 @@ class StatTableSource extends CustomDataTableSource {
         children: <Widget>[
           SizedBox(
               width: 20,
-              child: Text('${index + startIndex + 1}',
-                  style: CustomDataTableSource.firstColumnStyle)),
+              child:
+                  Text('${index + startIndex + 1}', style: CustomDataTableSource.firstColumnStyle)),
           Styles.buildTeamSvgImage(team, size: 20),
           Expanded(
             child: Padding(
@@ -136,8 +133,8 @@ class StatTableSource extends CustomDataTableSource {
         children: <Widget>[
           SizedBox(
               width: 20,
-              child: Text('${index + startIndex + 1}',
-                  style: CustomDataTableSource.firstColumnStyle)),
+              child:
+                  Text('${index + startIndex + 1}', style: CustomDataTableSource.firstColumnStyle)),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -179,9 +176,8 @@ class StatTableSource extends CustomDataTableSource {
         .map(
           (key) => DataColumn(
             label: Container(
-              decoration: BoxDecoration(
-                  border:
-                      Border(bottom: BorderSide(color: Colors.grey, width: 3))),
+              decoration:
+                  BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey, width: 3))),
               child: Padding(
                 padding: const EdgeInsets.all(3.0),
                 child: Text(
@@ -204,10 +200,9 @@ class StatTableSource extends CustomDataTableSource {
 
   @override
   int get sortColumn {
-    if(_sortColumn != null){
+    if (_sortColumn != null) {
       int index = displayItems.indexOf(_sortColumn);
-      if(index > -1)
-        return index;
+      if (index > -1) return index;
     }
     return null;
   }
@@ -219,12 +214,11 @@ class StatTableSource extends CustomDataTableSource {
       height: CustomDataTableSource.headerRowHeight,
       child: Center(
         child: Container(
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey, width: 3))),
+          decoration:
+              BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey, width: 3))),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 3.0, 8.0, 3.0),
-            child: Text(statTypeToString(type),
-                style: CustomDataTableSource.firstColumnStyle),
+            child: Text(statTypeToString(type), style: CustomDataTableSource.firstColumnStyle),
           ),
         ),
       ),
@@ -233,7 +227,7 @@ class StatTableSource extends CustomDataTableSource {
 
   @override
   void callback(int columnIndex, bool ascending) {
-    if(columnCallBack != null){
+    if (columnCallBack != null) {
       columnCallBack(displayItems[columnIndex], ascending);
     }
   }
