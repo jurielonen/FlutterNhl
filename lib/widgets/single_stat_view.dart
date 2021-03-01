@@ -28,6 +28,7 @@ class SingleStatView extends StatelessWidget {
             return SliverErrorView(error: viewModel.error);
           } else {
             return SliverFillRemaining(
+              hasScrollBody: true,
               child: Column(
                 children: <Widget>[
                   Container(

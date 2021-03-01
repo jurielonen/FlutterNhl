@@ -18,6 +18,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 
 class PlayerGameLogView extends StatelessWidget {
   final bool isSkater = true;
+
   PlayerGameLogView();
 
   @override
@@ -34,87 +35,60 @@ class PlayerGameLogView extends StatelessWidget {
         } else if (viewModel.loadingStatus == LoadingStatus.ERROR) {
           return SliverErrorView(error: viewModel.error);
         } else {
-          return SliverFillRemaining(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: 50.0,
-                  color: Colors.black12,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CustomYearPicker(
-                        selected: int.parse(viewModel.params.year),
-                        onSelected: (int year) =>
-                            viewModel.getGameLogs(viewModel.params.copyWith(year: year.toString())),
-                        maxValue: int.parse(StatParameters.getCurrentSeason()),
-                        minValue:
-                            20182019 /*viewModel.player != null
-                            ? int.parse(viewModel.player.firstSeason)
-                            : int.parse(Config.getCurrentSeason)*/
-                        ,
-                        reducer: 10001,
-                      ),
-                      CustomDropdownButton(
-                        selectedValue: viewModel.params.gameTypeString,
-                        values: PageParam.gameTypes,
-                        onValueChanged: (String type) => viewModel.getGameLogs(viewModel.params
-                            .copyWith(gameType: PageParam.getGameTypeBoolean(type))),
-                      ),
-                    ],
-                  ),
+          return CustomScrollView(slivers: [
+            SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 50.0,
+                color: Colors.black12,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CustomYearPicker(
+                      selected: int.parse(viewModel.params.year),
+                      onSelected: (int year) =>
+                          viewModel.getGameLogs(viewModel.params.copyWith(year: year.toString())),
+                      maxValue: int.parse(StatParameters.getCurrentSeason()),
+                      minValue:
+                          20182019 /*viewModel.player != null
+                              ? int.parse(viewModel.player.firstSeason)
+                              : int.parse(Config.getCurrentSeason)*/
+                      ,
+                      reducer: 10001,
+                    ),
+                    CustomDropdownButton(
+                      selectedValue: viewModel.params.gameTypeString,
+                      values: PageParam.gameTypes,
+                      onValueChanged: (String type) => viewModel.getGameLogs(
+                          viewModel.params.copyWith(gameType: PageParam.getGameTypeBoolean(type))),
+                    ),
+                  ],
                 ),
-                _buildGameLogList(viewModel.selectedGameLogs),
-              ],
+              ),
             ),
-          );
+            _buildGameLogList(viewModel.selectedGameLogs)
+          ]);
         }
       },
     );
-    /*return Column(
-      children: <Widget>[Container(
-            color: Colors.black,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Row(children: statColumn.toList()),
-            ),
-          ),
-        Expanded(
-          child: ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return listTiles.elementAt(index);
-              },
-              itemCount: listTiles.length),
-        ),
-      ],
-    );*/
   }
 
   Widget _buildGameLogList(List<GameLogsPlayer> logs) {
     if (logs == null) {
-      return ErrorView(UINoDataDownloadedException('player_game_log_view _buildGameLogList'));
+      return SliverErrorView(
+          error: UINoDataDownloadedException('player_game_log_view _buildGameLogList'));
     } else if (logs.length < 1) {
-      return ErrorView(NoDataException(''));
+      return SliverErrorView(error: NoDataException(''));
     } else {
-      return /*Stack(
-        children: <Widget>[
-          Container(
-            color: Colors.black,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Row(children: statColumn.toList()),
-            ),
-          ),*/
-          Expanded(
-        child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return getGameRow(logs[index]);
-            },
-            itemCount: logs.length),
-      ) /*,
-        ],
-      )*/
-          ;
+      return SliverFixedExtentList(
+        itemExtent: 48.0,
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            return getGameRow(logs[index]);
+          },
+          childCount: logs.length,
+        ),
+      );
     }
   }
 
@@ -153,12 +127,14 @@ class PlayerGameLogView extends StatelessWidget {
   Widget getGameRow(GameLogsPlayer log) {
     List<String> stats = isSkater ? skaterColumns : goalieColumns;
     return Container(
+      height: 48.0,
       decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white))),
       child: Row(
         children: <Widget>[
           Expanded(
             flex: 2,
             child: Container(
+              height: 48.0,
               color: Colors.grey,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),

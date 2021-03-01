@@ -51,7 +51,7 @@ class PlayerBioWidget extends StatelessWidget {
             },
             childCount: bioTiles.length,
           ),
-        ));
+        ),);
   }
 
   Iterable<Widget> get bioTiles sync* {
@@ -61,7 +61,8 @@ class PlayerBioWidget extends StatelessWidget {
     );
     yield createTextCard('Draft', playerDraftTable);
     for (PlayerStat stat in player.playerStats) {
-      yield createTextCard(stat.header, stat.statTable);
+      if(stat is PlayerAllTimeStat)
+        yield createTextCard(stat.header, stat.statTable);
     }
   }
 
@@ -157,9 +158,9 @@ class PlayerBioWidget extends StatelessWidget {
   Table get playerDraftTable {
     return Table(
       children: [
-        getRow('Year', player.draft.draftYear.toString()),
-        getRow('Round', '${player.draft.draftRound} rd'),
-        getRow('Pick', player.draft.draftOverall.toString()),
+        getRow('Year', player.draft?.draftYear.toString()),
+        getRow('Round', '${player.draft?.draftRound} rd'),
+        getRow('Pick', player.draft?.draftOverall.toString()),
       ],
     );
   }
@@ -167,12 +168,16 @@ class PlayerBioWidget extends StatelessWidget {
   static TableRow getRow(String header, String value) {
     return TableRow(children: [
       Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text(header.toUpperCase(), style: Styles.infoTableHeaderText)),
+        padding: const EdgeInsets.only(top: 8.0, left: 16.0, right: 8.0, bottom: 8.0),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(header.toUpperCase(), style: Styles.infoTableHeaderText)),
       ),
       Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text(value.toUpperCase(), style: Styles.infoTableValueText)),
+        padding: const EdgeInsets.only(top: 8.0, left: 30.0, right: 8.0, bottom: 8.0),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(value.toUpperCase(), style: Styles.infoTableValueText, maxLines: 1, overflow: TextOverflow.ellipsis,)),
       )
     ]);
   }

@@ -12,7 +12,7 @@ abstract class CustomDataTableSource {
   static const double headerRowHeight = 35;
   static const double dataRowHeight = 30;
   static const double firstColumnWidth = 100;
-  static const double cellWidth = 35;
+  static const double cellWidth = 50;
   Widget get tableCorner;
   List<Widget> get firstColumn;
   List<DataColumn> get columns;

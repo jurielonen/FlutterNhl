@@ -56,16 +56,23 @@ class PlayerMiddleware extends MiddlewareClass<AppState> {
   Future<Null> _getBio(Store<AppState> store, NextDispatcher next) async {
     if (store.state.playerState.loadingStatus != LoadingStatus.LOADING) {
       next(PlayerRequestingAction());
+      PlayerPage player;
       try {
-        final PlayerPage player =
+        player =
             await statsApi.fetchPlayerSummary(store.state.playerState.playerId);
+      } catch (error) {
+        next(PlayerErrorAction(error));
+        return;
+      }
+      try {
         player.draft = await nhlApi.fetchPlayerBio(
             store.state.playerState.playerId,
             store.state.playerState.playerType);
-        next(PlayerReceivedBioAction(player));
-      } catch (error) {
-        next(PlayerErrorAction(error));
+      } catch(error){
+        ///don't need to throw error if draft values arent found
+        print(error.toString());
       }
+      next(PlayerReceivedBioAction(player));
     }
   }
 

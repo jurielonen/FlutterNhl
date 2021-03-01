@@ -38,7 +38,7 @@ class PlayerHome extends StatefulWidget {
 }
 
 class _PlayerHomeState extends State<PlayerHome> {
-  static const double appBarHeight = 250.0;
+  static const double appBarHeight = 200.0;
   static const double tabBarHeight = 50.0;
   PageController _pageController;
   int _currentPage = 0;
@@ -62,7 +62,6 @@ class _PlayerHomeState extends State<PlayerHome> {
               length: PlayerHome.tabs.length,
               child: NestedScrollView(
                 headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                  print('is inner: $innerBoxIsScrolled');
                   return <Widget>[
                     SliverOverlapAbsorber(
                       handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -221,9 +220,9 @@ class _PlayerHomeState extends State<PlayerHome> {
                           ),
                         ),
                         forceElevated: innerBoxIsScrolled,
-                        bottom: PreferredSize(
+                        bottom: /*PreferredSize(
                           preferredSize: Size.fromHeight(tabBarHeight),
-                          child: TabBar(
+                          child: */TabBar(
                             tabs: PlayerHome.tabs
                                 .map((tab) => Tab(
                                       text: tab.name,
@@ -232,7 +231,7 @@ class _PlayerHomeState extends State<PlayerHome> {
                           ),
                         ),
                       ),
-                    ),
+                    //),
                   ];
                 },
                 body: TabBarView(
@@ -241,14 +240,14 @@ class _PlayerHomeState extends State<PlayerHome> {
                     return SafeArea(child: Builder(
                       builder: (BuildContext context) {
                         print('builder ${tab.name}');
-                        return CustomScrollView(
+                        return PlayerGameLogView();/*CustomScrollView(
                           key: PageStorageKey<String>(tab.name),
                           slivers: [
                             SliverOverlapInjector(
                                 handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
                             _buildBody(tab.name),
                           ],
-                        );
+                        );*/
                       },
                     ));
                   }).toList(),

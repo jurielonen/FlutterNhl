@@ -573,11 +573,11 @@ class PlayerAllTimeStat implements PlayerStat {
     cells.addAll(skater
         ? PlayerStat.playerStats
             .map((statName) =>
-                CustomDataTableSource.createSizedCell(getJsonDynamic(statName, stat).toString()))
+                CustomDataTableSource.createSizedCell(getStatFromMap(statName, stat).toString()))
             .toList()
         : PlayerStat.goalieStats
             .map((statName) =>
-                CustomDataTableSource.createSizedCell(getJsonDynamic(statName, stat).toString()))
+                CustomDataTableSource.createSizedCell(getStatFromMap(statName, stat).toString()))
             .toList());
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -657,7 +657,7 @@ class PlayerYearByYearStats implements PlayerStat {
       ...statList
           .map(
             (stat) => CustomDataTableSource.createSizedCell(
-              getJsonDynamic(stat, season.stat).toString(),
+              getStatFromMap(stat, season.stat).toString(),
             ),
           )
           .toList()
